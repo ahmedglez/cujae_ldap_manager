@@ -73,7 +73,7 @@ let userOptions = {
     url: CONFIG.ldap.url,
     //tlsOptions: { rejectUnauthorized: false }
   },
-  userDn: `uid={{username}},dc=example,dc=com`,
+  userDn: `uid={{username}},ou=usuarios,ou=informatica,dc=cujae,dc=edu,dc=cu`,
   userSearchBase: searchBase,
   usernameAttribute: usernameAttr,
   //starttls: true
