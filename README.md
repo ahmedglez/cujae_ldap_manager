@@ -68,37 +68,6 @@ docker build -t cujae_ldap_manager .
 docker run -p 3000:3000 cujae_ldap_manager
 ```
 
-## Usage
-
-### Configuration
-
-The application's configuration data is stored in a MongoDB database. To configure the application, you must first create a database and a collection in MongoDB. Then, add the following variables to the `.env` file:
-
-- `MONGO_URI`: the URI of the MongoDB database.
-- `MONGO_DB`: the name of the MongoDB database.
-- `MONGO_COLLECTION`: the name of the MongoDB collection.
-
-### Authentication
-
-The application uses LDAP authentication to verify user credentials. To configure the application to use LDAP authentication, you must add the following variables to the `.env` file:
-
-- `LDAP_URL`: the URL of the LDAP server.
-- `LDAP_BASE_DN`: the base DN of the LDAP server.
-- `LDAP_USER_DN`: the user DN of the LDAP server.
-- `LDAP_USER_PASSWORD`: the user password of the LDAP server.
-
-### Authorization
-
-The application uses LDAP groups to control access to protected resources. To configure the application to use LDAP groups, you must add the following variables to the `.env` file:
-
-- `LDAP_GROUP_DN`: the group DN of the LDAP server.
-- `LDAP_GROUP_FILTER`: the group filter of the LDAP server.
-- `LDAP_GROUP_ATTRIBUTE`: the group attribute of the LDAP server.
-
-### RESTful API
-
-The application provides a RESTful API that allows you to interact with the LDAP service programmatically. The API is documented using [Swagger](https://swagger.io/). To view the documentation, navigate to the `/api-docs` endpoint.
-
 ## Contributing
 
 Contributions to the Cujae LDAP Manager are always welcome! Please refer to the [contribution guidelines](https://github.com/your/repo/blob/main/CONTRIBUTING.md) for more information.
