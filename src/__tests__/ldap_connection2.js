@@ -1,4 +1,4 @@
-import LDAP from 'LDAP'
+const LDAP = require('LDAP')
 
 var options = {
   uri: 'ldap://10.8.176.9', // string
@@ -59,5 +59,3 @@ ldap.open(options, function (err, client) {
     )
   }
 })
-
-

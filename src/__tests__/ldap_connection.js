@@ -13,24 +13,24 @@ const config = {
 
 // create a new client
 const ldap = new SimpleLDAP(config)
+ldap.bindDN()
 
-ldap.bindDN().then((res) => {
-  console.log(res)
-})
-
-/* // setup a filter and attributes for your LDAP query
-const filter = '(uid=agonzalezb)'
-const attributes = ['uid', 'givenName', 'sn', 'telephoneNumber']
+// setup a filter and attributes for your LDAP query
+const filter = '(objectclass=iesEducationalStaff)'
+const attributes = ['uid', 'displayName', 'CI']
 
 // using async/await
 const getUsers = async () => {
-  const response = await ldap.search(filter, attributes)
-  console.log('Response', response)
-  return response
+  console.log('filters: ', filter)
+  console.log('atts: ', attributes)
+  ldap
+    .search(filter,attributes)
+    .then((res) => {
+      console.log('Response', res)
+    })
+    .catch((err) => console.log('ERROR EN RESPONSE', err))
 }
-
-const users = getUsers()
-
+getUsers()
 // [{
 //   dn: 'uid=artvandelay, dc=users, dc=localhost',
 //   idNumber: 1234567,
@@ -39,4 +39,3 @@ const users = getUsers()
 //   sn: 'Vandelay',
 //   telephoneNumber: '555-123-4567',
 // }]
- */

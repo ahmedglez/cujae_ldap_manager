@@ -1,7 +1,6 @@
 /* jshint node:true */
 /* global require */
-
-const CONFIG = require('./config.js')
+const CONFIG = require('./src/config/config.js')
 const mongoose = require('mongoose')
 mongoose.Promise = Promise
 const mongoClientPromise = mongoose
@@ -13,13 +12,18 @@ const mongoClientPromise = mongoose
   .then((m) => m.connection.getClient())
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
+const addRoutes = require('./src/routes/routes.js')
 
 const express = require('express')
 const app = express()
 
-const User = require('./model').User
+app.use(express.json())
 
-const LdapAuth = require('../index')
+addRoutes(app)
+
+const User = require('./src/models/model.js').User
+
+const LdapAuth = require('./src/modules/authentication/LdapAuth.js')
 
 var sessionMiddleWare = session({
   secret: CONFIG.sessionSecret,
@@ -98,9 +102,9 @@ LdapAuth.initialize(
 )
 
 // serve static pages
-app.use(express.static('public'))
+app.use(express.static('./src/public'))
 
 // Start server
-let port = 4000
+let port = CONFIG.server.port || 4000
 console.log(`server listen on port ${port}`)
-app.listen(port, '127.0.0.1')
+app.listen(port, CONFIG.server.host || '127.0.0.1')

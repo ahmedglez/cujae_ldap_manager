@@ -1,18 +1,41 @@
 {
-  "name": "express-passport-ldap-mongoose",
+  "name": "cujae_ldap_manager",
   "version": "3.1.2",
-  "description": "A library to use ldap-authentication and passport to authenticate users",
-  "main": "index.js",
-  "repository": "https://github.com/shaozi/express-passport-ldap-mongoose.git",
-  "author": "Jingshao Chen <jingshaochen@gmail.com>",
+  "description": "The Cujae LDAP Manager is a Node.js-based web application for managing users and groups in an LDAP service. It is designed specifically for the Cujae University community, but can be easily adapted for use in other organizations.",
+  "main": "server.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahmedglez/cujae_ldap_manager.git"
+  },
+  "author": "Ahmed Gonzalez <ahmediglez@gmail.com>",
+  "keywords": [
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "LDAP"
+  ],
   "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express-rate-limit": "^6.7.0",
+    "handlebars": "^4.7.7",
+    "jest-fetch-mock": "^3.0.3",
+    "jsonwebtoken": "^9.0.0",
     "LDAP": "^1.2.1",
     "ldap-authentication": "^2.3.1",
     "ldapjs": "^3.0.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
+    "nodemailer-smtp-transport": "^2.7.4",
     "passport": "^0.6.0",
     "passport-custom": "^1.1.1",
-    "simple-ldap-search": "^3.1.2"
+    "passport-jwt": "^4.0.1",
+    "simple-ldap-search": "^3.1.2",
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "connect-mongo": "^4.6.0",
@@ -20,12 +43,17 @@
     "express-session": "^1.17.3",
     "jasmine": "^4.3.0",
     "jest": "^29.5.0",
+    "jsdom": "^21.1.1",
+    "jsdom-global": "^3.0.2",
     "mongoose": "^6.5.2",
+    "nodemon": "^2.0.22",
     "superagent": "^8.0.0",
     "supertest": "^6.2.4"
   },
-  "type": "module",
   "scripts": {
-    "test": "jasmine"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   }
 }

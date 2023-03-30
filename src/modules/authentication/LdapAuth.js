@@ -128,29 +128,10 @@ var init = function (
   })
 
   router.use(passport.initialize())
-  router.use(passport.session())
-  // error handling if deserialization failed (when user is deleted from db, but client still has user cookie, passport will fail all the time.)
-  router.use((err, req, res, next) => {
-    if (err) {
-      req.logout()
-      if (req.originalUrl == _loginUrl) {
-        next() // never redirect login page to itself
-      } else {
-        if (req.flash && typeof req.flash === 'function') {
-          req.flash('error', err.message)
-        }
-        res.redirect(_loginUrl)
-      }
-    } else {
-      next()
-    }
-  })
+  router.use(passport.session())  
   // login
   router.post(_loginUrl, login)
-  router.get(_logoutUrl, function (req, res) {
-    req.logout()
-    res.redirect(_loginUrl)
-  })
+  
 }
 
 /**
