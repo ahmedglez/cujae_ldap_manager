@@ -22,7 +22,82 @@ The Cujae LDAP Manager is built using the following technologies:
 
 ## Getting Started
 
-To get started with the Cujae LDAP Manager, please refer to the [documentation](https://github.com/your/repo/wiki). It provides detailed instructions for installing and configuring the application, as well as using its API and web interface.
+The following instructions will help you get the Cujae LDAP Manager up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/download/) (version 14 or higher)
+- [MongoDB](https://docs.mongodb.com/manual/installation/) (version 4 or higher)
+- [Docker](https://docs.docker.com/get-docker/) (optional)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/ahmedglez/cujae_ldap_manager.git
+```
+
+2. Install the dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file in the root directory of the project and add the variables listed in the .env.example file.
+
+4. Start the application:
+
+```bash
+npm run start
+```
+
+### Docker
+
+The application can be run in a Docker container. To do so, follow these steps:
+
+1. Build the Docker image:
+
+```bash
+docker build -t cujae_ldap_manager .
+```
+
+2. Run the Docker container:
+
+```bash
+docker run -p 3000:3000 cujae_ldap_manager
+```
+
+## Usage
+
+### Configuration
+
+The application's configuration data is stored in a MongoDB database. To configure the application, you must first create a database and a collection in MongoDB. Then, add the following variables to the `.env` file:
+
+- `MONGO_URI`: the URI of the MongoDB database.
+- `MONGO_DB`: the name of the MongoDB database.
+- `MONGO_COLLECTION`: the name of the MongoDB collection.
+
+### Authentication
+
+The application uses LDAP authentication to verify user credentials. To configure the application to use LDAP authentication, you must add the following variables to the `.env` file:
+
+- `LDAP_URL`: the URL of the LDAP server.
+- `LDAP_BASE_DN`: the base DN of the LDAP server.
+- `LDAP_USER_DN`: the user DN of the LDAP server.
+- `LDAP_USER_PASSWORD`: the user password of the LDAP server.
+
+### Authorization
+
+The application uses LDAP groups to control access to protected resources. To configure the application to use LDAP groups, you must add the following variables to the `.env` file:
+
+- `LDAP_GROUP_DN`: the group DN of the LDAP server.
+- `LDAP_GROUP_FILTER`: the group filter of the LDAP server.
+- `LDAP_GROUP_ATTRIBUTE`: the group attribute of the LDAP server.
+
+### RESTful API
+
+The application provides a RESTful API that allows you to interact with the LDAP service programmatically. The API is documented using [Swagger](https://swagger.io/). To view the documentation, navigate to the `/api-docs` endpoint.
 
 ## Contributing
 
@@ -32,3 +107,23 @@ Contributions to the Cujae LDAP Manager are always welcome! Please refer to the 
 
 The Cujae LDAP Manager is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
+## Acknowledgments
+
+- [Node.js](https://nodejs.org/en/)
+- [Express](https://expressjs.com/)
+- [LDAP](https://ldap.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [Docker](https://www.docker.com/)
+- [Swagger](https://swagger.io/)
+- [Contributor Covenant](https://www.contributor-covenant.org/)
+- [Choose a License](https://choosealicense.com/)
+- [PurpleBooth](https://gist.github.com/PurpleBooth)
+- [othneildrew](https://gist.github.com/othneildrew/)
+- [Billie Thompson](https://gist.github.com/PurpleBooth)
+<!-- Jingshao Chen <jingshaochen@gmail.com>", -->
+
+- [All Contributors](Jingshao Chen <jingshaochen@gmail.com>)
+
+## Authors
+
+- **Ahmed Gonzalez** - [ahmedglez](Ahmed Gonzalez <ahmediglez@gmail.com>)
