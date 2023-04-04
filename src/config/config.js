@@ -12,5 +12,7 @@ module.exports = {
   ldap: {
     dn: process.env.LDAP_DN,
     url: process.env.LDAP_URL,
+    base: process.env.LDAP_BASE,
+    objectClasses: ['iesEducationalStaff'],
   },
 }
