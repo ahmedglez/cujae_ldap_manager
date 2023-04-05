@@ -2,6 +2,13 @@
 /* global require */
 const CONFIG = require('./src/config/config.js')
 const mongoose = require('mongoose')
+const logger = require('morgan')
+const bodyParser = require('body-parser')
+const express = require('express')
+const addRoutes = require('./src/routes/routes.js')
+const LdapAuth = require('./src/modules/authentication/LdapAuth.js')
+
+//MONGODB configuration
 mongoose.Promise = Promise
 const mongoClientPromise = mongoose
   .connect(CONFIG.mongodb.url, {
@@ -12,19 +19,7 @@ const mongoClientPromise = mongoose
   .then((m) => m.connection.getClient())
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
-const addRoutes = require('./src/routes/routes.js')
-
-const express = require('express')
-const app = express()
-
-app.use(express.json())
-
-addRoutes(app)
-
 const User = require('./src/models/model.js').User
-
-const LdapAuth = require('./src/modules/authentication/LdapAuth.js')
-
 var sessionMiddleWare = session({
   secret: CONFIG.sessionSecret,
   store: MongoStore.create({
@@ -40,6 +35,12 @@ var sessionMiddleWare = session({
   },
 })
 
+//app initialization
+const app = express()
+
+//add routes to application
+addRoutes(app)
+
 // The order of the following middleware is very important!!
 app.use(express.json())
 app.use(sessionMiddleWare)
@@ -50,17 +51,15 @@ app.use(sessionMiddleWare)
   (user) => User.findOneAndUpdate({ uid: user.uid }, user, { upsert: true, new: true }).exec()
 )*/
 
+// load app middlewares
+app.use(logger('dev'))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.json())
+
 // new mode, simple user
 let usernameAttr = 'uid'
 let searchBase = CONFIG.ldap.dn
-let options = {
-  ldapOpts: {
-    url: CONFIG.ldap.url,
-  },
-  userDn: `uid={{username}},${CONFIG.ldap.dn}`,
-  userSearchBase: searchBase,
-  usernameAttribute: usernameAttr,
-}
 let admOptions = {
   ldapOpts: {
     url: CONFIG.ldap.url,
@@ -82,6 +81,8 @@ let userOptions = {
   usernameAttribute: usernameAttr,
   //starttls: true
 }
+
+//LDAP initialization
 LdapAuth.initialize(
   userOptions,
   app,

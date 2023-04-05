@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-
 const UserServices = require('../services/user.services')
 const service = UserServices()
+const Joi = require('joi')
 
 router.get('/', (req, res) => {
   service
@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 })
 router.get('/:username', (req, res) => {
   service
-    .getUserByUsername(req.params.username)
+    .getByUsername(req.params.username)
     .then((data) =>
       res.status(200).json({
         success: 'true',
@@ -41,7 +41,7 @@ router.get('/:username', (req, res) => {
 })
 router.get('/ci/:ci', (req, res) => {
   service
-    .getUserByCI(req.params.ci)
+    .getByCI(req.params.ci)
     .then((data) =>
       res.status(200).json({
         success: 'true',
@@ -58,7 +58,7 @@ router.get('/ci/:ci', (req, res) => {
 })
 router.get('/email/:email', (req, res) => {
   service
-    .getUserByEmail(req.params.email)
+    .getByEmail(req.params.email)
     .then((data) =>
       res.status(200).json({
         success: 'true',

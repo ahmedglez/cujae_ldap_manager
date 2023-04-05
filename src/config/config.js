@@ -17,5 +17,7 @@ module.exports = {
     objectClasses: iesObjectClasses,
     port: process.env.LDAP_PORT,
     password: process.env.LDAP_PASS,
+    password_bind: process.env.LDAP_PASS_BIND,
+    username_bind: process.env.LDAP_USER_BIND,
   },
 }
