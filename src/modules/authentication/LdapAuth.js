@@ -5,6 +5,9 @@
 const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
 const { authenticate } = require('ldap-authentication')
+const TreeServices = require('../../services/tree.services')
+
+const service = TreeServices()
 
 var _backwardCompatible = false
 var _dn
@@ -60,6 +63,9 @@ var init = function (
         }
         let username = req.body.username
         let password = req.body.password
+        let response = await service.getUserByUsername(username)
+        const branch = response[0].objectName.toString().split(",")[2].replace("ou=","")
+        console.log("Branch", branch)
         // construct the parameter to pass in authenticate() function
         let options
         if (_backwardCompatible) {
@@ -85,7 +91,9 @@ var init = function (
             starttls: opt.starttls,
           }
           if (opt.userDn) {
-            options.userDn = opt.userDn.replace('{{username}}', username)
+            options.userDn = opt.userDn
+              .replace('{{username}}', username)
+              .replace('{{branch}}', branch)
           }
           if (opt.adminDn) {
             options.adminDn = opt.adminDn
@@ -128,10 +136,9 @@ var init = function (
   })
 
   router.use(passport.initialize())
-  router.use(passport.session())  
+  router.use(passport.session())
   // login
   router.post(_loginUrl, login)
-  
 }
 
 /**

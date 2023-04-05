@@ -1,8 +1,9 @@
 require('dotenv').config({ path: __dirname + '/../../.env' })
+const iesObjectClasses = require('../schemas/ies.schema')
 
 module.exports = {
   server: {
-    port: process.env.PORT,
+    port: process.env.SERVER_PORT,
     host: process.env.HOST,
   },
   mongodb: {
@@ -13,6 +14,8 @@ module.exports = {
     dn: process.env.LDAP_DN,
     url: process.env.LDAP_URL,
     base: process.env.LDAP_BASE,
-    objectClasses: ['iesEducationalStaff'],
+    objectClasses: iesObjectClasses,
+    port: process.env.LDAP_PORT,
+    password: process.env.LDAP_PASS,
   },
 }
