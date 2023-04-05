@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
 
-const TreeServices = require('../services/tree.services')
-const service = TreeServices()
+const UserServices = require('../services/user.services')
+const service = UserServices()
 
-router.get('/profesores', (req, res) => {
+router.get('/', (req, res) => {
   service
-    .getAllProffesors()
+    .getAll()
     .then((data) =>
       res.status(200).json({
         success: 'true',
@@ -21,9 +21,27 @@ router.get('/profesores', (req, res) => {
       })
     )
 })
-router.get('/year/:year', (req, res) => {
+router.get('/:username', (req, res) => {
   service
-    .getUserByYear(req.params.year)
+    .getUserByUsername(req.params.username)
+    .then((data) =>
+      res.status(200).json({
+        success: 'true',
+        message: 'data fetched succesfully',
+        data: data,
+      })
+    )
+    .catch((err) => {
+      console.log('error: ', err)
+      res.status(400).send({
+        success: 'false',
+        message: err.message,
+      })
+    })
+})
+router.get('/ci/:ci', (req, res) => {
+  service
+    .getUserByCI(req.params.ci)
     .then((data) =>
       res.status(200).json({
         success: 'true',
@@ -38,26 +56,9 @@ router.get('/year/:year', (req, res) => {
       })
     )
 })
-router.get('/years', (req, res) => {
+router.get('/email/:email', (req, res) => {
   service
-    .getUsersByYears()
-    .then((data) =>
-      res.status(200).json({
-        success: 'true',
-        message: 'data fetched succesfully',
-        data: data,
-      })
-    )
-    .catch((err) =>
-      res.status(400).send({
-        success: 'false',
-        message: err.message,
-      })
-    )
-})
-router.get('/branch/:branch', (req, res) => {
-  service
-    .getUserByBranch(req.params.branch)
+    .getUserByEmail(req.params.email)
     .then((data) =>
       res.status(200).json({
         success: 'true',
