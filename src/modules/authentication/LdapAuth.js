@@ -4,8 +4,15 @@
 
 const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
+const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
 const TreeServices = require('../../services/user.services')
+const { signToken } = require('../../utils/authentication/tokens/token_sign')
+const {
+  responseSuccess,
+  responseError,
+} = require('../../schemas/response.schema')
+const validateResponse = require('../../middlewares/validateResponse')
 
 const service = TreeServices()
 
@@ -115,6 +122,8 @@ var init = function (
     })
   )
 
+  passport.use(JwtStrategy)
+
   passport.serializeUser((user, done) => {
     if (user[_usernameAttributeName]) {
       done(null, user[_usernameAttributeName])
@@ -170,6 +179,8 @@ var initialize = function (
  */
 var login = function (req, res, next) {
   passport.authenticate('ldap', (err, user) => {
+    console.log('USER IN LOGIN', user)
+
     if (err) {
       res.status(401).json({ success: false, message: err.message })
       return
@@ -177,6 +188,20 @@ var login = function (req, res, next) {
     if (!user) {
       res.status(401).json({ success: false, message: 'User cannot be found' })
     } else {
+      const payload = {
+        sub: user.uid,
+        dn: user.dn,
+        firstname: user.givenName,
+        lastname: user.sn,
+        fullname: user.cn,
+        email: user.mail,
+        password: user.userPassword,
+        ci: user.CI,
+        roles: ['user'],
+      }
+      const token = signToken(payload, { expiresIn: '15 minutes' })
+      const refreshToken = signToken(payload, { expiresIn: '1 day' })
+
       req.login(user, (loginErr) => {
         if (loginErr) {
           return next(loginErr)
@@ -184,11 +209,12 @@ var login = function (req, res, next) {
         _insertFunc(user).then((user) => {
           var userObj =
             typeof user.toObject === 'function' ? user.toObject() : user
-          return res.json({
-            success: true,
-            message: 'authentication succeeded',
+          const data = {
+            token: token,
+            refreshToken: refreshToken,
             user: userObj,
-          })
+          }
+          return responseSuccess(res, 'authentication succeeded', data)
         })
       })
     }

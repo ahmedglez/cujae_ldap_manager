@@ -10,6 +10,7 @@ module.exports = {
     url: process.env.MONGODB_URL,
   },
   sessionSecret: process.env.SESSION_SECRET,
+  apiKey: process.env.API_KEY,
   ldap: {
     dn: process.env.LDAP_DN,
     url: process.env.LDAP_URL,
