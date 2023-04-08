@@ -1,77 +1,36 @@
 const express = require('express')
 const router = express.Router()
-
 const UserServices = require('../services/user.services')
+const { responseSuccess, responseError } = require('../schemas/response.schema')
+const validateResponse = require('../middlewares/validateResponse')
+const { checkAuth } = require('../middlewares/auth.handler')
 const service = UserServices()
 
-router.get('/', (req, res) => {
+router.get('/', checkAuth, validateResponse, (req, res) => {
   service
     .getAll()
-    .then((data) =>
-      res.status(200).json({
-        success: 'true',
-        message: 'data fetched succesfully',
-        data: data,
-      })
-    )
-    .catch((err) =>
-      res.status(400).send({
-        success: 'false',
-        message: err.message,
-      })
-    )
+    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+    .catch((err) => responseError(res, err.message, err.errors))
 })
-router.get('/:username', (req, res) => {
+router.get('/:username', checkAuth, validateResponse, (req, res) => {
   service
-    .getUserByUsername(req.params.username)
-    .then((data) =>
-      res.status(200).json({
-        success: 'true',
-        message: 'data fetched succesfully',
-        data: data,
-      })
-    )
+    .getByUsername(req.params.username)
+    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
     .catch((err) => {
-      console.log('error: ', err)
-      res.status(400).send({
-        success: 'false',
-        message: err.message,
-      })
+      responseError(res, err.message, err.errors)
     })
 })
-router.get('/ci/:ci', (req, res) => {
+router.get('/ci/:ci', checkAuth, validateResponse, (req, res) => {
   service
-    .getUserByCI(req.params.ci)
-    .then((data) =>
-      res.status(200).json({
-        success: 'true',
-        message: 'data fetched succesfully',
-        data: data,
-      })
-    )
-    .catch((err) =>
-      res.status(400).send({
-        success: 'false',
-        message: err.message,
-      })
-    )
+    .getByCI(req.params.ci)
+    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+    .catch((err) => responseError(res, err.message, err.errors))
 })
-router.get('/email/:email', (req, res) => {
+router.get('/email/:email', checkAuth, validateResponse, (req, res) => {
   service
-    .getUserByEmail(req.params.email)
-    .then((data) =>
-      res.status(200).json({
-        success: 'true',
-        message: 'data fetched succesfully',
-        data: data,
-      })
-    )
-    .catch((err) =>
-      res.status(400).send({
-        success: 'false',
-        message: err.message,
-      })
-    )
+    .getByEmail(req.params.email)
+    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+    .catch((err) => responseError(res, err.message, err.errors))
 })
 
 module.exports = router

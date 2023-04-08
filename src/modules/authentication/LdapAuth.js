@@ -4,8 +4,18 @@
 
 const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
+const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
-const TreeServices = require('../../services/tree.services')
+const TreeServices = require('../../services/user.services')
+const logger = require('../../middlewares/logger.handler')
+const morgan = require('morgan')
+
+const { signToken } = require('../../utils/authentication/tokens/token_sign')
+const {
+  responseSuccess,
+  responseError,
+} = require('../../schemas/response.schema')
+const validateResponse = require('../../middlewares/validateResponse')
 
 const service = TreeServices()
 
@@ -63,9 +73,11 @@ var init = function (
         }
         let username = req.body.username
         let password = req.body.password
-        let response = await service.getUserByUsername(username)
-        const branch = response[0].objectName.toString().split(",")[2].replace("ou=","")
-        console.log("Branch", branch)
+        let response = await service.getByUsername(username)
+        const branch = response.objectName
+          .toString()
+          .split(',')[2]
+          .replace('ou=', '')
         // construct the parameter to pass in authenticate() function
         let options
         if (_backwardCompatible) {
@@ -112,6 +124,8 @@ var init = function (
       }
     })
   )
+
+  passport.use(JwtStrategy)
 
   passport.serializeUser((user, done) => {
     if (user[_usernameAttributeName]) {
@@ -175,6 +189,20 @@ var login = function (req, res, next) {
     if (!user) {
       res.status(401).json({ success: false, message: 'User cannot be found' })
     } else {
+      const payload = {
+        sub: user.uid,
+        dn: user.dn,
+        firstname: user.givenName,
+        lastname: user.sn,
+        fullname: user.cn,
+        email: user.mail,
+        password: user.userPassword,
+        ci: user.CI,
+        roles: ['user'],
+      }
+      const token = signToken(payload, { expiresIn: '15 minutes' })
+      const refreshToken = signToken(payload, { expiresIn: '1 day' })
+
       req.login(user, (loginErr) => {
         if (loginErr) {
           return next(loginErr)
@@ -182,11 +210,12 @@ var login = function (req, res, next) {
         _insertFunc(user).then((user) => {
           var userObj =
             typeof user.toObject === 'function' ? user.toObject() : user
-          return res.json({
-            success: true,
-            message: 'authentication succeeded',
+          const data = {
+            token: token,
+            refreshToken: refreshToken,
             user: userObj,
-          })
+          }
+          return responseSuccess(res, 'authentication succeeded', data)
         })
       })
     }

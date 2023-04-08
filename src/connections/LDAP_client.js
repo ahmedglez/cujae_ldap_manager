@@ -12,12 +12,8 @@ client.on('connectError', (err) => {
   assert.ifError(err)
 })
 
-client.bind(
-  'uid=agonzalezb,ou=usuarios,ou=informatica,dc=cujae,dc=edu,dc=cu',
-  '00092068426',
-  (err) => {
-    assert.ifError(err)
-  }
-)
+client.bind(config.ldap.username_bind, config.ldap.password_bind, (err) => {
+  assert.ifError(err)
+})
 
 module.exports = client

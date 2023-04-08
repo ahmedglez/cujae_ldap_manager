@@ -2,86 +2,52 @@
 /* global require */
 const CONFIG = require('./src/config/config.js')
 const mongoose = require('mongoose')
-mongoose.Promise = Promise
-const mongoClientPromise = mongoose
-  .connect(CONFIG.mongodb.url, {
-    user: CONFIG.mongodb.user,
-    pass: CONFIG.mongodb.pass,
-    authSource: 'admin',
-  })
-  .then((m) => m.connection.getClient())
-const session = require('express-session')
-const MongoStore = require('connect-mongo')
-const addRoutes = require('./src/routes/routes.js')
-
+const bodyParser = require('body-parser')
+const logger = require('./src/middlewares/logger.handler.js')
 const express = require('express')
+const morgan = require('morgan')
+const addRoutes = require('./src/routes/routes.js')
+const LdapAuth = require('./src/modules/authentication/LdapAuth.js')
+const sessionMiddleWare = require('./src/middlewares/session.handler.js')
+const User = require('./src/schemas/user.schema.js').User
+//app initialization
 const app = express()
 
-app.use(express.json())
-
-addRoutes(app)
-
-const User = require('./src/models/model.js').User
-
-const LdapAuth = require('./src/modules/authentication/LdapAuth.js')
-
-var sessionMiddleWare = session({
-  secret: CONFIG.sessionSecret,
-  store: MongoStore.create({
-    clientPromise: mongoClientPromise,
-  }),
-  resave: true,
-  saveUninitialized: true,
-  unset: 'destroy',
-  cookie: {
-    httpOnly: false,
-    maxAge: 1000 * 3600 * 24,
-    secure: false, // this need to be false if https is not used. Otherwise, cookie will not be sent.
-  },
-})
-
+// load app middlewares
 // The order of the following middleware is very important!!
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(sessionMiddleWare)
-// use the library express-passport-ldap-mongoose
-// backward compatible mode
-/*LdapAuth.init(CONFIG.ldap.dn, CONFIG.ldap.url, app, 
-  (id) => User.findOne({ uid: id }).exec(), 
-  (user) => User.findOneAndUpdate({ uid: user.uid }, user, { upsert: true, new: true }).exec()
-)*/
 
-// new mode, simple user
-let usernameAttr = 'uid'
-let searchBase = CONFIG.ldap.dn
-let options = {
-  ldapOpts: {
-    url: CONFIG.ldap.url,
-  },
-  userDn: `uid={{username}},${CONFIG.ldap.dn}`,
-  userSearchBase: searchBase,
-  usernameAttribute: usernameAttr,
-}
-let admOptions = {
-  ldapOpts: {
-    url: CONFIG.ldap.url,
-    //tlsOptions: { rejectUnauthorized: false }
-  },
-  adminDn: `cn=read-only-admin,dc=example,dc=com`,
-  adminPassword: 'password',
-  userSearchBase: searchBase,
-  usernameAttribute: usernameAttr,
-  //starttls: true
-}
-let userOptions = {
-  ldapOpts: {
-    url: CONFIG.ldap.url,
-    //tlsOptions: { rejectUnauthorized: false }
-  },
-  userDn: `uid={{username}},ou=usuarios,ou={{branch}},dc=cujae,dc=edu,dc=cu`,
-  userSearchBase: searchBase,
-  usernameAttribute: usernameAttr,
-  //starttls: true
-}
+morgan.token('user', (req) => {
+  return req.user ? req.user.uid : 'anonymous'
+})
+app.use(
+  morgan(function (tokens, req, res) {
+    const log = {
+      method: tokens.method(req, res),
+      url: tokens.url(req, res),
+      status: tokens.status(req, res),
+      content_length: tokens.res(req, res, 'content-length'),
+      response_time: tokens['response-time'](req, res),
+      user: (tokens.user = req.user.uid),
+    }
+    logger.info({ ...log })
+
+    return [
+      `method:${log.method}`,
+      `url:${log.url}`,
+      `status:${log.status}`,
+      `content-lenght:${log.content_length}`,
+      `response-time:${log.response_time}ms`,
+      `user_uid:${log.user}`,
+    ].join(' ')
+  })
+)
+
+//LDAP initialization
+const { usernameAttr, userOptions } = require('./src/constants/ldap_options.js')
 LdapAuth.initialize(
   userOptions,
   app,
@@ -100,6 +66,16 @@ LdapAuth.initialize(
     return foundUser
   }
 )
+
+//add routes to application
+addRoutes(app)
+
+// use the library express-passport-ldap-mongoose
+// backward compatible mode
+/*LdapAuth.init(CONFIG.ldap.dn, CONFIG.ldap.url, app, 
+  (id) => User.findOne({ uid: id }).exec(), 
+  (user) => User.findOneAndUpdate({ uid: user.uid }, user, { upsert: true, new: true }).exec()
+)*/
 
 // serve static pages
 app.use(express.static('./src/public'))
