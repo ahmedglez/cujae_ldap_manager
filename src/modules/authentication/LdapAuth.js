@@ -5,7 +5,7 @@
 const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
 const { authenticate } = require('ldap-authentication')
-const TreeServices = require('../../services/tree.services')
+const TreeServices = require('../../services/user.services')
 
 const service = TreeServices()
 
@@ -63,9 +63,11 @@ var init = function (
         }
         let username = req.body.username
         let password = req.body.password
-        let response = await service.getUserByUsername(username)
-        const branch = response[0].objectName.toString().split(",")[2].replace("ou=","")
-        console.log("Branch", branch)
+        let response = await service.getByUsername(username)
+        const branch = response.objectName
+          .toString()
+          .split(',')[2]
+          .replace('ou=', '')
         // construct the parameter to pass in authenticate() function
         let options
         if (_backwardCompatible) {

@@ -7,14 +7,4 @@ const service = AuthServices()
 
 const router = express.Router()
 
-router.post('/test', (req, res, next) => {
-  console.log('test')
-  res.send('test')
-})
-
-router.get('/login', (req, res, next) => {
-  console.log('login')
-  res.send('login')
-})
-
 module.exports = router

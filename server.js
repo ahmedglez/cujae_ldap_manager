@@ -19,7 +19,7 @@ const mongoClientPromise = mongoose
   .then((m) => m.connection.getClient())
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
-const User = require('./src/models/model.js').User
+const User = require('./src/schemas/user.schema.js').User
 var sessionMiddleWare = session({
   secret: CONFIG.sessionSecret,
   store: MongoStore.create({
