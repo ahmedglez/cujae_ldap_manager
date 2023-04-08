@@ -7,6 +7,9 @@ const CustomStrategy = require('passport-custom').Strategy
 const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
 const TreeServices = require('../../services/user.services')
+const logger = require('../../middlewares/logger.handler')
+const morgan = require('morgan')
+
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
   responseSuccess,
@@ -179,8 +182,6 @@ var initialize = function (
  */
 var login = function (req, res, next) {
   passport.authenticate('ldap', (err, user) => {
-    console.log('USER IN LOGIN', user)
-
     if (err) {
       res.status(401).json({ success: false, message: err.message })
       return
