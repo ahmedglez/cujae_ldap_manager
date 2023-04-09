@@ -1,6 +1,7 @@
 const winston = require('winston')
 const { MongoDB } = require('winston-mongodb')
 const config = require('../config/config')
+const morgan = require('morgan')
 
 const logger = winston.createLogger({
   level: 'info',
@@ -19,4 +20,32 @@ const logger = winston.createLogger({
   ],
 })
 
-module.exports = logger
+const addLoggerMiddleware = (app) => {
+  morgan.token('user', (req) => {
+    return req.user ? req.user.uid : 'anonymous'
+  })
+  app.use(
+    morgan(function (tokens, req, res) {
+      const log = {
+        method: tokens.method(req, res),
+        url: tokens.url(req, res),
+        status: tokens.status(req, res),
+        content_length: tokens.res(req, res, 'content-length'),
+        response_time: tokens['response-time'](req, res),
+        user: (tokens.user = req.user.uid),
+      }
+      logger.info({ ...log })
+
+      return [
+        `method:${log.method}`,
+        `url:${log.url}`,
+        `status:${log.status}`,
+        `content-lenght:${log.content_length}`,
+        `response-time:${log.response_time}ms`,
+        `user_uid:${log.user}`,
+      ].join(' ')
+    })
+  )
+}
+
+module.exports = addLoggerMiddleware
