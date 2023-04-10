@@ -10,23 +10,25 @@ const ldap_initialization = require('./src/utils/ldap_initialization.js')
 const path = require('path')
 const cors = require('cors')
 const helmet = require('helmet')
+const limiter = require('./src/middlewares/rate_limiter.handler.js')
 
 //app initialization
 const app = express()
-
-//security middlewares
-app.use(cors())
-app.use(helmet())
 
 // load app middlewares
 // The order of the following middleware is very important!!
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json())
+
+//security middlewares
+app.use(cors())
+app.use(helmet())
+app.use(limiter)
 app.use(sessionMiddleWare)
 addLoggerMiddleware(app)
 
-//LDAP initialization
+//LDAP and passport initialization
 ldap_initialization(app)
 
 //add routes to application
