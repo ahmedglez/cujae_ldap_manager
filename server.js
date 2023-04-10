@@ -9,11 +9,14 @@ const addLoggerMiddleware = require('./src/middlewares/logger.handler.js')
 const ldap_initialization = require('./src/utils/ldap_initialization.js')
 const path = require('path')
 const cors = require('cors')
+const helmet = require('helmet')
 
 //app initialization
 const app = express()
 
+//security middlewares
 app.use(cors())
+app.use(helmet())
 
 // load app middlewares
 // The order of the following middleware is very important!!
