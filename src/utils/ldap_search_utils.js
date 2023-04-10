@@ -2,37 +2,43 @@ const config = require('../config/config')
 const transformData = require('./transform_user_schema')
 const ldap = require('../connections/LDAP_client')
 
-const searchSchema = (filter, customDN) => {
-  const dn =
-    customDN !== null && customDN !== undefined ? customDN : config.ldap.dn
-  const attributes = ['uid', 'displayName', 'CI']
-  const search_options = {
-    scope: 'sub',
-    filter: filter,
-    attrs: attributes,
-  }
-
+const searchSchema = (dn, opt) => {
   const results = []
 
   return new Promise((resolve, reject) => {
-    ldap.search(dn, search_options, (err, res) => {
-      if (err) {
-        return reject(new Error(`Search failed: ${err.message}`))
-      }
-      return res
-        .on('searchEntry', (entry) =>
-          results.push({
-            objectName: entry.pojo.objectName,
-            attributes: transformData(entry),
-          })
-        )
-        .once('error', (resError) =>
-          reject(new Error(`Search error: ${resError}`))
-        )
-        .on('end', (result) => {
-          console.log('status: ' + result.status)
+    ldap.search(dn, opt, (err, res) => {
+      res.on('searchEntry', (entry) => {
+        if (opt.sizeLimit !== undefined) {
+          if (results.length === opt.sizeLimit - 1) {
+            resolve(results.length === 1 ? results[0] : results)
+          }
+        }
+        results.push({
+          objectName: entry.pojo.objectName,
+          attributes: transformData(entry),
         })
-        .once('end', () => resolve(results[0]))
+      })
+      res.on('page', (result, cb) => {
+        console.log('page finish')
+        opt.pageNum * 100 === results.length
+          ? resolve(
+              results.length === 1
+                ? results[0]
+                : results.slice(opt.pageNum * 100 - 100, opt.pageNum * 100)
+            )
+          : null
+      })
+      res.on('searchReference', (referral) => {
+        console.log('referral: ' + referral.uris.join())
+      })
+      res.on('error', (resError) =>
+        reject(new Error(`Search error: ${resError}`))
+      )
+      res.on('end', (result) => {
+        console.log('status: ' + result.status)
+        console.log('RESULTS', results.length)
+        resolve(results.length === 1 ? results[0] : results)
+      })
     })
   })
 }

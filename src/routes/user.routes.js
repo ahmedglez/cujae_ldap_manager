@@ -6,9 +6,34 @@ const validateResponse = require('../middlewares/validateResponse')
 const { checkAuth } = require('../middlewares/auth.handler')
 const service = UserServices()
 
+//Get all users
 router.get('/', checkAuth, validateResponse, (req, res) => {
+  const page = req.query.page || undefined
+  const branch = req.query.branch || undefined
   service
-    .getAll()
+    .getAll(page, branch)
+    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+    .catch((err) => responseError(res, err.message, err.errors))
+})
+//Get students
+router.get('/students', checkAuth, validateResponse, (req, res) => {
+  const page = req.query.page || undefined
+  const branch = req.query.branch || undefined
+  const group = req.query.group || undefined
+  service
+    .getStudents(page, branch, group)
+    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+    .catch((err) => responseError(res, err.message, err.errors))
+})
+//Get professors
+router.get('/professors', checkAuth, validateResponse, (req, res) => {
+  const page = req.query.page || undefined
+  const branch = req.query.branch || undefined
+  const orgRole = req.query.orgRole || undefined
+  const PCC = req.query.PCC || undefined
+  const researchGroup = req.query.researchGroup || undefined
+  service
+    .getProfessors(page, branch, orgRole, PCC, researchGroup)
     .then((data) => responseSuccess(res, 'data fetched succesfully', data))
     .catch((err) => responseError(res, err.message, err.errors))
 })

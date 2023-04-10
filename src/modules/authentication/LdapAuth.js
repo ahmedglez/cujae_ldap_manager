@@ -200,7 +200,7 @@ var login = function (req, res, next) {
         ci: user.CI,
         roles: ['user'],
       }
-      const token = signToken(payload, { expiresIn: '15 minutes' })
+      const token = signToken(payload, { expiresIn: '45 minutes' })
       const refreshToken = signToken(payload, { expiresIn: '1 day' })
 
       req.login(user, (loginErr) => {

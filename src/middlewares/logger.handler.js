@@ -32,7 +32,7 @@ const addLoggerMiddleware = (app) => {
         status: tokens.status(req, res),
         content_length: tokens.res(req, res, 'content-length'),
         response_time: tokens['response-time'](req, res),
-        user: (tokens.user = req.user.uid),
+        user: req.user.sub,
       }
       logger.info({ ...log })
 

@@ -8,9 +8,12 @@ const sessionMiddleWare = require('./src/middlewares/session.handler.js')
 const addLoggerMiddleware = require('./src/middlewares/logger.handler.js')
 const ldap_initialization = require('./src/utils/ldap_initialization.js')
 const path = require('path')
+const cors = require('cors')
 
 //app initialization
 const app = express()
+
+app.use(cors())
 
 // load app middlewares
 // The order of the following middleware is very important!!
