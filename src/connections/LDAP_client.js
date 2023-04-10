@@ -12,6 +12,10 @@ client.on('connectError', (err) => {
   assert.ifError(err)
 })
 
+client.on('connection', (stream) => {
+  console.log('someone connected!')
+})
+
 client.bind(config.ldap.username_bind, config.ldap.password_bind, (err) => {
   assert.ifError(err)
 })
