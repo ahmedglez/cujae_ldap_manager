@@ -5,9 +5,6 @@ const LDAP = require('ldapjs')
 const config = require('../config/config')
 const assert = require('assert')
 const searchSchema = require('../utils/ldap_search_utils')
-ldap.bind(config.ldap.username_bind, config.ldap.password_bind, (err) => {
-  assert.ifError(err)
-})
 
 const UserServices = () => {
   const getAll = (page, branch) => {
@@ -17,10 +14,10 @@ const UserServices = () => {
       filter: '(objectClass=person)',
       scope: 'sub',
       attributes: ['uid', 'cn', 'mail', 'ci'],
-      paged: page === undefined ? false : true,
-      pageNum: page === undefined ? undefined : parseInt(page),
-      sizeLimit: page === undefined ? 500 : undefined,
+      paged: true,
     }
+
+    console.log(opts)
     return searchSchema(dn, opts)
   }
 

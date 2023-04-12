@@ -20,5 +20,9 @@ module.exports = {
     password: process.env.LDAP_PASS,
     password_bind: process.env.LDAP_PASS_BIND,
     username_bind: process.env.LDAP_USER_BIND,
+    admin: {
+      username: process.env.ADMIN_USER,
+      password: process.env.ADMIN_PASS,
+    },
   },
 }
