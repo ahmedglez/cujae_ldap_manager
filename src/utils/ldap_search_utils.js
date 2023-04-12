@@ -9,6 +9,7 @@ const searchSchema = (dn, opt) => {
   return new Promise((resolve, reject) => {
     ldap.search(dn, opt, (err, res) => {
       res.on('searchEntry', (entry) => {
+        console.log("ENTRO")
         if (opt.sizeLimit !== undefined) {
           if (results.length === opt.sizeLimit - 1) {
             resolve(results.length === 1 ? results[0] : results)

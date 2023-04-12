@@ -6,7 +6,11 @@ const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
 const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
-const TreeServices = require('../../services/user.services')
+const UserServices = require('../../services/user.services')
+const GroupServices = require('../../services/group.services')
+
+//helpers
+const get_dn_from_user = require('../../helpers/get_dn_from_user')
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
@@ -15,7 +19,8 @@ const {
 } = require('../../schemas/response.schema')
 const validateResponse = require('../../middlewares/validateResponse')
 
-const service = TreeServices()
+const userService = UserServices()
+const groupService = GroupServices()
 
 var _backwardCompatible = false
 var _dn
@@ -71,7 +76,8 @@ var init = function (
         }
         let username = req.body.username
         let password = req.body.password
-        let response = await service.getByUsername(username)
+        let response = await userService.getByUsername(username)
+        // if user doesn't exists
         if (response.attributes === undefined) {
           throw new Error('username or password incorrect')
         }
@@ -182,7 +188,7 @@ var initialize = function (
  * on successful authenticate, or {success: false} on failed authenticate
  */
 var login = function (req, res, next) {
-  passport.authenticate('ldap', (err, user) => {
+  passport.authenticate('ldap', async (err, user) => {
     if (err) {
       res.status(401).json({ success: false, message: err.message })
       return
@@ -190,6 +196,13 @@ var login = function (req, res, next) {
     if (!user) {
       res.status(401).json({ success: false, message: 'User cannot be found' })
     } else {
+      console.log('USER', user)
+      const userUID = user.uid
+      const userDN = user.member
+      const branch = userDN.split(',')[1].replace('ou=', '')
+      const response = await groupService.getAdminsGroups(branch)
+      const isAdmin = response.attributes.memberUid.includes(userUID)
+
       const payload = {
         sub: user.uid,
         dn: user.dn,
@@ -198,7 +211,7 @@ var login = function (req, res, next) {
         fullname: user.cn,
         email: user.mail,
         ci: user.CI,
-        roles: ['user'],
+        roles: isAdmin ? ['admin', 'user'] : ['user'],
       }
       const token = signToken(payload, { expiresIn: '45 minutes' })
       const refreshToken = signToken(payload, { expiresIn: '1 day' })

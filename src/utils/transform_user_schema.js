@@ -7,10 +7,8 @@ const getObject = (arr) => {
 }
 
 const transform = (entry) => {
-  const data = {
-    objectName: entry.pojo.objectName,
-    attributes: getObject(entry.pojo.attributes),
-  }
+  const data = getObject(entry.pojo.attributes)
+
   return data
 }
 
