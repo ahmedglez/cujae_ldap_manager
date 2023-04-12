@@ -3,7 +3,7 @@ const router = express.Router()
 const UserServices = require('../services/user.services')
 const { responseSuccess, responseError } = require('../schemas/response.schema')
 const validateResponse = require('../middlewares/validateResponse')
-const { checkAuth } = require('../middlewares/auth.handler')
+const { checkAuth, checkRoles } = require('../middlewares/auth.handler')
 const service = UserServices()
 
 //Get all users
@@ -37,7 +37,7 @@ router.get('/professors', checkAuth, validateResponse, (req, res) => {
     .then((data) => responseSuccess(res, 'data fetched succesfully', data))
     .catch((err) => responseError(res, err.message, err.errors))
 })
-router.get('/:username', checkAuth, validateResponse, (req, res) => {
+router.get('/:username', checkAuth,checkRoles("admin"), validateResponse, (req, res) => {
   service
     .getByUsername(req.params.username)
     .then((data) => responseSuccess(res, 'data fetched succesfully', data))

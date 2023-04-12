@@ -9,9 +9,6 @@ const { authenticate } = require('ldap-authentication')
 const UserServices = require('../../services/user.services')
 const GroupServices = require('../../services/group.services')
 
-//helpers
-const get_dn_from_user = require('../../helpers/get_dn_from_user')
-
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
   responseSuccess,
