@@ -7,8 +7,6 @@ const CustomStrategy = require('passport-custom').Strategy
 const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
 const TreeServices = require('../../services/user.services')
-const logger = require('../../middlewares/logger.handler')
-const morgan = require('morgan')
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
@@ -74,6 +72,9 @@ var init = function (
         let username = req.body.username
         let password = req.body.password
         let response = await service.getByUsername(username)
+        if (response.attributes === undefined) {
+          throw new Error('username or password incorrect')
+        }
         const branch = response.objectName
           .toString()
           .split(',')[2]
@@ -196,7 +197,6 @@ var login = function (req, res, next) {
         lastname: user.sn,
         fullname: user.cn,
         email: user.mail,
-        password: user.userPassword,
         ci: user.CI,
         roles: ['user'],
       }
