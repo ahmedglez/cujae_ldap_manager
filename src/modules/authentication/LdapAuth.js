@@ -192,8 +192,7 @@ var login = function (req, res, next) {
     }
     if (!user) {
       res.status(401).json({ success: false, message: 'User cannot be found' })
-    } else {
-      console.log('USER', user)
+    } else {     
       const userUID = user.uid
       const userDN = user.member
       const branch = userDN.split(',')[1].replace('ou=', '')

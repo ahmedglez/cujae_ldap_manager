@@ -24,5 +24,6 @@ module.exports = {
       username: process.env.ADMIN_USER,
       password: process.env.ADMIN_PASS,
     },
+    sizeLimit: parseInt(process.env.LDAP_SIZE_LIMIT),
   },
 }

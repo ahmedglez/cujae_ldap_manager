@@ -7,28 +7,36 @@ const assert = require('assert')
 const searchSchema = require('../utils/ldap_search_utils')
 
 const UserServices = () => {
-  const getAll = (page, branch) => {
+  const getAll = (branch) => {
     const dn =
       branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
     const opts = {
       filter: '(objectClass=person)',
       scope: 'sub',
       attributes: ['uid', 'cn', 'mail', 'ci'],
-      paged: true,
+      sizeLimit: config.ldap.sizeLimit,
     }
-
     console.log(opts)
+
     return searchSchema(dn, opts)
   }
 
-  const getStudents = (page, branch, group) => {
+  const getStudents = (branch, group, year) => {
+    const getfilter = () => {
+      let filter = ''
+      if (group !== undefined) {
+        filter = `(studentClassGroup=${parseInt(group)})`
+      } else if (year !== undefined) {
+        filter = `(studentClassGroup=${year}*)`
+      } else {
+        filter = `(objectClass=iesStudent)`
+      }
+      return filter
+    }
     const dn =
       branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
     const opts = {
-      filter:
-        group !== undefined
-          ? `(studentClassGroup=${parseInt(group)})`
-          : `(objectClass=iesStudent)`,
+      filter: getfilter(),
       scope: 'sub',
       attributes: [
         'uid',
@@ -38,9 +46,7 @@ const UserServices = () => {
         'studentClassGroup',
         'displayName',
       ],
-      paged: page === undefined ? false : true,
-      pageNum: page === undefined ? undefined : parseInt(page),
-      sizeLimit: page === undefined ? 500 : undefined,
+      sizeLimit: config.ldap.sizeLimit,
     }
     return searchSchema(dn, opts)
   }
@@ -56,7 +62,6 @@ const UserServices = () => {
       branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
 
     var pccValue = PCC
-    console.log('PCC VALUE', pccValue)
 
     if (PCC !== undefined) {
       pccValue = PCC === true ? 'TRUE' : 'FALSE'

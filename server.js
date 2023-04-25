@@ -11,6 +11,7 @@ const path = require('path')
 const cors = require('cors')
 const helmet = require('helmet')
 const limiter = require('./src/middlewares/rate_limiter.handler.js')
+const paginate = require('express-paginate')
 
 //app initialization
 const app = express()
@@ -30,6 +31,9 @@ addLoggerMiddleware(app)
 
 //LDAP and passport initialization
 ldap_initialization(app)
+
+//pagination middleware
+app.use(paginate.middleware(100, CONFIG.ldap.sizeLimit))
 
 //add routes to application
 addRoutes(app)
