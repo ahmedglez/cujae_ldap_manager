@@ -16,6 +16,7 @@ const paginate = require('express-paginate')
 //app initialization
 const app = express()
 
+app.use(require('express-status-monitor')())
 // load app middlewares
 // The order of the following middleware is very important!!
 app.use(bodyParser.json())
