@@ -3,8 +3,8 @@ require('dotenv').config({ path: __dirname + '/../../.env' })
 const config = require('../config/config')
 const assert = require('assert')
 const searchSchema = require('../utils/ldap_search_utils')
+const searchSchemaWithoutFormat = require('../utils/searchSchemaWithNoFormat')
 const ldapClient = require('../connections/LDAP_client')
-var bytes = new Uint8Array(1024)
 
 const UserServices = () => {
   const getAll = (branch) => {
@@ -103,6 +103,15 @@ const UserServices = () => {
     return searchSchema(config.ldap.dn, opts)
   }
 
+  const getByUsernameWithNoFormat = (username) => {
+    const opts = {
+      filter: `(uid=${username})`,
+      scope: 'sub',
+      timeLimit: 60,
+    }
+    return searchSchemaWithoutFormat(config.ldap.dn, opts)
+  }
+
   const getByCI = (ci) => {
     const opts = {
       filter: `(ci=${ci})`,
@@ -152,7 +161,7 @@ const UserServices = () => {
     return new Promise((resolve, reject) => {
       ldapClient.add(dn, entry, (err) => {
         if (err) {
-          console.log("ERROR",err)
+          console.log('ERROR', err)
           reject(boom.badImplementation(err))
         }
         resolve({ message: 'User added successfully' })
@@ -163,6 +172,7 @@ const UserServices = () => {
   return {
     getAll,
     getByUsername,
+    getByUsernameWithNoFormat,
     getByCI,
     getByEmail,
     getStudents,

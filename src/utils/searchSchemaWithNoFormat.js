@@ -2,7 +2,7 @@ const config = require('../config/config')
 const transformData = require('./transform_user_schema')
 const ldap = require('../connections/LDAP_client')
 
-const searchSchema = (dn, opt) => {
+const searchSchemaWithoutFormat = (dn, opt) => {
   let results = []
   let pageCount = 0
   let pagedEntries = []
@@ -17,11 +17,11 @@ const searchSchema = (dn, opt) => {
         }
         results.push({
           objectName: entry.pojo.objectName,
-          attributes: transformData(entry),
+          attributes: entry.pojo,
         })
         pagedEntries.push({
           objectName: entry.pojo.objectName,
-          attributes: transformData(entry),
+          attributes: entry.pojo,
         })
       })
       res.on('page', (result, cb) => {
@@ -44,5 +44,4 @@ const searchSchema = (dn, opt) => {
   })
 }
 
-
-module.exports = searchSchema
+module.exports = searchSchemaWithoutFormat
