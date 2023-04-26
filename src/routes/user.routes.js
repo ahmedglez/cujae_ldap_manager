@@ -6,6 +6,7 @@ const validateResponse = require('../middlewares/validateResponse')
 const { checkAuth, checkRoles } = require('../middlewares/auth.handler')
 const service = UserServices()
 const paginateResults = require('../utils/paginateResults')
+const newUserSchema = require('../schemas/newUser.schema')
 
 //Get all users
 router.get(
@@ -108,6 +109,30 @@ router.get(
     service
       .getByEmail(req.params.email)
       .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+      .catch((err) => responseError(res, err.message, err.errors))
+  }
+)
+
+//Add Users
+router.post(
+  '/',
+  checkAuth,
+  checkRoles('admin'),
+  validateResponse,
+  (req, res) => {
+    const user = req.body
+    const branch = req.query.branch || undefined
+    if (!branch) {
+      responseError(res, 'branch is required')
+    }
+    newUserSchema
+      .validate(user)
+      .then(() => {
+        service
+          .addNewUser(user, branch)
+          .then((data) => responseSuccess(res, 'user added succesfully', data))
+          .catch((err) => responseError(res, err.message, err.errors))
+      })
       .catch((err) => responseError(res, err.message, err.errors))
   }
 )

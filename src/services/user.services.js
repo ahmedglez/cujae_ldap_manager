@@ -1,10 +1,10 @@
 const boom = require('@hapi/boom')
 require('dotenv').config({ path: __dirname + '/../../.env' })
-const ldap = require('../connections/LDAP_client')
-const LDAP = require('ldapjs')
 const config = require('../config/config')
 const assert = require('assert')
 const searchSchema = require('../utils/ldap_search_utils')
+const ldapClient = require('../connections/LDAP_client')
+var bytes = new Uint8Array(1024)
 
 const UserServices = () => {
   const getAll = (branch) => {
@@ -119,6 +119,47 @@ const UserServices = () => {
     return searchSchema(config.ldap.dn, opts)
   }
 
+  const addNewUser = (user, branch) => {
+    const dn = `uid=${user.uid},ou=usuarios,ou=${branch},${config.ldap.dn}`
+
+    const entry = {
+      ...user,
+      objectclass: [
+        'top',
+        'person',
+        'posixAccount',
+        'iesServices',
+        'sambaSamAccount',
+        'radiusprofile',
+        'CourierMailAlias',
+      ],
+      homeDirectory: `/home/${user.uid}`,
+      gidNumber: [1000],
+      sambaSID: ['S-1-5-21-1255719363-1350762778-3568053751-513'],
+      sambaLMPassword: [new TextEncoder().encode('sambaLMPassword')],
+      sambaNTPassword: [new TextEncoder().encode('sambaNTPassword')],
+      loginShell: [new TextEncoder().encode('/bin/nosh')],
+      sambaacctflags: [new TextEncoder().encode('[U          ]')],
+      sambapasswordhistory: [
+        new TextEncoder().encode(
+          '000000000000000000000000000000000000000000000000000000 0000000000'
+        ),
+      ],
+      sambaprimarygroupsid: ['S-1-5-21-1255719363-1350762778-3568053751-513'],
+      sambapwdlastset: [new TextEncoder().encode('1308584948')],
+    }
+    console.log(branch)
+    return new Promise((resolve, reject) => {
+      ldapClient.add(dn, entry, (err) => {
+        if (err) {
+          console.log("ERROR",err)
+          reject(boom.badImplementation(err))
+        }
+        resolve({ message: 'User added successfully' })
+      })
+    })
+  }
+
   return {
     getAll,
     getByUsername,
@@ -126,6 +167,7 @@ const UserServices = () => {
     getByEmail,
     getStudents,
     getProfessors,
+    addNewUser,
   }
 }
 
