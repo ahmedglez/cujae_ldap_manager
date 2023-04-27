@@ -1,10 +1,9 @@
 const responseSuccess = (res, message, data) => {
-  console.log(data)
   data.length > 1
     ? res.status(200).json({
         success: true,
         message: message,
-        length: data?.results.length ?? data.length,
+        length: data.results !== undefined ? data.results.length : data.length,
         data: data,
       })
     : res.status(200).json({

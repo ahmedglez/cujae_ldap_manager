@@ -57,10 +57,10 @@
     "mongoose": "^6.5.2",
     "nodemon": "^2.0.22",
     "superagent": "^8.0.0",
-    "supertest": "^6.2.4"
+    "supertest": "^6.3.3"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit --detectOpenHandles  --watchAll --maxWorkers=1",
     "test:watch": "jest --watch",
     "start": "node server.js",
     "dev": "nodemon server.js"

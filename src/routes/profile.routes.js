@@ -16,7 +16,6 @@ router.get('/', checkAuth, checkRoles('user'), validateResponse, (req, res) => {
 
 router.put('/', checkAuth, checkRoles('user'), validateResponse, (req, res) => {
   const { email, password, confirmPassword } = req.body
-  console.log({ email, password, confirmPassword })
   if (!email && !password) {
     console.log('entro')
     responseError(res, 'fields cannot be empty', null)

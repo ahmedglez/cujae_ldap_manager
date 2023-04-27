@@ -49,3 +49,5 @@ app.use(express.static('./src/public'))
 let port = CONFIG.server.port || 4000
 console.log(`server listen on port ${port}`)
 app.listen(port, CONFIG.server.host || '127.0.0.1')
+
+module.exports = app

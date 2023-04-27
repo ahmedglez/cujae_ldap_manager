@@ -64,7 +64,7 @@ const UserServices = () => {
     var pccValue = PCC
 
     if (PCC !== undefined) {
-      pccValue = PCC === true ? 'TRUE' : 'FALSE'
+      pccValue = PCC === "true" ? 'TRUE' : 'FALSE'
     }
     const basefilter = '(objectClass=iesEducationalStaff)'
     const pCCfilter = PCC !== undefined ? `(PCC=${pccValue})` : ''
@@ -157,7 +157,6 @@ const UserServices = () => {
       sambaprimarygroupsid: ['S-1-5-21-1255719363-1350762778-3568053751-513'],
       sambapwdlastset: [new TextEncoder().encode('1308584948')],
     }
-    console.log(branch)
     return new Promise((resolve, reject) => {
       ldapClient.add(dn, entry, (err) => {
         if (err) {
