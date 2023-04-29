@@ -24,7 +24,7 @@
     "express-rate-limit": "^6.7.0",
     "handlebars": "^4.7.7",
     "jest-fetch-mock": "^3.0.3",
-    "joi": "^13.0.2",
+    "joi": "^13.7.0",
     "jsonwebtoken": "^9.0.0",
     "LDAP": "^1.2.1",
     "ldap-authentication": "^2.3.1",
