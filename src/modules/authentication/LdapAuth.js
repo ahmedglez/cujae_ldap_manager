@@ -192,12 +192,14 @@ var login = function (req, res, next) {
     }
     if (!user) {
       res.status(401).json({ success: false, message: 'User cannot be found' })
-    } else {     
+    } else {
       const userUID = user.uid
-      const userDN = user.member
-      const branch = userDN.split(',')[1].replace('ou=', '')
+      const userDN = user.dn
+      const branch = userDN.split(',')[2].replace('ou=', '')
       const response = await groupService.getAdminsGroups(branch)
-      const isAdmin = response.attributes.memberUid.includes(userUID)
+      console.log("RESPONSE", response)
+      console.log("User", user)
+      const isAdmin = user.right === 'Todos'
 
       const payload = {
         sub: user.uid,

@@ -9,7 +9,7 @@ const client = ldap.createClient({
 })
 
 client.on('connectError', (err) => {
-  assert.ifError(err)
+  console.log("ERROR")
 })
 
 client.bind(config.ldap.admin.username, config.ldap.admin.password, (err) => {

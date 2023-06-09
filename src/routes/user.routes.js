@@ -7,6 +7,33 @@ const { checkAuth, checkRoles } = require('../middlewares/auth.handler')
 const service = UserServices()
 const paginateResults = require('../utils/paginateResults')
 const newUserSchema = require('../schemas/newUser.schema')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+// test
+const Person = mongoose.model(
+  'Person',
+  Schema({
+    name: String,
+    email: String,
+    password: String,
+  })
+)
+
+router.post('/artillery', async (req, res) => {
+  const user = req.body
+  const person = Person({
+    name: user.name,
+    email: user.email,
+    password: user.password,
+  })
+
+  await person.save()
+  res.status(200).json({
+    success: true,
+    message: 'user added',
+    data: user,
+  })
+})
 
 //Get all users
 router.get(
@@ -32,7 +59,7 @@ router.get(
 router.get(
   '/students',
   checkAuth,
-  checkRoles('admin'),
+  checkRoles('admino'),
   validateResponse,
   (req, res) => {
     const branch = req.query.branch || undefined

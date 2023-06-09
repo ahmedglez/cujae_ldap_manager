@@ -13,6 +13,7 @@ const mongoClientPromise = mongoose
     authSource: 'admin',
   })
   .then((m) => m.connection.getClient())
+  .catch((e)=>console.log(e))
 
 const sessionMiddleWare = session({
   secret: CONFIG.sessionSecret,

@@ -6,8 +6,8 @@ const LDAP = require('ldapjs')
 const searchSchema = require('../utils/ldap_search_utils')
 
 ldap.bind(
-  'uid=agonzalezb,ou=usuarios,ou=informatica,dc=cujae,dc=edu,dc=cu',
-  '00092068426',
+  config.ldap.admin.username,
+  config.ldap.admin.password,
   (err) => {
     assert.ifError(err)
   }
