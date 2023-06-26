@@ -104,13 +104,9 @@ router.get(
   (req, res) => {
     service
       .getByUsername(req.params.username)
-      .then((data) =>
-        responseSuccess(
-          res,
-          'data fetched succesfully',
-          paginateResults(data, req)
-        )
-      )
+      .then((data) => {
+        responseSuccess(res, 'data fetched succesfully', data)
+      })
       .catch((err) => {
         responseError(res, err.message, err.errors)
       })
