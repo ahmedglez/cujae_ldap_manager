@@ -25,11 +25,14 @@ const searchSchema = (dn, opt) => {
         })
       })
       res.on('page', (result, cb) => {
-        console.log('page finish')
-        pageCount = pageCount + 1
-        pageCount === opt.pageNum
-          ? resolve(pagedEntries.length === 1 ? pagedEntries[0] : pagedEntries)
-          : (pagedEntries = [])
+        if (!!opt.pageNum) {
+          pageCount = pageCount + 1
+          pageCount === opt.pageNum
+            ? resolve(
+                pagedEntries.length === 1 ? pagedEntries[0] : pagedEntries
+              )
+            : (pagedEntries = [])
+        }
       })
       res.on('searchReference', (referral) => {
         console.log('referral: ' + referral.uris.join())
@@ -43,6 +46,5 @@ const searchSchema = (dn, opt) => {
     })
   })
 }
-
 
 module.exports = searchSchema

@@ -12,6 +12,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const limiter = require('./src/middlewares/rate_limiter.handler.js')
 const paginate = require('express-paginate')
+const compression = require('compression')
 
 //app initialization
 const app = express()
@@ -23,10 +24,15 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json())
 
+// Middleware para la compresión de respuestas
+app.use(compression())
+
 //security middlewares
 app.use(cors())
 app.use(helmet())
+// Middleware para limitar el numero de solicitudes
 app.use(limiter)
+// Middleware para el registro de solicitudes
 app.use(sessionMiddleWare)
 addLoggerMiddleware(app)
 

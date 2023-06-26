@@ -197,8 +197,6 @@ var login = function (req, res, next) {
       const userDN = user.dn
       const branch = userDN.split(',')[2].replace('ou=', '')
       const response = await groupService.getAdminsGroups(branch)
-      console.log("RESPONSE", response)
-      console.log("User", user)
       const isAdmin = user.right === 'Todos'
 
       const payload = {
@@ -219,8 +217,10 @@ var login = function (req, res, next) {
           return next(loginErr)
         }
         _insertFunc(user).then((user) => {
-          var userObj =
-            typeof user.toObject === 'function' ? user.toObject() : user
+          var userObj = {
+            user,
+          }
+
           const data = {
             token: token,
             refreshToken: refreshToken,

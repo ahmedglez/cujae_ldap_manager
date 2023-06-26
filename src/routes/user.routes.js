@@ -43,6 +43,7 @@ router.get(
   validateResponse,
   (req, res) => {
     const branch = req.query.branch || undefined
+    console.log('req', req.query)
     service
       .getAll(branch)
       .then((data) =>
@@ -59,7 +60,7 @@ router.get(
 router.get(
   '/students',
   checkAuth,
-  checkRoles('admino'),
+  checkRoles('admin'),
   validateResponse,
   (req, res) => {
     const branch = req.query.branch || undefined
