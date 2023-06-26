@@ -112,6 +112,8 @@ router.get(
       })
   }
 )
+
+/* get user by ci */
 router.get(
   '/ci/:ci',
   checkAuth,
@@ -124,6 +126,8 @@ router.get(
       .catch((err) => responseError(res, err.message, err.errors))
   }
 )
+
+/* get user by email */
 router.get(
   '/email/:email',
   checkAuth,
@@ -133,6 +137,27 @@ router.get(
     service
       .getByEmail(req.params.email)
       .then((data) => responseSuccess(res, 'data fetched succesfully', data))
+      .catch((err) => responseError(res, err.message, err.errors))
+  }
+)
+
+/* get users by year */
+router.get(
+  '/year/:year',
+  checkAuth,
+  checkRoles('admin'),
+  validateResponse,
+  (req, res) => {
+    const branch = req.query.branch
+    service
+      .getByYear(req.params.year, branch)
+      .then((data) =>
+        responseSuccess(
+          res,
+          'data fetched succesfully',
+          paginateResults(data, req)
+        )
+      )
       .catch((err) => responseError(res, err.message, err.errors))
   }
 )

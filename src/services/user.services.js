@@ -16,8 +16,18 @@ const UserServices = () => {
       attributes: ['uid', 'cn', 'mail', 'ci'],
       sizeLimit: config.ldap.sizeLimit,
     }
-    console.log(opts)
+    return searchSchema(dn, opts)
+  }
 
+  const getByYear = (year = 1, branch) => {
+    const dn =
+      branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
+    const opts = {
+      filter: `(studentYear=${year})`,
+      scope: 'sub',
+      attributes: ['uid', 'cn', 'mail', 'ci'],
+      sizeLimit: config.ldap.sizeLimit,
+    }
     return searchSchema(dn, opts)
   }
 
@@ -64,7 +74,7 @@ const UserServices = () => {
     var pccValue = PCC
 
     if (PCC !== undefined) {
-      pccValue = PCC === "true" ? 'TRUE' : 'FALSE'
+      pccValue = PCC === 'true' ? 'TRUE' : 'FALSE'
     }
     const basefilter = '(objectClass=iesEducationalStaff)'
     const pCCfilter = PCC !== undefined ? `(PCC=${pccValue})` : ''
@@ -170,6 +180,7 @@ const UserServices = () => {
 
   return {
     getAll,
+    getByYear,
     getByUsername,
     getByUsernameWithNoFormat,
     getByCI,
