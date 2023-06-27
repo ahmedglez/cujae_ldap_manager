@@ -13,6 +13,7 @@ const helmet = require('helmet')
 const limiter = require('./src/middlewares/rate_limiter.handler.js')
 const paginate = require('express-paginate')
 const compression = require('compression')
+const cache = require('express-cache-ctrl')
 
 //app initialization
 const app = express()
@@ -41,6 +42,9 @@ ldap_initialization(app)
 
 //pagination middleware
 app.use(paginate.middleware(100, CONFIG.ldap.sizeLimit))
+
+// Middleware de caché
+app.use(cache.private(3600)); // 
 
 //add routes to application
 addRoutes(app)
