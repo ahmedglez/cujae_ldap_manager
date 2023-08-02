@@ -8,6 +8,7 @@ const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
 const UserServices = require('../../services/user.services')
 const GroupServices = require('../../services/group.services')
+const User = require('../../schemas/user.schema').User
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
@@ -196,9 +197,8 @@ var login = function (req, res, next) {
       const userUID = user.uid
       const userDN = user.dn
       const branch = userDN.split(',')[2].replace('ou=', '')
-      const response = await groupService.getAdminsGroups(branch)
+      /*  const response = await groupService.getAdminsGroups(branch) */
       const isAdmin = user.right === 'Todos'
-
       const payload = {
         sub: user.uid,
         dn: user.dn,
@@ -209,6 +209,7 @@ var login = function (req, res, next) {
         ci: user.CI,
         roles: isAdmin ? ['admin', 'user'] : ['user'],
       }
+      const userObj = { ...user }
       const token = signToken(payload, { expiresIn: '45 minutes' })
       const refreshToken = signToken(payload, { expiresIn: '1 day' })
 
@@ -217,10 +218,6 @@ var login = function (req, res, next) {
           return next(loginErr)
         }
         _insertFunc(user).then((user) => {
-          var userObj = {
-            user,
-          }
-
           const data = {
             token: token,
             refreshToken: refreshToken,
