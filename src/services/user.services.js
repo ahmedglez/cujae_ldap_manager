@@ -7,14 +7,16 @@ const searchSchemaWithoutFormat = require('../utils/searchSchemaWithNoFormat')
 const ldapClient = require('../connections/LDAP_client')
 
 const UserServices = () => {
-  const getAll = (branch) => {
+  const getAll = (branch, filter) => {
+    console.log('filter', filter)
     const dn =
       branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
     const opts = {
-      filter: '(objectClass=person)',
+      filter: filter,
       scope: 'sub',
-      attributes: ['uid', 'cn', 'mail', 'ci'],
+      attributes: ['uid', 'cn', 'mail', 'ci', 'sex', 'year'],
       sizeLimit: config.ldap.sizeLimit,
+      timeLimit: 50000,
     }
     return searchSchema(dn, opts)
   }

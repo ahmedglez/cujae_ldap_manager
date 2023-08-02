@@ -9,6 +9,8 @@ const paginateResults = require('../utils/paginateResults')
 const newUserSchema = require('../schemas/newUser.schema')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const getQueryToFilters = require('../utils/getQueryToFilters')
+
 // test
 const Person = mongoose.model(
   'Person',
@@ -43,9 +45,9 @@ router.get(
   validateResponse,
   (req, res) => {
     const branch = req.query.branch || undefined
-    console.log('req', req.query)
+    const filter = getQueryToFilters(req)
     service
-      .getAll(branch)
+      .getAll(branch, filter)
       .then((data) =>
         responseSuccess(
           res,
