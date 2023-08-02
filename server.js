@@ -44,7 +44,7 @@ ldap_initialization(app)
 app.use(paginate.middleware(100, CONFIG.ldap.sizeLimit))
 
 // Middleware de caché
-app.use(cache.private(3600)); // 
+app.use(cache.private(3600)) 
 
 //add routes to application
 addRoutes(app)
