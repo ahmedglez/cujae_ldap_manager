@@ -202,6 +202,7 @@ var login = function (req, res, next) {
       const payload = {
         sub: user.uid,
         dn: user.dn,
+        uid: user.uid,
         firstname: user.givenName,
         lastname: user.sn,
         fullname: user.cn,
