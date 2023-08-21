@@ -144,16 +144,19 @@ var init = function (
     }
   })
 
-  passport.deserializeUser((id, done) => {
-    _findFunc(id).then((user) => {
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findOne({
+        username: id,
+      })
       if (!user) {
-        done(
-          new Error(`Deserialize user failed. ${id} is deleted from local DB`)
-        )
-      } else {
-        done(null, user)
+        // User does not exist
+        return done(null, user)
       }
-    })
+      return done(null, user)
+    } catch (error) {
+      return done(error)
+    }
   })
 
   router.use(passport.initialize())
@@ -188,54 +191,67 @@ var initialize = function (
  * on successful authenticate, or {success: false} on failed authenticate
  */
 var login = function (req, res, next) {
-  passport.authenticate('ldap', async (err, user) => {
-    if (err) {
-      res.status(401).json({ success: false, message: err.message })
-      return
-    }
-    if (!user) {
-      res.status(401).json({ success: false, message: 'User cannot be found' })
-    } else {
-      const userUID = user.uid
-      const userDN = user.dn
-      const branch = userDN.split(',')[2].replace('ou=', '')
-      /*  const response = await groupService.getAdminsGroups(branch) */
-      const isAdmin = user.right === 'Todos'
-      const last_time_logged = await profileService.getLastLoginByUsername(
-        user.uid
-      )
-      const payload = {
-        sub: user.uid,
-        dn: user.dn,
-        uid: user.uid,
-        firstname: user.givenName,
-        lastname: user.sn,
-        fullname: user.cn,
-        email: user.mail,
-        ci: user.CI,
-        roles: isAdmin ? ['admin', 'user'] : ['user'],
-        last_time_logged,
+  passport.authenticate(
+    'ldap',
+    {
+      successRedirect: '/dashboard',
+      failureRedirect: '/login',
+      failureFlash: true,
+    },
+    async (err, user) => {
+      if (err) {
+        res.status(401).json({ success: false, message: err.message })
+        return
       }
-      const userObj = { ...user }
-      const token = signToken(payload, { expiresIn: '45 minutes' })
-      const refreshToken = signToken(payload, { expiresIn: '1 day' })
+      if (!user) {
+        res
+          .status(401)
+          .json({ success: false, message: 'User cannot be found' })
+      } else {
+        const userUID = user.uid
+        const userDN = user.dn
+        const branch = userDN.split(',')[2].replace('ou=', '')
+        /*  const response = await groupService.getAdminsGroups(branch) */
+        const isAdmin = user.right === 'Todos'
+        const last_time_logged = await profileService.getLastLoginByUsername(
+          user.uid
+        )
+        const loginInfo = await profileService.updateLastTimeLogged(user.uid)
+        console.log('loginInfo', loginInfo)
 
-      req.login(user, (loginErr) => {
-        if (loginErr) {
-          return next(loginErr)
+        const payload = {
+          sub: user.uid,
+          dn: user.dn,
+          uid: user.uid,
+          firstname: user.givenName,
+          lastname: user.sn,
+          fullname: user.cn,
+          email: user.mail,
+          ci: user.CI,
+          roles: isAdmin ? ['admin', 'user'] : ['user'],
+          last_time_logged,
         }
-        _insertFunc(user).then((user) => {
-          const data = {
-            token: token,
-            refreshToken: refreshToken,
-            user: userObj,
+
+        const userObj = { ...user }
+        const token = signToken(payload, { expiresIn: '45 minutes' })
+        const refreshToken = signToken(payload, { expiresIn: '1 day' })
+
+        req.login(user, (loginErr) => {
+          if (loginErr) {
+            return next(loginErr)
           }
-          profileService.updateLastTimeLogged(user.uid)
-          return responseSuccess(res, 'authentication succeeded', data)
+          _insertFunc(user).then((user) => {
+            const data = {
+              token: token,
+              refreshToken: refreshToken,
+              user: userObj,
+            }
+            return responseSuccess(res, 'authentication succeeded', data)
+          })
         })
-      })
+      }
     }
-  })(req, res, next)
+  )(req, res, next)
 }
 
 module.exports.init = init

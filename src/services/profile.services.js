@@ -67,13 +67,26 @@ const ProfileServices = () => {
 
       const updatedUser = await User.findOneAndUpdate(
         { username },
-        { updatedAt: currentDate },
+        {
+          updatedAt: currentDate,
+          $push: {
+            registry: {
+              timestamp: currentDate,
+            },
+          }, // Add new login record
+        },
         { new: true } // Return the updated document
       ).exec()
 
       if (!updatedUser) {
         return 'User not found'
       }
+
+      // Ensure that loginRecords is an array (initialize if needed)
+      if (!Array.isArray(updatedUser.loginRecords)) {
+        updatedUser.loginRecords = []
+      }
+
       const lastLoginDate = updatedUser.updatedAt.toLocaleString()
       return lastLoginDate
     } catch (error) {
