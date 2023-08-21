@@ -9,6 +9,7 @@ const { authenticate } = require('ldap-authentication')
 const UserServices = require('../../services/user.services')
 const GroupServices = require('../../services/group.services')
 const User = require('../../schemas/user.schema').User
+const ProfileServices = require('../../services/profile.services')
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
@@ -19,6 +20,7 @@ const validateResponse = require('../../middlewares/validateResponse')
 
 const userService = UserServices()
 const groupService = GroupServices()
+const profileService = ProfileServices()
 
 var _backwardCompatible = false
 var _dn
@@ -199,6 +201,9 @@ var login = function (req, res, next) {
       const branch = userDN.split(',')[2].replace('ou=', '')
       /*  const response = await groupService.getAdminsGroups(branch) */
       const isAdmin = user.right === 'Todos'
+      const last_time_logged = await profileService.getLastLoginByUsername(
+        user.uid
+      )
       const payload = {
         sub: user.uid,
         dn: user.dn,
@@ -209,6 +214,7 @@ var login = function (req, res, next) {
         email: user.mail,
         ci: user.CI,
         roles: isAdmin ? ['admin', 'user'] : ['user'],
+        last_time_logged,
       }
       const userObj = { ...user }
       const token = signToken(payload, { expiresIn: '45 minutes' })
@@ -224,6 +230,7 @@ var login = function (req, res, next) {
             refreshToken: refreshToken,
             user: userObj,
           }
+          profileService.updateLastTimeLogged(user.uid)
           return responseSuccess(res, 'authentication succeeded', data)
         })
       })

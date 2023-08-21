@@ -5,6 +5,7 @@ const UserServices = require('./user.services')
 const service = UserServices()
 const { verifyToken } = require('../utils/authentication/tokens/token_verify')
 const ldap = require('ldapjs')
+const { User } = require('../schemas/user.schema')
 
 const ProfileServices = () => {
   const getProfile = (req) => {
@@ -43,9 +44,49 @@ const ProfileServices = () => {
     }
   }
 
+  async function getLastLoginByUsername(username) {
+    try {
+      const user = await User.findOne({ username })
+        .sort({ updatedAt: -1 })
+        .exec()
+
+      if (!user) {
+        return 'User not found'
+      }
+
+      return user.updatedAt
+    } catch (error) {
+      console.error('Error fetching last login:', error)
+      return null
+    }
+  }
+
+  async function updateLastTimeLogged(username) {
+    try {
+      const currentDate = new Date()
+
+      const updatedUser = await User.findOneAndUpdate(
+        { username },
+        { updatedAt: currentDate },
+        { new: true } // Return the updated document
+      ).exec()
+
+      if (!updatedUser) {
+        return 'User not found'
+      }
+      const lastLoginDate = updatedUser.updatedAt.toLocaleString()
+      return lastLoginDate
+    } catch (error) {
+      console.error('Error updating last login:', error)
+      return null
+    }
+  }
+
   return {
     getProfile,
     updateProfile,
+    getLastLoginByUsername,
+    updateLastTimeLogged,
   }
 }
 
