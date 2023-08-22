@@ -217,7 +217,6 @@ var login = function (req, res, next) {
           user.uid
         )
         const loginInfo = await profileService.updateLastTimeLogged(user.uid)
-        console.log('loginInfo', loginInfo)
 
         const payload = {
           sub: user.uid,
@@ -230,6 +229,7 @@ var login = function (req, res, next) {
           ci: user.CI,
           roles: isAdmin ? ['admin', 'user'] : ['user'],
           last_time_logged,
+          loginInfo,
         }
 
         const userObj = { ...user }
