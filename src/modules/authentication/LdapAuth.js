@@ -11,6 +11,13 @@ const GroupServices = require('../../services/group.services')
 const User = require('../../schemas/user.schema').User
 const ProfileServices = require('../../services/profile.services')
 
+/* helpers */
+const {
+  extractBaseFromDn,
+  extractGroupsFromDn,
+  extractUidFromDn,
+} = require('../../helpers/dnHelper')
+
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
   responseSuccess,
@@ -217,11 +224,17 @@ var login = function (req, res, next) {
           user.uid
         )
         const loginInfo = await profileService.updateLastTimeLogged(user.uid)
+        // Example usage
+        const ldapDn = user.dn
+        const groups = extractGroupsFromDn(ldapDn)
+        const base = extractBaseFromDn(ldapDn)
 
         const payload = {
           sub: user.uid,
           dn: user.dn,
           uid: user.uid,
+          groups: groups,
+          base: base,
           firstname: user.givenName,
           lastname: user.sn,
           fullname: user.cn,
