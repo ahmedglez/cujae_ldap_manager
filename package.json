@@ -62,6 +62,7 @@
     "jest": "^29.5.0",
     "jsdom": "^21.1.1",
     "jsdom-global": "^3.0.2",
+    "module-alias": "^2.2.3",
     "mongoose": "^6.5.2",
     "nodemon": "^2.0.22",
     "superagent": "^8.0.0",
@@ -70,7 +71,13 @@
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles  --watchAll --maxWorkers=1",
     "test:watch": "jest --watch",
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "_moduleAliases": {
+    "@root"      : ".", 
+    "@deep"      : "src/some/very/deep/directory/or/file",
+    "@src"       : "src",
+    "something"  : "src/foo"
   }
 }

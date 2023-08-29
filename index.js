@@ -1,5 +1,6 @@
 /* jshint node:true */
 /* global require */
+require('module-alias/register')
 const CONFIG = require('./src/config/config.js')
 const bodyParser = require('body-parser')
 const express = require('express')
