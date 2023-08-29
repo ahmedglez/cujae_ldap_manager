@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../server') // your Express app
+const app = require('../../index') // your Express app
 const UserServices = require('../services/user.services')
 const mongoose = require('mongoose')
 const User = require('../schemas/user.schema').User
