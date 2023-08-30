@@ -32,9 +32,6 @@ router.get('/', async (req, res) => {
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
 
-    console.log('queryFilter', queryFilter)
-    console.log('ldapFilter', ldapFilter)
-
     // Define the LDAP attributes you want to retrieve
     const attributes = [
       'uid',
@@ -105,14 +102,6 @@ router.get('/group/:group', async (req, res) => {
       error: error.message,
     })
   }
-})
-
-// Route handler for getting user by username
-router.get('/:username', (req, res) => {
-  service
-    .getByUsername(req.params.username)
-    .then((data) => responseSuccess(res, 'data fetched successfully', data))
-    .catch((err) => responseError(res, err.message, err.errors))
 })
 
 // Route handler for getting user by CI

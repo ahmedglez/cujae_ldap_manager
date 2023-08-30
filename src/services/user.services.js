@@ -33,24 +33,6 @@ const UserServices = () => {
     return results.slice(startIndex, limit * page)
   }
 
-  const getByUsername = (username) => {
-    const opts = {
-      filter: `(uid=${username})`,
-      scope: 'sub',
-      timeLimit: 60,
-    }
-    return searchSchema(config.ldap.dn, opts)
-  }
-
-  const getByUsernameWithNoFormat = (username) => {
-    const opts = {
-      filter: `(uid=${username})`,
-      scope: 'sub',
-      timeLimit: 60,
-    }
-    return searchSchemaWithoutFormat(config.ldap.dn, opts)
-  }
-
   const getByCI = (ci) => {
     const opts = {
       filter: `(ci=${ci})`,

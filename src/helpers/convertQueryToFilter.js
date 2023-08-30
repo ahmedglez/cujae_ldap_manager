@@ -10,6 +10,10 @@ const createLdapFilterFromQuery = (query) => {
     filters.push(`cn=${query.cn}`)
   }
 
+  if (query.username) {
+    filters.push(`uid=${query.username}`)
+  }
+
   // Combine multiple filters using logical AND
   const ldapFilter = `(${filters.join('')})`
 
