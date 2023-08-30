@@ -69,7 +69,8 @@ router.get('/', async (req, res) => {
 router.get('/group/:group', async (req, res) => {
   try {
     const baseDN = `ou=usuarios,ou=${req.params.group},${config.ldap.base}`
-    const filter = 'objectClass=person'
+    const queryFilter = createLdapFilterFromQuery(req.query)
+    const ldapFilter = `(&(objectClass=person)${queryFilter})`
 
     // Define the LDAP attributes you want to retrieve
     const attributes = [
@@ -84,7 +85,7 @@ router.get('/group/:group', async (req, res) => {
     // Call the performLdapSearch function to retrieve users matching the group filters
     const searchResults = await service.handleFilteredSearch(
       baseDN,
-      filter,
+      ldapFilter,
       attributes,
       req.query.page,
       req.query.limit
