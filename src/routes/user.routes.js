@@ -8,6 +8,7 @@ const config = require('@src/config/config')
 const {
   createLdapFilterFromQuery,
 } = require('@src/helpers/convertQueryToFilter')
+const validateQuery = require('@src/middlewares/queryValidator')
 
 // Middleware for routes requiring checkAuth and checkRoles('admin')
 router.use(checkAuth, checkRoles('admin'))
@@ -19,6 +20,7 @@ router.use(validateResponse)
 router.get('/', async (req, res) => {
   try {
     const baseDN = `${config.ldap.base}`
+    const isValid = validateQuery(req.query)
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
 
