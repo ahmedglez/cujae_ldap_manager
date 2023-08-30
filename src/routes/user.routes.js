@@ -14,6 +14,7 @@ const Schema = mongoose.Schema
 const getQueryToFilters = require('@src/utils/getQueryToFilters')
 const { performLdapSearch } = require('@src/helpers/ldapUtils')
 const config = require('@src/config/config')
+const paginate = require('express-paginate')
 
 // Middleware for routes requiring checkAuth and checkRoles('admin')
 router.use(checkAuth, checkRoles('admin'))
@@ -57,13 +58,16 @@ router.get('/group/:group', async (req, res) => {
     const searchResults = await service.handleFilteredSearch(
       baseDN,
       filter,
-      attributes
+      attributes,
+      req.query.page,
+      req.query.limit
     )
     // Send the search results
     res.json({
       success: true,
       length: searchResults.length,
       data: searchResults,
+      
     })
   } catch (error) {
     res.status(500).json({

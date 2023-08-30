@@ -20,9 +20,17 @@ const UserServices = () => {
     return searchSchema(dn, opts)
   }
 
-  const handleFilteredSearch = (baseDN = config.ldap.base, ldapFilter, att) => {
+  const handleFilteredSearch = async (
+    baseDN = config.ldap.base,
+    ldapFilter,
+    att,
+    page = 1,
+    limit = 10
+  ) => {
     const attributes = att === undefined ? ['dn', 'uid', 'cn'] : att
-    return performLdapSearch(baseDN, ldapFilter, attributes)
+    const startIndex = (page - 1) * limit
+    const results = await performLdapSearch(baseDN, ldapFilter, attributes)
+    return results.slice(startIndex, limit * page)
   }
 
   const getByUsername = (username) => {
