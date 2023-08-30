@@ -54,6 +54,7 @@ router.get('/', async (req, res) => {
 router.get('/group/:group', async (req, res) => {
   try {
     const baseDN = `ou=usuarios,ou=${req.params.group},${config.ldap.base}`
+    const isValid = validateQuery(req.query)
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
 
@@ -96,6 +97,7 @@ router.post('/baseDN', async (req, res) => {
     if (!baseDN) {
       throw new Error('Value of the baseDN has not been sent correctly')
     }
+    const isValid = validateQuery(req.query)
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
 
