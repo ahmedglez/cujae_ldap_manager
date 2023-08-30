@@ -15,18 +15,14 @@ const ProfileServices = require('../../services/profile.services')
 const {
   extractBaseFromDn,
   extractGroupsFromDn,
-  extractUidFromDn,
 } = require('../../helpers/dnHelper')
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const {
   responseSuccess,
-  responseError,
 } = require('../../schemas/response.schema')
-const validateResponse = require('../../middlewares/validateResponse')
 
 const userService = UserServices()
-const groupService = GroupServices()
 const profileService = ProfileServices()
 
 var _backwardCompatible = false
@@ -215,9 +211,6 @@ var login = function (req, res, next) {
           .status(401)
           .json({ success: false, message: 'User cannot be found' })
       } else {
-        const userUID = user.uid
-        const userDN = user.dn
-        const branch = userDN.split(',')[2].replace('ou=', '')
         const isAdmin = user.right === 'Todos'
         const last_time_logged = await profileService.getLastLoginByUsername(
           user.uid
@@ -228,8 +221,6 @@ var login = function (req, res, next) {
         const groups = extractGroupsFromDn(ldapDn)
         const rootBaseDN = extractBaseFromDn(ldapDn)
         const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
-
-        console.log('user.dn')
 
         const payload = {
           sub: user.uid,
