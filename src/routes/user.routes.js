@@ -98,6 +98,41 @@ router.get('/group/:group', async (req, res) => {
   }
 })
 
+router.get('/baseDN', async (req, res) => {
+  try {
+    const baseDN = req.body.baseDN
+    if (!baseDN) {
+      throw new Error('Value of the baseDN has not been sent correctly')
+    }
+    const queryFilter = createLdapFilterFromQuery(req.query)
+    const ldapFilter = `(&(objectClass=person)${queryFilter})`
+
+    // Define the LDAP attributes you want to retrieve
+    const attributes = null
+
+    // Call the performLdapSearch function to retrieve users matching the group filters
+    const searchResults = await service.handleFilteredSearch(
+      baseDN,
+      ldapFilter,
+      attributes,
+      req.query.page,
+      req.query.limit
+    )
+    // Send the search results
+    res.json({
+      success: true,
+      length: searchResults.length,
+      data: searchResults,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching users',
+      error: error.message,
+    })
+  }
+})
+
 // Route handler for getting users by year
 router.get('/year/:year', (req, res) => {
   const branch = req.query.branch

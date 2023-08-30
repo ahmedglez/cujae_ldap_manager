@@ -227,14 +227,18 @@ var login = function (req, res, next) {
         // Example usage
         const ldapDn = user.dn
         const groups = extractGroupsFromDn(ldapDn)
-        const base = extractBaseFromDn(ldapDn)
+        const rootBaseDN = extractBaseFromDn(ldapDn)
+        const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
+
+        console.log('user.dn')
 
         const payload = {
           sub: user.uid,
           dn: user.dn,
           uid: user.uid,
           groups: groups,
-          base: base,
+          base: rootBaseDN,
+          localBase: localBaseDN,
           firstname: user.givenName,
           lastname: user.sn,
           fullname: user.cn,
