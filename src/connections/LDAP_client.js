@@ -9,7 +9,7 @@ const client = ldap.createClient({
 })
 
 client.on('connectError', (err) => {
-  console.log("ERROR")
+  console.log('Error trying to connect to LDAP', err)
 })
 
 client.bind(config.ldap.admin.username, config.ldap.admin.password, (err) => {

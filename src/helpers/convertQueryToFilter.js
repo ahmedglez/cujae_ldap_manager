@@ -2,6 +2,10 @@
 const createLdapFilterFromQuery = (query) => {
   const filters = []
 
+  if (query && Object.keys(query).length === 2) {
+    return ''
+  }
+
   if (query.uid) {
     filters.push(`uid=${query.uid}`)
   }

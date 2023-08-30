@@ -29,17 +29,24 @@ const UserServices = () => {
   ) => {
     const attributes = att === undefined ? ['dn', 'uid', 'cn'] : att
     const startIndex = (page - 1) * limit
-    const results = await performLdapSearch(baseDN, ldapFilter, attributes)
-    return results.slice(startIndex, limit * page)
+
+    try {
+      const results = await performLdapSearch(baseDN, ldapFilter, attributes)
+
+      return results.slice(startIndex, limit * page)
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
   }
 
-  const getByUsername = (username) => {
-    const opts = {
-      filter: `(uid=${username})`,
-      scope: 'sub',
-      timeLimit: 60,
-    }
-    return searchSchema(config.ldap.dn, opts)
+  const getByUsername = async (username) => {
+    const results = await performLdapSearch(
+      config.ldap.base,
+      `(uid=${username})`
+    )
+    console.log('results', results)
+    return results
   }
 
   return {

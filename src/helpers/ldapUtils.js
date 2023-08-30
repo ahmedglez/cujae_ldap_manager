@@ -39,31 +39,36 @@ const transform = (entry) => {
 
 // Perform a search using the provided filter and return the results
 const performLdapSearch = async (baseDn, filter, attributes) => {
-  await bindLdapClient() // Bind before search
-
-  const searchOptions = {
-    filter: filter,
-    scope: 'sub',
-    attributes,
-  }
-
   return new Promise((resolve, reject) => {
-    const searchResults = []
+    try {
+      bindLdapClient() // Bind before search
 
-    ldapClient.search(baseDn, searchOptions, (err, searchResponse) => {
-      if (err) {
-        reject(err)
-        return
+      const searchOptions = {
+        filter: filter,
+        scope: 'sub',
+        attributes,
+        timeLimit: config.ldap.timeLimit,
       }
 
-      searchResponse.on('searchEntry', (entry) => {
-        searchResults.push(transform(entry))
-      })
+      const searchResults = []
 
-      searchResponse.on('end', () => {
-        resolve(searchResults)
+      ldapClient.search(baseDn, searchOptions, (err, searchResponse) => {
+        if (err) {
+          reject(err)
+          return // Exit the function early in case of error
+        }
+
+        searchResponse.on('searchEntry', (entry) => {
+          searchResults.push(transform(entry))
+        })
+
+        searchResponse.on('end', () => {
+          resolve(searchResults)
+        })
       })
-    })
+    } catch (err) {
+      reject(err)
+    }
   })
 }
 
