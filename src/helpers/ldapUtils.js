@@ -33,7 +33,8 @@ const getObject = (arr) => {
 
 const transform = (entry) => {
   const data = getObject(entry.pojo.attributes)
-
+  data.objectName = entry.pojo.objectName
+  data.dn = entry.pojo.objectName
   return data
 }
 

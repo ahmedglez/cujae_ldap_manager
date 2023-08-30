@@ -31,7 +31,13 @@ const UserServices = () => {
     const startIndex = (page - 1) * limit
 
     try {
-      const results = await performLdapSearch(baseDN, ldapFilter, attributes)
+      const results = await performLdapSearch(
+        baseDN,
+        ldapFilter,
+        attributes,
+        page,
+        limit
+      )
 
       return results.slice(startIndex, limit * page)
     } catch (err) {
@@ -45,7 +51,6 @@ const UserServices = () => {
       config.ldap.base,
       `(uid=${username})`
     )
-    console.log('results', results)
     return results
   }
 

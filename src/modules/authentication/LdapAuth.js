@@ -83,16 +83,13 @@ var init = function (
         }
         let username = req.body.username
         let password = req.body.password
-        let response = await userService.getByUsername(username)
+        let res = await userService.getByUsername(username)
+        const response = res[0]
+
         // if user doesn't exists
-        if (response.attributes === undefined) {
+        if (response === undefined) {
           throw new Error('username or password incorrect')
         }
-        const branch = response.objectName
-          .toString()
-          .split(',')[2]
-          .replace('ou=', '')
-        // construct the parameter to pass in authenticate() function
         let options
         if (_backwardCompatible) {
           _usernameAttributeName = 'uid'
@@ -119,7 +116,10 @@ var init = function (
           if (opt.userDn) {
             options.userDn = opt.userDn
               .replace('{{username}}', username)
-              .replace('{{branch}}', branch)
+              .replace(
+                '{{branch}}',
+                response.objectName.split(',')[2].replace('ou=', '')
+              )
           }
           if (opt.adminDn) {
             options.adminDn = opt.adminDn
