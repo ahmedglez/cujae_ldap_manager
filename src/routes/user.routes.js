@@ -1,10 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const UserServices = require('@src/services/user.services.js')
-const {
-  responseSuccess,
-  responseError,
-} = require('@src/schemas/response.schema')
 const validateResponse = require('@src/middlewares/validateResponse')
 const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
 const service = UserServices()
