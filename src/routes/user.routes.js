@@ -98,7 +98,7 @@ router.get('/group/:group', async (req, res) => {
   }
 })
 
-router.get('/baseDN', async (req, res) => {
+router.post('/baseDN', async (req, res) => {
   try {
     const baseDN = req.body.baseDN
     if (!baseDN) {
