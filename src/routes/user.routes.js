@@ -104,14 +104,6 @@ router.get('/group/:group', async (req, res) => {
   }
 })
 
-// Route handler for getting user by CI
-router.get('/ci/:ci', (req, res) => {
-  service
-    .getByCI(req.params.ci)
-    .then((data) => responseSuccess(res, 'data fetched successfully', data))
-    .catch((err) => responseError(res, err.message, err.errors))
-})
-
 // Route handler for getting user by email
 router.get('/email/:email', (req, res) => {
   service
