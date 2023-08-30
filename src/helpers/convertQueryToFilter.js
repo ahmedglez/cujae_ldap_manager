@@ -18,6 +18,10 @@ const createLdapFilterFromQuery = (query) => {
     filters.push(`ci=${query.ci}`)
   }
 
+  if (query.email) {
+    filters.push(`maildrop=${query.email}`)
+  }
+
   // Combine multiple filters using logical AND
   const ldapFilter = `(${filters.join('')})`
 

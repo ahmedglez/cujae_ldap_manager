@@ -104,14 +104,6 @@ router.get('/group/:group', async (req, res) => {
   }
 })
 
-// Route handler for getting user by email
-router.get('/email/:email', (req, res) => {
-  service
-    .getByEmail(req.params.email)
-    .then((data) => responseSuccess(res, 'data fetched successfully', data))
-    .catch((err) => responseError(res, err.message, err.errors))
-})
-
 // Route handler for getting users by year
 router.get('/year/:year', (req, res) => {
   const branch = req.query.branch

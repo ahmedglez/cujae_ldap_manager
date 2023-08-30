@@ -42,18 +42,9 @@ const UserServices = () => {
     return searchSchema(config.ldap.dn, opts)
   }
 
-  const getByEmail = (email) => {
-    const opts = {
-      filter: `(maildrop=${email})`,
-      scope: 'sub',
-    }
-    return searchSchema(config.ldap.dn, opts)
-  }
-
   return {
     getAll,
     getByUsername,
-    getByEmail,
     handleFilteredSearch,
   }
 }
