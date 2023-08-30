@@ -15,6 +15,9 @@ const getQueryToFilters = require('@src/utils/getQueryToFilters')
 const { performLdapSearch } = require('@src/helpers/ldapUtils')
 const config = require('@src/config/config')
 const paginate = require('express-paginate')
+const {
+  createLdapFilterFromQuery,
+} = require('@src/helpers/convertQueryToFilter')
 
 // Middleware for routes requiring checkAuth and checkRoles('admin')
 router.use(checkAuth, checkRoles('admin'))
@@ -23,19 +26,46 @@ router.use(checkAuth, checkRoles('admin'))
 router.use(validateResponse)
 
 // Route handler for getting all users
-router.get('/', (req, res) => {
-  const branch = req.query.branch || undefined
-  const filter = getQueryToFilters(req)
-  service
-    .getAll(branch, filter)
-    .then((data) =>
-      responseSuccess(
-        res,
-        'data fetched successfully',
-        paginateResults(data, req)
-      )
+router.get('/', async (req, res) => {
+  try {
+    const baseDN = `${config.ldap.base}`
+    const queryFilter = createLdapFilterFromQuery(req.query)
+    const ldapFilter = `(&(objectClass=person)${queryFilter})`
+
+    console.log('queryFilter', queryFilter)
+    console.log('ldapFilter', ldapFilter)
+
+    // Define the LDAP attributes you want to retrieve
+    const attributes = [
+      'uid',
+      'cn',
+      'sn',
+      'givenName',
+      'mail',
+      'telephoneNumber',
+    ]
+
+    // Call the performLdapSearch function to retrieve users matching the group filters
+    const searchResults = await service.handleFilteredSearch(
+      baseDN,
+      ldapFilter,
+      attributes,
+      req.query.page,
+      req.query.limit
     )
-    .catch((err) => responseError(res, err.message, err.errors))
+    // Send the search results
+    res.json({
+      success: true,
+      length: searchResults.length,
+      data: searchResults,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching users',
+      error: error.message,
+    })
+  }
 })
 
 // Get users by groups
@@ -67,7 +97,6 @@ router.get('/group/:group', async (req, res) => {
       success: true,
       length: searchResults.length,
       data: searchResults,
-      
     })
   } catch (error) {
     res.status(500).json({
