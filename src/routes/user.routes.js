@@ -33,14 +33,7 @@ router.get('/', async (req, res) => {
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
 
     // Define the LDAP attributes you want to retrieve
-    const attributes = [
-      'uid',
-      'cn',
-      'sn',
-      'givenName',
-      'mail',
-      'telephoneNumber',
-    ]
+    const attributes = null
 
     // Call the performLdapSearch function to retrieve users matching the group filters
     const searchResults = await service.handleFilteredSearch(
