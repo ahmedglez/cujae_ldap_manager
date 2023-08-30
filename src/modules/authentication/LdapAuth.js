@@ -218,7 +218,6 @@ var login = function (req, res, next) {
         const userUID = user.uid
         const userDN = user.dn
         const branch = userDN.split(',')[2].replace('ou=', '')
-        /*  const response = await groupService.getAdminsGroups(branch) */
         const isAdmin = user.right === 'Todos'
         const last_time_logged = await profileService.getLastLoginByUsername(
           user.uid

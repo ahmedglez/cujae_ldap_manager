@@ -1,10 +1,5 @@
-const boom = require('@hapi/boom')
 require('dotenv').config({ path: __dirname + '/../../.env' })
-const ldap = require('@src/connections/LDAP_client')
-const LDAP = require('ldapjs')
 const config = require('@src/config/config')
-const assert = require('assert')
-const searchSchema = require('@src/utils/ldap_search_utils')
 const { performLdapSearch } = require('@src/helpers/ldapUtils')
 
 const GroupServices = () => {
@@ -22,20 +17,6 @@ const GroupServices = () => {
       console.error(err)
       throw err
     }
-  }
-
-  const getAdminsGroups = (branch) => {
-    const dn =
-      branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
-    const opts = {
-      filter: `(cn=admins)`,
-      scope: 'sub',
-    }
-    return searchSchema(dn, opts)
-  }
-  return {
-    getAdminsGroups,
-    getGroup,
   }
 }
 

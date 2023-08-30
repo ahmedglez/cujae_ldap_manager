@@ -8,13 +8,7 @@ const {
 const validateResponse = require('@src/middlewares/validateResponse')
 const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
 const service = UserServices()
-const paginateResults = require('@src/utils/paginateResults')
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const getQueryToFilters = require('@src/utils/getQueryToFilters')
-const { performLdapSearch } = require('@src/helpers/ldapUtils')
 const config = require('@src/config/config')
-const paginate = require('express-paginate')
 const {
   createLdapFilterFromQuery,
 } = require('@src/helpers/convertQueryToFilter')
@@ -131,21 +125,6 @@ router.post('/baseDN', async (req, res) => {
       error: error.message,
     })
   }
-})
-
-// Route handler for getting users by year
-router.get('/year/:year', (req, res) => {
-  const branch = req.query.branch
-  service
-    .getByYear(req.params.year, branch)
-    .then((data) =>
-      responseSuccess(
-        res,
-        'data fetched successfully',
-        paginateResults(data, req)
-      )
-    )
-    .catch((err) => responseError(res, err.message, err.errors))
 })
 
 module.exports = router

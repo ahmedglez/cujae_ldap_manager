@@ -1,25 +1,8 @@
 require('dotenv').config({ path: __dirname + '/../../.env' })
 const config = require('@src/config/config')
-const assert = require('assert')
-const searchSchema = require('@src/utils/ldap_search_utils')
-const searchSchemaWithoutFormat = require('@src/utils/searchSchemaWithNoFormat')
-const ldapClient = require('@src/connections/LDAP_client')
 const { performLdapSearch } = require('@src/helpers/ldapUtils')
 
 const UserServices = () => {
-  const getAll = (branch, filter) => {
-    const dn =
-      branch === undefined ? config.ldap.dn : `ou=${branch},${config.ldap.dn}`
-    const opts = {
-      filter: filter,
-      scope: 'sub',
-      attributes: ['uid', 'cn', 'mail', 'ci', 'sex', 'year'],
-      sizeLimit: config.ldap.sizeLimit,
-      timeLimit: 50000,
-    }
-    return searchSchema(dn, opts)
-  }
-
   const handleFilteredSearch = async (
     baseDN = config.ldap.base,
     ldapFilter,
@@ -55,7 +38,6 @@ const UserServices = () => {
   }
 
   return {
-    getAll,
     getByUsername,
     handleFilteredSearch,
   }

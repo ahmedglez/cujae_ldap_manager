@@ -24,12 +24,4 @@ router.get('/:group', checkAuth, validateResponse, async (req, res) => {
   }
 })
 
-router.get('/admins', checkAuth, validateResponse, (req, res) => {
-  const branch = req.query.branch
-  service
-    .getAdminsGroups(branch)
-    .then((data) => responseSuccess(res, 'data fetched succesfully', data))
-    .catch((err) => responseError(res, err.message, err.errors))
-})
-
 module.exports = router
