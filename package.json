@@ -38,7 +38,7 @@
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "simple-ldap-search": "^3.1.2",
-    "socket.io": "^4.6.1",
+    "socket.io": "^4.7.2",
     "winston": "^3.8.2",
     "winston-mongodb": "^5.1.1"
   },
