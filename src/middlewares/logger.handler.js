@@ -53,6 +53,16 @@ const addLoggerMiddleware = (app) => {
 
     // Register the morgan middleware
     app.use(morgan(logFormat))
+
+    // Add error connection handler
+    app.on('error', (err) => {
+      if (
+        err.name === 'ServerSelectionError' &&
+        err.message === 'connection timed out'
+      ) {
+        console.error('Error connecting to the database:', err.message)
+      }
+    })
   } catch (error) {
     console.error('Error connecting to the database:', error.message)
   }
