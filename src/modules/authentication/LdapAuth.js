@@ -46,12 +46,10 @@ var _usernameAttributeName
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
  */
 
-var sessionStore = new Map()
+const sessionStore = new Map()
 
 function checkLastAuthentication(req, res, next) {
   const userId = req.body.username
-  console.log('sessionStore', sessionStore)
-  console.log('userID', userId)
   const lastAuthTimestamp = sessionStore.get(userId)
   if (!lastAuthTimestamp || Date.now() - lastAuthTimestamp >= 15 * 60 * 1000) {
     next()
@@ -89,16 +87,16 @@ var init = function (
         if (!req.body.username || !req.body.password) {
           throw new Error('username and password must be both provided')
         }
-        let username = req.body.username
-        let password = req.body.password
-        let res = await userService.getByUsername(username)
+        const username = req.body.username
+        const password = req.body.password
+        const res = await userService.getByUsername(username)
         const response = res[0]
 
         // if user doesn't exists
         if (response === undefined) {
           throw new Error('username or password incorrect')
         }
-        let options
+        let options = {}
         if (_backwardCompatible) {
           _usernameAttributeName = 'uid'
           options = {
@@ -137,7 +135,7 @@ var init = function (
           }
         }
         // ldap authenticate the user
-        let user = await authenticate(options)
+        const user = await authenticate(options)
         // success
         done(null, user)
       } catch (error) {
@@ -190,7 +188,7 @@ var init = function (
  * @param {string} [loginUrl] - path to login page. Default: /login
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
  */
-var initialize = function (
+const initialize = function (
   opt,
   router,
   findFunc,
@@ -205,7 +203,7 @@ var initialize = function (
  * Customized login authentication handler to send {success: true}
  * on successful authenticate, or {success: false} on failed authenticate
  */
-var login = function (req, res, next) {
+const login = function (req, res, next) {
   passport.authenticate(
     'ldap',
     {
