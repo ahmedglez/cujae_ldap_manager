@@ -18,9 +18,7 @@ const {
 } = require('../../helpers/dnHelper')
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
-const {
-  responseSuccess,
-} = require('../../schemas/response.schema')
+const { responseSuccess } = require('../../schemas/response.schema')
 
 const userService = UserServices()
 const profileService = ProfileServices()
@@ -47,6 +45,20 @@ var _usernameAttributeName
  * @param {string} [loginUrl] - path to login page. Default: /login
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
  */
+
+var sessionStore = new Map()
+
+function checkLastAuthentication(req, res, next) {
+  const userId = req.body.username
+  console.log('sessionStore', sessionStore)
+  console.log('userID', userId)
+  const lastAuthTimestamp = sessionStore.get(userId)
+  if (!lastAuthTimestamp || Date.now() - lastAuthTimestamp >= 15 * 60 * 1000) {
+    next()
+  } else {
+    res.status(401).json({ message: 'Logout first before re-authenticating.' })
+  }
+}
 var init = function (
   opt,
   ldapurl,
@@ -165,7 +177,7 @@ var init = function (
   router.use(passport.initialize())
   router.use(passport.session())
   // login
-  router.post(_loginUrl, login)
+  router.post(_loginUrl, checkLastAuthentication, login)
 }
 
 /**
@@ -221,6 +233,8 @@ var login = function (req, res, next) {
         const groups = extractGroupsFromDn(ldapDn)
         const rootBaseDN = extractBaseFromDn(ldapDn)
         const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
+
+        sessionStore.set(user.uid, Date.now())
 
         const payload = {
           sub: user.uid,
