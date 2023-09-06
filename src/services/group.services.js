@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../../.env' })
 const config = require('@src/config/config')
-const { performLdapSearch } = require('@src/helpers/ldapUtils')
+const { performLdapSearch } = require('@src/utils/ldapUtils')
 
 const GroupServices = () => {
   const getGroup = async (group) => {

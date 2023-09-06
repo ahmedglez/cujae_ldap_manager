@@ -3,7 +3,7 @@ const config = require('@src/config/config')
 const {
   performLdapSearch,
   performLdapUpdate,
-} = require('@src/helpers/ldapUtils')
+} = require('@src/utils/ldapUtils')
 
 const UserServices = () => {
   const handleFilteredSearch = async (
