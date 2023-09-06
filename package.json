@@ -48,6 +48,7 @@
     "passport": "^0.6.0",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
+    "redis": "^4.6.8",
     "simple-ldap-search": "^3.1.2",
     "simple-statistics": "^7.8.3",
     "socket.io": "^4.6.1",
@@ -75,9 +76,9 @@
     "dev": "nodemon index.js"
   },
   "_moduleAliases": {
-    "@root"      : ".", 
-    "@deep"      : "src/some/very/deep/directory/or/file",
-    "@src"       : "src",
-    "something"  : "src/foo"
+    "@root": ".",
+    "@deep": "src/some/very/deep/directory/or/file",
+    "@src": "src",
+    "something": "src/foo"
   }
 }

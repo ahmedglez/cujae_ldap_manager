@@ -27,4 +27,8 @@ module.exports = {
     sizeLimit: parseInt(process.env.LDAP_SIZE_LIMIT),
     timeLimit: parseInt(process.env.LDAP_TIME_LIMIT),
   },
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+  },
 }
