@@ -1,5 +1,7 @@
+const ldap = require('ldapjs')
 const ldapClient = require('@src/connections/LDAP_client')
 const config = require('@src/config/config')
+var assert = require('assert')
 
 // Bind to the LDAP server using appropriate credentials
 const bindLdapClient = () => {
@@ -40,6 +42,7 @@ const transform = (entry) => {
 
 // Perform a search using the provided filter and return the results
 const performLdapSearch = async (baseDn, filter, attributes) => {
+  console.log('filter', filter)
   return new Promise((resolve, reject) => {
     try {
       bindLdapClient() // Bind before search
@@ -73,7 +76,37 @@ const performLdapSearch = async (baseDn, filter, attributes) => {
   })
 }
 
+const performLdapUpdate = async (userDN, att, value) => {
+  console.log('userDN', userDN)
+  return new Promise((resolve, reject) => {
+    try {
+      bindLdapClient() // Bind before search
+
+      const change = new ldap.Change({
+        operation: 'replace',
+        modification: {
+          type: att,
+          values: [value],
+        },
+      })
+
+      ldapClient.modify(userDN, change, (err) => {
+        if (err) {
+          console.log('error', err)
+          assert.ifError(err)
+        } else {
+          console.log('updated user')
+          resolve('updated User')
+        }
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 module.exports = {
   performLdapSearch,
   unbindLdapClient,
+  performLdapUpdate,
 }

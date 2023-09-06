@@ -127,4 +127,26 @@ router.post('/baseDN', async (req, res) => {
   }
 })
 
+router.put('/:username', async (req, res) => {
+  try {
+    const { att, value } = req.body
+    const username = req.params.username
+
+    const updatedUser = await service.updateUser(username, att, value)
+
+    // Send the search results
+    res.json({
+      success: true,
+      message: 'User updated correctly',
+      data: updatedUser,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating users',
+      error: error.message,
+    })
+  }
+})
+
 module.exports = router

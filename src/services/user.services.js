@@ -1,6 +1,9 @@
 require('dotenv').config({ path: __dirname + '/../../.env' })
 const config = require('@src/config/config')
-const { performLdapSearch } = require('@src/helpers/ldapUtils')
+const {
+  performLdapSearch,
+  performLdapUpdate,
+} = require('@src/helpers/ldapUtils')
 
 const UserServices = () => {
   const handleFilteredSearch = async (
@@ -32,14 +35,28 @@ const UserServices = () => {
   const getByUsername = async (username) => {
     const results = await performLdapSearch(
       config.ldap.base,
-      `(uid=${username})`
+      `(uid=${username})`,
+      null
     )
     return results
+  }
+
+  const updateUser = async (username, att, value) => {
+    const results = await performLdapSearch(
+      config.ldap.base,
+      `(uid=${username})`,
+      []
+    )
+    const user = results[0]
+
+    const updatedUser = await performLdapUpdate(user.dn, att, value)
+    return updatedUser
   }
 
   return {
     getByUsername,
     handleFilteredSearch,
+    updateUser,
   }
 }
 
