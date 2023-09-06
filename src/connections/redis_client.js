@@ -1,41 +1,44 @@
-const redis = require('redis')
-const config = require('@src/config/config')
+const { createClient } = require('redis')
+const { promisify } = require('util')
 
-// Create a Redis client
-const client = redis.createClient({
-  host: config.redis.host, // Docker Desktop container runs on localhost
-  port: parseInt(config.redis.port), // Default Redis port
-})
+// Function to create and configure a Redis client
+function createRedisClient() {
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
+  const client = createClient({
+    url: redisUrl,
+  })
 
-// Test the connection
-client.on('connect', () => {
-  console.log('Connected to Redis server')
-})
+  // Promisify Redis client methods for async/await support
+  const getAsync = promisify(client.get).bind(client)
+  const setAsync = promisify(client.set).bind(client)
 
-// Handle errors
-client.on('error', (err) => {
-  console.error('Redis Error:', err)
-})
+  // Connect to Redis
+  async function connect() {
+    return new Promise((resolve, reject) => {
+      client.on('error', (err) => {
+        reject(err)
+      })
 
-// Example: Set a key-value pair
-/* client.set('myKey', 'myValue', (err, reply) => {
-  if (err) {
-    console.error('Redis Set Error:', err)
-  } else {
-    console.log('Set result:', reply)
+      client.on('connect', () => {
+        resolve()
+      })
+    })
   }
-})
 
-// Example: Get a value by key
-client.get('myKey', (err, reply) => {
-  if (err) {
-    console.error('Redis Get Error:', err)
-  } else {
-    console.log('Get result:', reply)
+  // Close the Redis client to release resources
+  function disconnect() {
+    client.quit()
   }
-}) */
 
-// Close the Redis connection (when needed)
-// client.quit();
+  // Return the Redis client and utility functions
+  return {
+    client,
+    connect,
+    disconnect,
+    isConnected: client.isOpen,
+    getAsync,
+    setAsync,
+  }
+}
 
-module.exports = { client }
+module.exports = createRedisClient()

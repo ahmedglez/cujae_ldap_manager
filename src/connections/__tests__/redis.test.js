@@ -1,29 +1,36 @@
-const { Client } = require('redis-om')
-
-const url = process.env.REDIS_URL
+const redisClient = require('../redis_client')
 
 // Jest test suite
 describe('Redis Database Tests', () => {
-  it('should connect to Redis', async () => {
-    // Create a Redis client and specify the host and port
-    const client = new Client()
-
-    // Define the Redis connection URL (e.g., 'redis://localhost:6379')
-    const redisUrl = url || 'redis://localhost:6379'
-
-    console.log('Connecting to Redis using URL:', redisUrl)
-
-    // Attempt to connect to Redis using the specified URL
-    await client.open(redisUrl)
-
-    // Check if the client is open (connected)
-    const isOpen = client.isOpen()
-    console.log('Redis client is open:', isOpen)
-
-    // Close the Redis client to release resources
-    await client.close()
-
-    // Wait for the connection to be established
-    expect(isOpen).toBeTruthy()
+  beforeAll(async () => {
+    // Create and connect to the Redis client
+    await redisClient.client.connect()
+    console.log(' redisClient.ping()', redisClient.client.ping())
   })
+
+  afterAll(async () => {
+    // Disconnect the Redis client and release resources
+    redisClient.client.quit()
+  })
+
+  it('should connect to Redis', async () => {
+    // Check if the Redis client is connected
+    const isConnected = redisClient.client.isOpen
+    expect(isConnected).toBeTruthy()
+  })
+
+  it('should set and get a value from Redis', async () => {
+    // Set a key-value pair
+    await redisClient.client.hSet('key', 'field', 'perro')
+
+    // Get the value by key
+    const value = await redisClient.client.hGetAll('key')
+    console.log('value', value)
+
+    expect(value).toEqual({
+      field: 'perro',
+    })
+  })
+
+  // Add more tests as needed
 })
