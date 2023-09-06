@@ -49,13 +49,14 @@ var _usernameAttributeName
 const sessionStore = new Map()
 
 function checkLastAuthentication(req, res, next) {
-  const userId = req.body.username
+  /*  const userId = req.body.username
   const lastAuthTimestamp = sessionStore.get(userId)
   if (!lastAuthTimestamp || Date.now() - lastAuthTimestamp >= 15 * 60 * 1000) {
     next()
   } else {
     res.status(401).json({ message: 'Logout first before re-authenticating.' })
-  }
+  } */
+  next()
 }
 var init = function (
   opt,
