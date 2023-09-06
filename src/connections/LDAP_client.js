@@ -13,7 +13,11 @@ client.on('connectError', (err) => {
 })
 
 client.bind(config.ldap.admin.username, config.ldap.admin.password, (err) => {
-  assert.ifError(err)
+  if (err) {
+    assert.ifError(err)
+  } else {
+    console.log('Binded to LDAP')
+  }
 })
 
 module.exports = client
