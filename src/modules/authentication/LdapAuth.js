@@ -48,18 +48,6 @@ var _usernameAttributeName
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
  */
 
-const sessionStore = new Map()
-
-function checkLastAuthentication(req, res, next) {
-  const userId = req.body.username
-  const lastAuthTimestamp = sessionStore.get(userId)
-  if (!lastAuthTimestamp || Date.now() - lastAuthTimestamp >= 15 * 60 * 1000) {
-    next()
-  } else {
-    res.status(401).json({ message: 'Logout first before re-authenticating.' })
-  }
-  next()
-}
 var init = function (
   opt,
   ldapurl,
@@ -92,6 +80,10 @@ var init = function (
         }
         const username = req.body.username
         const password = req.body.password
+
+        if (req.session.passport !== undefined)
+          throw new Error('log out before logging back in')
+
         const res = await userService.getByUsername(username)
         const response = res[0]
 
@@ -235,8 +227,6 @@ const login = function (req, res, next) {
         const groups = extractGroupsFromDn(ldapDn)
         const rootBaseDN = extractBaseFromDn(ldapDn)
         const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
-
-        sessionStore.set(user.uid, Date.now())
 
         const payload = {
           sub: user.uid,
