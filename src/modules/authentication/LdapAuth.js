@@ -10,6 +10,8 @@ const UserServices = require('../../services/user.services')
 const GroupServices = require('../../services/group.services')
 const User = require('../../schemas/user.schema').User
 const ProfileServices = require('../../services/profile.services')
+const { addToBlackList } = require('@src/services/auth.services')
+const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
 
 /* helpers */
 const {
@@ -49,13 +51,13 @@ var _usernameAttributeName
 const sessionStore = new Map()
 
 function checkLastAuthentication(req, res, next) {
-  /*  const userId = req.body.username
+  const userId = req.body.username
   const lastAuthTimestamp = sessionStore.get(userId)
   if (!lastAuthTimestamp || Date.now() - lastAuthTimestamp >= 15 * 60 * 1000) {
     next()
   } else {
     res.status(401).json({ message: 'Logout first before re-authenticating.' })
-  } */
+  }
   next()
 }
 var init = function (
@@ -176,7 +178,8 @@ var init = function (
   router.use(passport.initialize())
   router.use(passport.session())
   // login
-  router.post(_loginUrl, checkLastAuthentication, login)
+  router.post(_loginUrl, login)
+  router.post(_logoutUrl, checkAuth, logout)
 }
 
 /**
@@ -272,6 +275,27 @@ const login = function (req, res, next) {
       }
     }
   )(req, res, next)
+}
+
+const logout = function (req, res, next) {
+  try {
+    const token = req.headers.authorization.split(' ')[1]
+    const isLogout = addToBlackList(token)
+    if (isLogout) {
+      res.status(200).json({
+        success: true,
+        message: 'user logged out correctly',
+      })
+    } else {
+      res.status(500).json({
+        success: false,
+        error: 'Invalid token',
+        message: `this token hasn't been used yet`,
+      })
+    }
+  } catch (error) {
+    res.status(401).json({ success: false, message: 'Invalid token' })
+  }
 }
 
 module.exports.init = init
