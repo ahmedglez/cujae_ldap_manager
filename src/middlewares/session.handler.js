@@ -24,7 +24,7 @@ try {
     unset: 'destroy',
     cookie: {
       httpOnly: false,
-      maxAge: 1000 * 3600 * 24,
+      maxAge: 900000, // 15 minutes in milliseconds
       secure: false, // this need to be false if https is not used. Otherwise, cookie will not be sent.
     },
   })
