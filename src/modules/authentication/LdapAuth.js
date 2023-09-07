@@ -7,11 +7,10 @@ const CustomStrategy = require('passport-custom').Strategy
 const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
 const UserServices = require('../../services/user.services')
-const GroupServices = require('../../services/group.services')
 const User = require('../../schemas/user.schema').User
 const ProfileServices = require('../../services/profile.services')
-const { addToBlackList } = require('@src/services/auth.services')
 const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
+const { logout } = require('./functions/index.js')
 
 /* helpers */
 const {
@@ -246,7 +245,7 @@ const login = function (req, res, next) {
         }
 
         const userObj = { ...user }
-        const token = signToken(payload, { expiresIn: '45 minutes' })
+        const token = signToken(payload, { expiresIn: '15 minutes' })
         const refreshToken = signToken(payload, { expiresIn: '1 day' })
 
         req.login(user, (loginErr) => {
@@ -265,27 +264,6 @@ const login = function (req, res, next) {
       }
     }
   )(req, res, next)
-}
-
-const logout = async function (req, res, next) {
-  try {
-    const token = req.headers.authorization.split(' ')[1]
-    const isLogout = await addToBlackList(token)
-    console.log('isLogout', isLogout)
-    if (isLogout) {
-      res.status(200).json({
-        success: true,
-        message: 'user logged out correctly',
-      })
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Invalid token',
-      })
-    }
-  } catch (err) {
-    res.status(401).json({ success: false, message: 'Invalid token' })
-  }
 }
 
 module.exports.init = init
