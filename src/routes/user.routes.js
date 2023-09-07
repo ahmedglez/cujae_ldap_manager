@@ -2,7 +2,11 @@ const express = require('express')
 const router = express.Router()
 const UserServices = require('@src/services/user.services.js')
 const validateResponse = require('@src/middlewares/validateResponse')
-const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
+const {
+  checkAuth,
+  checkRoles,
+  checkBlacklist,
+} = require('@src/middlewares/auth.handler')
 const service = UserServices()
 const config = require('@src/config/config')
 const {
@@ -11,7 +15,7 @@ const {
 const validateQuery = require('@src/middlewares/queryValidator')
 
 // Middleware for routes requiring checkAuth and checkRoles('admin')
-router.use(checkAuth, checkRoles('admin'))
+router.use(checkAuth, checkBlacklist, checkRoles('admin'))
 
 // Middleware to handle common success and error responses
 router.use(validateResponse)

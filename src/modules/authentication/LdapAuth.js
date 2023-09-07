@@ -277,10 +277,11 @@ const login = function (req, res, next) {
   )(req, res, next)
 }
 
-const logout = function (req, res, next) {
+const logout = async function (req, res, next) {
   try {
     const token = req.headers.authorization.split(' ')[1]
-    const isLogout = addToBlackList(token)
+    const isLogout = await addToBlackList(token)
+    console.log('isLogout', isLogout)
     if (isLogout) {
       res.status(200).json({
         success: true,
@@ -290,10 +291,9 @@ const logout = function (req, res, next) {
       res.status(500).json({
         success: false,
         error: 'Invalid token',
-        message: `this token hasn't been used yet`,
       })
     }
-  } catch (error) {
+  } catch (err) {
     res.status(401).json({ success: false, message: 'Invalid token' })
   }
 }
