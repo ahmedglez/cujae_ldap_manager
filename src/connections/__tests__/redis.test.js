@@ -5,7 +5,6 @@ describe('Redis Database Tests', () => {
   beforeAll(async () => {
     // Create and connect to the Redis client
     await redisClient.client.connect()
-    console.log(' redisClient.ping()', redisClient.client.ping())
   })
 
   afterAll(async () => {
@@ -25,7 +24,6 @@ describe('Redis Database Tests', () => {
 
     // Get the value by key
     const value = await redisClient.client.hGetAll('key')
-    console.log('value', value)
 
     expect(value).toEqual({
       field: 'perro',
