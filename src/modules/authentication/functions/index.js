@@ -1,4 +1,7 @@
-const { addToBlackList } = require('@src/services/auth.services')
+const {
+  addToBlackList,
+  deleteRefreshToken,
+} = require('@src/services/auth.services')
 
 const clearSession = (req) => {
   return new Promise((resolve, reject) => {
@@ -14,9 +17,10 @@ const clearSession = (req) => {
 
 const logout = async function (req, res, next) {
   try {
-    await clearSession(req)
     const token = req.headers.authorization.split(' ')[1]
     const isLogout = await addToBlackList(token)
+    await clearSession(req)
+    await deleteRefreshToken(req.user.uid)
     if (isLogout) {
       res.status(200).json({
         success: true,

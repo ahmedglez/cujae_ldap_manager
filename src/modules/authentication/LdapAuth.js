@@ -9,8 +9,12 @@ const { authenticate } = require('ldap-authentication')
 const UserServices = require('../../services/user.services')
 const User = require('../../schemas/user.schema').User
 const ProfileServices = require('../../services/profile.services')
-const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
+const { checkAuth } = require('@src/middlewares/auth.handler')
 const { logout } = require('./functions/index.js')
+const {
+  storeRefreshToken,
+  getRefreshToken,
+} = require('@src/services/auth.services')
 
 /* helpers */
 const {
@@ -247,6 +251,8 @@ const login = function (req, res, next) {
         const userObj = { ...user }
         const token = signToken(payload, { expiresIn: '15 minutes' })
         const refreshToken = signToken(payload, { expiresIn: '1 day' })
+
+        await storeRefreshToken(user.uid, refreshToken)
 
         req.login(user, (loginErr) => {
           if (loginErr) {
