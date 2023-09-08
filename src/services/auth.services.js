@@ -46,15 +46,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
   try {
     await client.connect()
     if (client.isOpen) {
-      client.set(`refreshToken:${userId}`, refreshToken, (err) => {
-        if (err) {
-          disconnect()
-          console.error('Error storing refresh token:', err)
-        } else {
-          disconnect()
-          console.log('Refresh token stored successfully.')
-        }
-      })
+      await client.set(`refreshToken:${userId}`, refreshToken)
       disconnect()
     } else {
       disconnect()
@@ -88,18 +80,8 @@ const deleteRefreshToken = async (userId) => {
 const getRefreshToken = async (userId, callback) => {
   try {
     await client.connect()
-
-    client.get(`refreshToken:${userId}`, (err, refreshToken) => {
-      if (err) {
-        disconnect()
-        console.error('Error retrieving refresh token:', err)
-        callback(err)
-      } else {
-        disconnect()
-        console.log('Refresh token retrieved successfully.')
-        callback(null, refreshToken)
-      }
-    })
+    const refreshToken = await client.get(`refreshToken:${userId}`)
+    return refreshToken
   } catch (error) {
     disconnect()
     console.error('Error retrieving refresh token:', error)
