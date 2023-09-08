@@ -81,6 +81,7 @@ const getRefreshToken = async (userId, callback) => {
   try {
     await client.connect()
     const refreshToken = await client.get(`refreshToken:${userId}`)
+    disconnect()
     return refreshToken
   } catch (error) {
     disconnect()

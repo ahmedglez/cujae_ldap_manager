@@ -10,7 +10,7 @@ const UserServices = require('../../services/user.services')
 const User = require('../../schemas/user.schema').User
 const ProfileServices = require('../../services/profile.services')
 const { checkAuth } = require('@src/middlewares/auth.handler')
-const { logout } = require('./functions/index.js')
+const { logout, refresh } = require('./functions/index.js')
 const {
   storeRefreshToken,
   getRefreshToken,
@@ -174,7 +174,8 @@ var init = function (
   router.use(passport.session())
   // login
   router.post(_loginUrl, login)
-  router.post(_logoutUrl, checkAuth, logout)
+  router.post(_logoutUrl, logout)
+  router.post('/refresh', refresh)
 }
 
 /**
