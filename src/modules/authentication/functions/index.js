@@ -15,26 +15,14 @@ const clearSession = (req) => {
   })
 }
 
-const logout = async function (req, res, next) {
-  try {
-    const token = req.headers.authorization.split(' ')[1]
-    const isLogout = await addToBlackList(token)
-    await clearSession(req)
-    await deleteRefreshToken(req.user.uid)
-    if (isLogout) {
-      res.status(200).json({
-        success: true,
-        message: 'user logged out correctly',
-      })
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Invalid token',
-      })
-    }
-  } catch (err) {
-    res.status(401).json({ success: false, message: 'Invalid token' })
+const logout = (req, res) => {
+  const accessToken = req.body.accessToken // You can adjust this based on how you send the token in the request
+  clearSession(req)
+  if (!accessToken) {
+    return res.status(400).json({ message: 'Access token is required.' })
   }
+  addToBlackList(req.user.uid, accessToken)
+  return res.status(200).json({ message: 'User logged out successfully.' })
 }
 
 module.exports = { logout }

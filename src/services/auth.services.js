@@ -5,45 +5,40 @@ const {
   disconnect,
 } = require('../connections/redis_client')
 
-const addToBlackList = async (token, expirationInSeconds = 3600) => {
-  try {
-    await client.connect()
-    if (client.isOpen) {
-      const exists = await client.exists(token)
-      if (exists > 0) {
-        disconnect()
-        return false
-      }
-      client.hSet(token, expirationInSeconds, '1')
-      disconnect()
-      return true
-    } else {
-      disconnect()
-      throw new Error('Error connecting to redis DB')
-    }
-  } catch (err) {
-    disconnect()
-    console.log('error', err)
-    throw new Error('Error connecting to redis DB')
-  }
-}
-
 const isBlackListed = async (token) => {
   try {
     await client.connect()
+
     if (client.isOpen) {
-      const exists = await client.exists(token)
+      const userId = await client.get(`blackList:${token}`)
       disconnect()
-      if (exists === 0) return false
-      else return true
+
+      // If userId is not null, it means the token exists in the blacklist
+      return userId !== null
     } else {
       disconnect()
       throw new Error('Error connecting to redis DB')
     }
   } catch (error) {
     disconnect()
-    console.log('error', err)
-    throw new Error('Error connecting to redis DB')
+    console.error('Error checking token in blacklist:', error)
+    throw error
+  }
+}
+
+const addToBlackList = async (userId, token) => {
+  try {
+    await client.connect()
+    if (client.isOpen) {
+      await client.set(`blackList:${token}`, userId)
+      disconnect()
+    } else {
+      disconnect()
+      throw new Error('Error connecting to redis DB')
+    }
+  } catch (error) {
+    disconnect()
+    console.error('Error storing refresh token:', error)
   }
 }
 
@@ -114,8 +109,8 @@ const getRefreshToken = async (userId, callback) => {
 
 module.exports = {
   addToBlackList,
-  isBlackListed,
   getRefreshToken,
   storeRefreshToken,
   deleteRefreshToken,
+  isBlackListed,
 }
