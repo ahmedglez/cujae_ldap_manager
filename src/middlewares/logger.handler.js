@@ -31,7 +31,7 @@ const logFormat = (tokens, req, res) => {
     status: tokens.status(req, res),
     content_length: tokens.res(req, res, 'content-length'),
     response_time: tokens['response-time'](req, res),
-    user: req.user === undefined ? 'anonymous' : req.user.uid,
+    user: req.user === undefined ? 'anonymous' : req?.user?.uid,
   }
 
   logger.info({ ...log })
