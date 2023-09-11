@@ -15,7 +15,7 @@ const {
 const validateQuery = require('@src/middlewares/queryValidator')
 
 // Middleware for routes requiring checkAuth and checkRoles('admin')
-router.use(checkAuth, checkBlacklist, checkRoles('admin'))
+router.use(checkAuth, checkRoles('admin'))
 
 // Middleware to handle common success and error responses
 router.use(validateResponse)
@@ -23,7 +23,7 @@ router.use(validateResponse)
 // Route handler for getting all users
 router.get('/', async (req, res) => {
   try {
-    const baseDN = `${config.ldap.base}`
+    const { localBase } = req.user
     const isValid = validateQuery(req.query)
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 
     // Call the performLdapSearch function to retrieve users matching the group filters
     const searchResults = await service.handleFilteredSearch(
-      baseDN,
+      localBase,
       ldapFilter,
       attributes,
       req.query.page,
