@@ -4,6 +4,8 @@ const {
   isConnected,
   disconnect,
 } = require('../connections/redis_client')
+const config = require('@src/config/config')
+const { performLdapSearch } = require('@src/utils/ldapUtils')
 
 const isBlackListed = async (token) => {
   try {
@@ -90,10 +92,38 @@ const getRefreshToken = async (userId, callback) => {
   }
 }
 
+const isSuperAdmin = async (uid) => {
+  const ldapFilter = `(objectClass=posixGroup)`
+  const customDN = `cn=admin,${config.ldap.base}`
+  try {
+    const response = await performLdapSearch(customDN, ldapFilter)
+    const adminGroup = response[0]
+    return adminGroup.memberUid.includes(uid)
+  } catch (error) {
+    console.error('Error in isSuperAdmin:', error)
+    throw error
+  }
+}
+
+const isAdmin = async (uid, baseDN = config.ldap.base) => {
+  const ldapFilter = `(objectClass=posixGroup)`
+  const customDN = `cn=admin,${baseDN.replace('usuarios', 'grupos')}`
+  try {
+    const response = await performLdapSearch(customDN, ldapFilter)
+    const adminGroup = response[0]
+    return adminGroup.memberUid.includes(uid)
+  } catch (error) {
+    console.error('Error in isSuperAdmin:', error)
+    throw error
+  }
+}
+
 module.exports = {
   addToBlackList,
   getRefreshToken,
   storeRefreshToken,
   deleteRefreshToken,
   isBlackListed,
+  isSuperAdmin,
+  isAdmin,
 }

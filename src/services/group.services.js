@@ -35,7 +35,6 @@ const GroupServices = () => {
   const getGroupByCN = async (baseDN = config.ldap.base, cn = 'admin') => {
     const ldapFilter = `(objectClass=*)`
     const customDN = `cn=${cn},${baseDN}`
-    console.log('ldapFilter', ldapFilter)
     try {
       const results = await performLdapSearch(customDN, ldapFilter)
       return results

@@ -6,9 +6,10 @@ const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
 const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
-const UserServices = require('../../services/user.services')
+const userService = require('../../services/user.services')()
+const { isSuperAdmin, isAdmin } = require('@src/services/auth.services')
 const User = require('../../schemas/user.schema').User
-const ProfileServices = require('../../services/profile.services')
+const profileService = require('../../services/profile.services')()
 const { checkAuth } = require('@src/middlewares/auth.handler')
 const { logout, refresh } = require('./functions/index.js')
 const {
@@ -24,9 +25,6 @@ const {
 
 const { signToken } = require('../../utils/authentication/tokens/token_sign')
 const { responseSuccess } = require('../../schemas/response.schema')
-
-const userService = UserServices()
-const profileService = ProfileServices()
 
 var _backwardCompatible = false
 var _dn
@@ -221,7 +219,6 @@ const login = function (req, res, next) {
           .status(401)
           .json({ success: false, message: 'User cannot be found' })
       } else {
-        const isAdmin = user.right === 'Todos'
         const last_time_logged = await profileService.getLastLoginByUsername(
           user.uid
         )
@@ -231,6 +228,15 @@ const login = function (req, res, next) {
         const groups = extractGroupsFromDn(ldapDn)
         const rootBaseDN = extractBaseFromDn(ldapDn)
         const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
+
+        let roles = ['user']
+        const isSpAdmin = await isSuperAdmin(user.uid)
+        if (isSpAdmin) {
+          roles = [...roles, 'admin', 'superadmin']
+        } else {
+          const isAdm = await isAdmin(user.uid, localBaseDN)
+          isAdm ? (roles = [...roles, 'admin']) : [...roles]
+        }
 
         const payload = {
           sub: user.uid,
@@ -244,7 +250,7 @@ const login = function (req, res, next) {
           fullname: user.cn,
           email: user.mail,
           ci: user.CI,
-          roles: isAdmin ? ['admin', 'user'] : ['user'],
+          roles: roles,
           last_time_logged,
           loginInfo,
         }
