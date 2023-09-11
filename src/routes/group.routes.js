@@ -24,4 +24,27 @@ router.get('/:group', checkAuth, validateResponse, async (req, res) => {
   }
 })
 
+router.get('/byType/:type', checkAuth, validateResponse, async (req, res) => {
+  try {
+    const type = req.params.type
+    const baseDN = req.body.dn
+    if (!type) {
+      throw new Error(`It seems that the type is missing.`)
+    }
+
+    const response = await service.getGroupByCN(baseDN, type)
+
+    res.json({
+      success: true,
+      data: response,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching group',
+      error: `It seems that the group does not exist.`,
+    })
+  }
+})
+
 module.exports = router
