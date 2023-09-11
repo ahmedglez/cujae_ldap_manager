@@ -82,7 +82,9 @@ var init = function (
         const username = req.body.username
         const password = req.body.password
 
-        if (req.session.passport !== undefined)
+        const localSession = { user: username }
+
+        if (localSession.user === req.session?.passport?.user)
           throw new Error('log out before logging back in')
 
         const res = await userService.getByUsername(username)
