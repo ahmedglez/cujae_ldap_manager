@@ -37,8 +37,8 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
       return res.status(404).json({ message: 'User not found.' })
     }
 
-    await generateRecoveryCode(user, new Date(900000)) //15 min
-    await sendRecoveryPasswordEmailTo(user)
+    const recoveryCode = await generateRecoveryCode(user, new Date(900000)) //15 min
+    await sendRecoveryPasswordEmailTo(user, recoveryCode)
 
     res.json({ message: 'Password reset email sent successfully.' })
   } catch (error) {

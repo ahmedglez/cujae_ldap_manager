@@ -35,12 +35,13 @@ const generateRecoveryCode = async (user, expiration) => {
       userInDB.recoveryCode.expiresAt = expiration
       await userInDB.save()
     }
+    return code
   } catch (error) {
     throw error
   }
 }
 
-const sendRecoveryPasswordEmailTo = async (user) => {
+const sendRecoveryPasswordEmailTo = async (user, code) => {
   try {
     const name = user.name
     const email = user.maildrop
@@ -68,6 +69,7 @@ const sendRecoveryPasswordEmailTo = async (user) => {
         const template = handlebars.compile(html)
         const replacements = {
           name,
+          code,
         }
         const htmlToSend = template(replacements)
 
