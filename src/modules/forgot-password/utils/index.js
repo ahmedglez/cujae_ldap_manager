@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 function generateRandomSixDigitNumber() {
   const min = 100000 // Minimum six-digit number (100000)
   const max = 999999 // Maximum six-digit number (999999)
