@@ -87,8 +87,7 @@ var init = function (
         if (localSession.user === req.session?.passport?.user)
           throw new Error('log out before logging back in')
 
-        const res = await userService.getByUsername(username)
-        const response = res[0]
+        const response = await userService.getByUsername(username)
 
         // if user doesn't exists
         if (response === undefined) {
@@ -230,6 +229,8 @@ const login = function (req, res, next) {
         const groups = extractGroupsFromDn(ldapDn)
         const rootBaseDN = extractBaseFromDn(ldapDn)
         const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
+
+        console.log('user', user)
 
         let roles = ['user']
         const isSpAdmin = await isSuperAdmin(user.uid)
