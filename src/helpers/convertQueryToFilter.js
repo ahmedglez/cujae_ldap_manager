@@ -13,6 +13,7 @@ const attributeFilters = {
   userStatus: (value) => `userStatus=${value}`,
   sedeMunicipio: (value) => `sedeMunicipio=${value}`,
   userInformation: (value) => `userInformation=${value}`,
+  career: (value) => `career=${value}`,
 }
 
 const userTypeFilters = {
