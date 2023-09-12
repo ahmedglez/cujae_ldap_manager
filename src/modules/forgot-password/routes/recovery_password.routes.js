@@ -5,11 +5,14 @@ const userService = require('@src/services/user.services')()
 const {
   generateRecoveryCode,
   sendRecoveryPasswordEmailTo,
+  checkRecoveryCode,
 } = require('../services/restore-password.service')
 const { validationResult, body } = require('express-validator')
 const { passwordValidationMiddleware } = require('../utils/passwordUtils')
 const { signToken } = require('@src/utils/authentication/tokens/token_sign')
+const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const { checkAuth, checkBlacklist } = require('@src/middlewares/auth.handler')
+const boom = require('@hapi/boom')
 
 // Validation rules for the email or username
 const validateEmailOrUsername = [
@@ -46,7 +49,10 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
 
     const token = signToken(payload, { expiresIn: '15 minutes' })
 
-    const recoveryCode = await generateRecoveryCode(user, new Date(900000)) //15 min
+    const currentTime = new Date()
+    const expiration = new Date(currentTime.getTime() + 15 * 60 * 1000) // 15 minutes in milliseconds
+
+    const recoveryCode = await generateRecoveryCode(user, expiration)
     await sendRecoveryPasswordEmailTo(user, recoveryCode)
 
     res.json({
@@ -62,14 +68,28 @@ router.post(
   '/reset-password',
   checkAuth,
   passwordValidationMiddleware,
-  (req, res) => {
-    // Retrieve the reset token and new password from the request body
-    const { recoveryCode, newPassword } = req.body
-
+  async (req, res) => {
     try {
+      const { recoveryCode, newPassword } = req.body
+      const payload = verifyToken(req.headers.authorization.split(' ')[1])
+      console.log('payload', payload)
+
+      if (!payload) {
+        const error = boom.unauthorized('Token is not valid')
+        throw error
+      }
+
+      const checkedCode = await checkRecoveryCode(
+        payload.username,
+        recoveryCode
+      )
+      if (!checkedCode.isValid) {
+        const error = boom.unauthorized(checkedCode.isValid.message)
+        throw error
+      }
     } catch (error) {
       console.error('Error resetting password:', error)
-      res.status(400).json({ message: 'Invalid or expired token.' })
+      res.status(400).json({ message: 'Invalid or expired recovery code.' })
     }
   }
 )

@@ -6,7 +6,10 @@ const fs = require('fs')
 const userServices = require('@src/services/user.services')()
 const path = require('path')
 const UserAndRecoveryCode = require('../schemas/user&recoveryCode.schema')
-const { generateRandomSixDigitNumber, readHTMLFile } = require('../utils/emailUtils')
+const {
+  generateRandomSixDigitNumber,
+  readHTMLFile,
+} = require('../utils/emailUtils')
 
 const generateRecoveryCode = async (user, expiration) => {
   try {
@@ -95,4 +98,43 @@ const sendRecoveryPasswordEmailTo = async (user, code) => {
   }
 }
 
-module.exports = { generateRecoveryCode, sendRecoveryPasswordEmailTo }
+async function checkRecoveryCode(username, recoveryCode) {
+  try {
+    // Find a user by username
+    const user = await UserAndRecoveryCode.findOne({ username })
+
+    // Check if the user exists and has a recovery code set
+    if (!user || !user.recoveryCode || !user.recoveryCode.code) {
+      return {
+        isValid: false,
+        message: 'User not found or no recovery code set.',
+      }
+    }
+
+    // Check if the recovery code matches
+    if (user.recoveryCode.code !== recoveryCode) {
+      return { isValid: false, message: 'Invalid recovery code.' }
+    }
+
+    // Check if the recovery code has expired
+    const currentTime = new Date()
+    if (
+      user.recoveryCode.expiresAt &&
+      currentTime > user.recoveryCode.expiresAt
+    ) {
+      return { isValid: false, message: 'Recovery code has expired.' }
+    }
+
+    // Recovery code is valid
+    return { isValid: true, message: 'Recovery code is valid.' }
+  } catch (error) {
+    console.error('Error checking recovery code:', error)
+    throw error
+  }
+}
+
+module.exports = {
+  generateRecoveryCode,
+  sendRecoveryPasswordEmailTo,
+  checkRecoveryCode,
+}
