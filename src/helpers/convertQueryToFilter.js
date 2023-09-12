@@ -18,6 +18,7 @@ const attributeFilters = {
   studentYear: (value) => `studentYear=${value}`,
   country: (value) => `country=${value}`,
   UJC: (value) => `UJC=${value}`,
+  skinColor: (value) => `skinColor=${value}`,
 }
 
 const userTypeFilters = {
