@@ -21,6 +21,8 @@ const attributeFilters = {
   skinColor: (value) => `skinColor=${value}`,
   sn: (value) => `sn=${value}`,
   displayName: (value) => `displayName=${value}`,
+  mail: (value) => `mail=${value}`,
+  maildrop: (value) => `maildrop=${value}`,
 }
 
 const userTypeFilters = {
