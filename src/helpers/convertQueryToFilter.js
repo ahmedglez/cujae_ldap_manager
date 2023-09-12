@@ -14,6 +14,7 @@ const attributeFilters = {
   sedeMunicipio: (value) => `sedeMunicipio=${value}`,
   userInformation: (value) => `userInformation=${value}`,
   career: (value) => `career=${value}`,
+  studentClassGroup: (value) => `studentClassGroup=${value}`,
 }
 
 const userTypeFilters = {
