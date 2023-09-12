@@ -8,7 +8,11 @@ const {
   checkRecoveryCode,
 } = require('../services/restore-password.service')
 const { validationResult, body } = require('express-validator')
-const { passwordValidationMiddleware } = require('../utils/passwordUtils')
+const {
+  passwordValidationMiddleware,
+  hashPassword,
+  verifyPassword,
+} = require('../utils/passwordUtils')
 const { signToken } = require('@src/utils/authentication/tokens/token_sign')
 const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const { checkAuth, checkBlacklist } = require('@src/middlewares/auth.handler')
@@ -72,7 +76,6 @@ router.post(
     try {
       const { recoveryCode, newPassword } = req.body
       const payload = verifyToken(req.headers.authorization.split(' ')[1])
-      console.log('payload', payload)
 
       if (!payload) {
         const error = boom.unauthorized('Token is not valid')
@@ -86,6 +89,16 @@ router.post(
       if (!checkedCode.isValid) {
         const error = boom.unauthorized(checkedCode.isValid.message)
         throw error
+      }
+
+      const encriptedPassword = hashPassword(newPassword)
+      const updatedUser = await userService.updateUser(
+        payload.username,
+        'userPassword',
+        encriptedPassword
+      )
+      if (!!updatedUser) {
+        res.status(200).json({ success: true, message: 'updated user' })
       }
     } catch (error) {
       console.error('Error resetting password:', error)

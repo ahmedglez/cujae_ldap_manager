@@ -1,4 +1,6 @@
 const passwordSchema = require('../schemas/passwordValidation.schema')
+const assert = require('assert')
+const ssha = require('ssha')
 
 const passwordValidationMiddleware = (req, res, next) => {
   // Retrieve the new password from the request body
@@ -60,4 +62,13 @@ const passwordValidationMiddleware = (req, res, next) => {
   next()
 }
 
-module.exports = { passwordValidationMiddleware }
+const hashPassword = (password) => ssha.create(password)
+
+const verifyPassword = (password, encriptedPassword) =>
+  ssha.verify(password, encriptedPassword)
+
+module.exports = {
+  passwordValidationMiddleware,
+  hashPassword,
+  verifyPassword,
+}
