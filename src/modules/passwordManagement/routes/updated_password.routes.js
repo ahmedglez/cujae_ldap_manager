@@ -60,7 +60,7 @@ router.post(
       )
 
       if (!!updatedUser) {
-        await sendSuccessPasswordEmailTo(payload.name, payload.email)
+        await sendSuccessPasswordEmailTo(user.name, user.maildrop)
         res.status(200).json({ success: true, message: 'Updated user' })
       }
     } catch (error) {
