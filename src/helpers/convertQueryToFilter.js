@@ -19,6 +19,8 @@ const attributeFilters = {
   country: (value) => `country=${value}`,
   UJC: (value) => `UJC=${value}`,
   skinColor: (value) => `skinColor=${value}`,
+  sn: (value) => `sn=${value}`,
+  displayName: (value) => `displayName=${value}`,
 }
 
 const userTypeFilters = {
