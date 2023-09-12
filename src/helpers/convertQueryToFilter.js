@@ -16,6 +16,7 @@ const attributeFilters = {
   career: (value) => `career=${value}`,
   studentClassGroup: (value) => `studentClassGroup=${value}`,
   studentYear: (value) => `studentYear=${value}`,
+  country: (value) => `country=${value}`,
 }
 
 const userTypeFilters = {
