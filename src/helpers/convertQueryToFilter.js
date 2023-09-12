@@ -23,6 +23,8 @@ const attributeFilters = {
   displayName: (value) => `displayName=${value}`,
   mail: (value) => `mail=${value}`,
   maildrop: (value) => `maildrop=${value}`,
+  objectName: (value) => `objectName=${value}`,
+  dn: (value) => `dn=${value}`,
 }
 
 const userTypeFilters = {
