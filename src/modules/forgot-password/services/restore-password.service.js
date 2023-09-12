@@ -133,8 +133,59 @@ async function checkRecoveryCode(username, recoveryCode) {
   }
 }
 
+const sendSuccessPasswordEmailTo = async (username, email) => {
+  try {
+    const transporter = nodemailer.createTransport(
+      smtpTransport({
+        service: process.env.EMAIL_SERVICE,
+        host: process.env.EMAIL_HOST,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      })
+    )
+
+    readHTMLFile(
+      path.join(__dirname, '../templates/successful-password-change.html'),
+      function (err, html) {
+        if (err) {
+          console.log('error reading file', err)
+          return
+        }
+
+        const template = handlebars.compile(html)
+        const replacements = {
+          username,
+        }
+        const htmlToSend = template(replacements)
+
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Reestablecimiento de Contrasena',
+          html: htmlToSend,
+        }
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error)
+          } else {
+            console.log('Email sent: ' + info.response)
+          }
+        })
+      }
+    )
+  } catch (error) {
+    console.error(error)
+    throw new Error('Error on sending email')
+  }
+}
+
 module.exports = {
   generateRecoveryCode,
   sendRecoveryPasswordEmailTo,
   checkRecoveryCode,
+  sendSuccessPasswordEmailTo,
 }

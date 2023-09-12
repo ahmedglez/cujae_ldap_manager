@@ -6,6 +6,7 @@ const {
   generateRecoveryCode,
   sendRecoveryPasswordEmailTo,
   checkRecoveryCode,
+  sendSuccessPasswordEmailTo,
 } = require('../services/restore-password.service')
 const { validationResult, body } = require('express-validator')
 const {
@@ -48,6 +49,7 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
 
     const payload = {
       username: user.uid,
+      name: user.name,
       email: user.maildrop,
     }
 
@@ -98,6 +100,7 @@ router.post(
         encriptedPassword
       )
       if (!!updatedUser) {
+        await sendSuccessPasswordEmailTo(payload.name, payload.email)
         res.status(200).json({ success: true, message: 'updated user' })
       }
     } catch (error) {
