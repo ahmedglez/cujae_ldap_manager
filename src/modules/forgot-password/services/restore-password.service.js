@@ -6,7 +6,7 @@ const fs = require('fs')
 const userServices = require('@src/services/user.services')()
 const path = require('path')
 const UserAndRecoveryCode = require('../schemas/user&recoveryCode.schema')
-const { generateRandomSixDigitNumber, readHTMLFile } = require('../utils/index')
+const { generateRandomSixDigitNumber, readHTMLFile } = require('../utils/emailUtils')
 
 const generateRecoveryCode = async (user, expiration) => {
   try {

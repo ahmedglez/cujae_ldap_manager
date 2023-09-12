@@ -6,8 +6,8 @@ const {
   generateRecoveryCode,
   sendRecoveryPasswordEmailTo,
 } = require('../services/restore-password.service')
-const { validationResult } = require('express-validator')
-const { body } = require('express-validator')
+const { validationResult, body } = require('express-validator')
+const { passwordValidationMiddleware } = require('../utils/passwordUtils')
 
 // Validation rules for the email or username
 const validateEmailOrUsername = [
@@ -46,39 +46,12 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' })
   }
 })
-router.post('/reset-password', (req, res) => {
+router.post('/reset-password', passwordValidationMiddleware, (req, res) => {
   // Retrieve the reset token and new password from the request body
-  const { token, newPassword } = req.body
+  const { recoveryCode, newPassword } = req.body
 
   try {
-    // Verify the reset token
-    const decodedToken = jwt.verify(token, secretKey)
-
-    // Check if the token is still valid
-    redisClient.get(token, (error, storedEmailOrUsername) => {
-      if (error) {
-        throw new Error('Error retrieving token from Redis.')
-      }
-
-      if (storedEmailOrUsername === decodedToken.emailOrUsername) {
-        // Token is valid, update the user's password in your database
-        // Replace this with your password update logic
-        // For example, you might hash the new password and update it in the database
-        // const hashedPassword = hashPassword(newPassword);
-        // updateUserPassword(decodedToken.emailOrUsername, hashedPassword);
-
-        // Respond with a success message
-        res.json({ message: 'Password reset successful.' })
-
-        // Delete the token from Redis (optional)
-        redisClient.del(token)
-      } else {
-        // Token does not match the stored value
-        throw new Error('Invalid or expired token.')
-      }
-    })
   } catch (error) {
-    // Handle token verification errors
     console.error('Error resetting password:', error)
     res.status(400).json({ message: 'Invalid or expired token.' })
   }
