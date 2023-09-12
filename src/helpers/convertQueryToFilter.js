@@ -9,6 +9,7 @@ const attributeFilters = {
   lastName: (value) => `lastName=${value}`,
   sex: (value) => `sex=${value}`,
   area: (value) => `area=${value}`,
+  userCondition: (value) => `userCondition=${value}`,
 }
 
 const userTypeFilters = {
