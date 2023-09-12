@@ -6,6 +6,7 @@ const attributeFilters = {
   username: (value) => `uid=${value}`,
   ci: (value) => `ci=${value}`,
   email: (value) => `maildrop=${value}`,
+  lastName: (value) => `lastName=${value}`,
 }
 
 const userTypeFilters = {
