@@ -11,6 +11,7 @@ const attributeFilters = {
   area: (value) => `area=${value}`,
   userCondition: (value) => `userCondition=${value}`,
   userStatus: (value) => `userStatus=${value}`,
+  sedeMunicipio: (value) => `sedeMunicipio=${value}`,
 }
 
 const userTypeFilters = {
