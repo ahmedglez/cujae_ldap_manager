@@ -17,6 +17,7 @@ const attributeFilters = {
   studentClassGroup: (value) => `studentClassGroup=${value}`,
   studentYear: (value) => `studentYear=${value}`,
   country: (value) => `country=${value}`,
+  UJC: (value) => `UJC=${value}`,
 }
 
 const userTypeFilters = {
