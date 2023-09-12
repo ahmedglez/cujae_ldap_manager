@@ -44,10 +44,22 @@ const GroupServices = () => {
     }
   }
 
+  const getGroupsInBaseDN = async (baseDN = config.ldap.base) => {
+    const ldapFilter = `(objectClass=organizationalUnit)`
+    try {
+      const results = await performLdapSearch(baseDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getGroupByCN:', error)
+      throw error
+    }
+  }
+
   return {
     getAdminGroup,
     getGroup,
     getGroupByCN,
+    getGroupsInBaseDN,
   }
 }
 
