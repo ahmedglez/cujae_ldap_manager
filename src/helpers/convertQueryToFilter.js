@@ -25,6 +25,15 @@ const attributeFilters = {
   maildrop: (value) => `maildrop=${value}`,
   objectName: (value) => `objectName=${value}`,
   dn: (value) => `dn=${value}`,
+  workerID: (value) => `workerID=${value}`,
+  workArea: (value) => `workArea=${value}`,
+  nameInstitution: (value) => `nameInstitution=${value}`,
+  workercontract: (value) => `workercontract=${value}`,
+  userYears: (value) => `userYears=${value}`,
+  schoolLevel: (value) => `schoolLevel=${value}`,
+  orgRole: (value) => `orgRole=${value}`,
+  educationalCategory: (value) => `educationalCategory=${value}`,
+  scientificCategory: (value) => `scientificCategory=${value}`,
 }
 
 const userTypeFilters = {
