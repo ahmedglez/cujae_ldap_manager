@@ -8,6 +8,7 @@ const attributeFilters = {
   email: (value) => `maildrop=${value}`,
   lastName: (value) => `lastName=${value}`,
   sex: (value) => `sex=${value}`,
+  area: (value) => `area=${value}`,
 }
 
 const userTypeFilters = {
