@@ -7,7 +7,6 @@ const { checkAuth, checkRoles } = require('../middlewares/auth.handler')
 const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const config = require('@src/config/config')
 const service = GroupServices()
-const { nodeTypes } = require('@src/constants/nodeTypes')
 
 router.get('/', checkAuth, validateResponse, async (req, res) => {
   try {

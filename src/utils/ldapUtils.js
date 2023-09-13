@@ -109,6 +109,40 @@ const performScopedLdapSearch = async (baseDn, filter, attributes) => {
   })
 }
 
+const performBaseLdapSearch = async (baseDn, filter, attributes) => {
+  return new Promise((resolve, reject) => {
+    try {
+      bindLdapClient() // Bind before search
+
+      const searchOptions = {
+        filter: filter,
+        scope: 'base',
+        attributes,
+        timeLimit: config.ldap.timeLimit,
+      }
+
+      const searchResults = []
+
+      ldapClient.search(baseDn, searchOptions, (err, searchResponse) => {
+        if (err) {
+          reject(err)
+          return // Exit the function early in case of error
+        }
+
+        searchResponse.on('searchEntry', (entry) => {
+          searchResults.push(transform(entry))
+        })
+
+        searchResponse.on('end', () => {
+          resolve(searchResults)
+        })
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 const performLdapUpdate = async (userDN, att, value) => {
   console.log('userDN', userDN)
   return new Promise((resolve, reject) => {
@@ -143,4 +177,5 @@ module.exports = {
   unbindLdapClient,
   performLdapUpdate,
   performScopedLdapSearch,
+  performBaseLdapSearch,
 }
