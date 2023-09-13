@@ -7,31 +7,8 @@ const { checkAuth, checkRoles } = require('../middlewares/auth.handler')
 const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const config = require('@src/config/config')
 const service = GroupServices()
+const { nodeTypes } = require('@src/constants/nodeTypes')
 
-//Get all users
-/* router.get(
-  '/:group',
-  checkAuth,
-  checkRoles('admin'),
-  validateResponse,
-  async (req, res) => {
-    try {
-      const group = req.params.group
-      const response = await service.getGroup(group)
-      res.json({
-        success: true,
-        data: response,
-      })
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error fetching group',
-        error: `It seems that the group does not exist.`,
-      })
-    }
-  }
-)
- */
 router.get('/', checkAuth, validateResponse, async (req, res) => {
   try {
     const payload = verifyToken(req.headers.authorization.split(' ')[1])
@@ -63,6 +40,36 @@ router.get('/', checkAuth, validateResponse, async (req, res) => {
   }
 })
 
+router.get(
+  '/getChilds/:nodeType',
+  checkAuth,
+  checkRoles('admin'),
+  validateResponse,
+  async (req, res) => {
+    try {
+      const nodeType = req.params.nodeType
+      const baseDN = req
+
+      if (!nodeTypes.includes(nodeType)) {
+        throw new Error(`Invalid node type.`)
+      }
+
+      if (nodeType === nodeTypes[0]) {
+        const response = await service.getGroupsInBaseDN(baseDN)
+        res.json({
+          success: true,
+          data: response,
+        })
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Error fetching group',
+        error: `It seems that the group does not exist.`,
+      })
+    }
+  }
+)
 router.get('/byType/:type', checkAuth, validateResponse, async (req, res) => {
   try {
     const type = req.params.type
