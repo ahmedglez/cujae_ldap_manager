@@ -1,6 +1,9 @@
 require('dotenv').config({ path: __dirname + '/../../.env' })
 const config = require('../config/config')
-const { performLdapSearch } = require('@src/utils/ldapUtils')
+const {
+  performLdapSearch,
+  performScopedLdapSearch,
+} = require('@src/utils/ldapUtils')
 
 const GroupServices = () => {
   const getGroup = async (group) => {
@@ -55,11 +58,23 @@ const GroupServices = () => {
     }
   }
 
+  const getChildrensBaseDN = async (baseDN = config.ldap.base) => {
+    const ldapFilter = `(objectClass=*)`
+    try {
+      const results = await performScopedLdapSearch(baseDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getChildrens', error)
+      throw error
+    }
+  }
+
   return {
     getAdminGroup,
     getGroup,
     getGroupByCN,
     getGroupsInBaseDN,
+    getChildrensBaseDN,
   }
 }
 

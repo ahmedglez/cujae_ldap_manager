@@ -41,26 +41,23 @@ router.get('/', checkAuth, validateResponse, async (req, res) => {
 })
 
 router.get(
-  '/getChilds/:nodeType',
+  '/getChilds',
   checkAuth,
   checkRoles('admin'),
   validateResponse,
   async (req, res) => {
     try {
-      const nodeType = req.params.nodeType
-      const baseDN = req
+      const { baseDN } = req.body
 
-      if (!nodeTypes.includes(nodeType)) {
-        throw new Error(`Invalid node type.`)
+      if (!baseDN) {
+        throw new Error(`Base DN required.`)
       }
 
-      if (nodeType === nodeTypes[0]) {
-        const response = await service.getGroupsInBaseDN(baseDN)
-        res.json({
-          success: true,
-          data: response,
-        })
-      }
+      const response = await service.getChildrensBaseDN(baseDN)
+      res.json({
+        success: true,
+        data: response,
+      })
     } catch (error) {
       res.status(500).json({
         success: false,
