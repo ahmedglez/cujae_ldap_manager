@@ -2,7 +2,7 @@ const winston = require('winston')
 const { MongoDB } = require('winston-mongodb')
 const config = require('../config/config')
 const morgan = require('morgan')
-const mongoose = require('mongoose') // Import Mongoose
+const mongoose = require('mongoose')
 
 const logger = winston.createLogger({
   level: 'info',
@@ -48,39 +48,38 @@ const logFormat = (tokens, req, res) => {
 }
 
 const addLoggerMiddleware = (app) => {
-  try {
-    // Attempt to establish the database connection and configure logger
-    mongoose.connect(config.mongodb.url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+  // Attempt to establish the database connection and configure logger
+  mongoose.connect(config.mongodb.url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
 
-    const db = mongoose.connection
+  const db = mongoose.connection
 
-    db.on('error', (error) => {
-      console.error('Error connecting to the database:', error.message)
-    })
+  db.on('error', (error) => {
+    // Handle the MongoDB connection error gracefully
+    console.log('Error connecting to the database:', error.message)
+    // You can choose to continue with the app, but logging to MongoDB won't work
+  })
 
-    db.once('open', () => {
-      console.log('Connected to MongoDB (ldapDB)')
-      winston.add(logger.transports[0])
+  db.once('open', () => {
+    console.log('Connected to MongoDB (ldapDB)')
+    winston.add(logger.transports[0])
 
-      // Register the morgan middleware
-      app.use(morgan(logFormat))
-    })
+    // Register the morgan middleware
+    app.use(morgan(logFormat))
+  })
 
-    // Add error connection handler
-    app.on('error', (err) => {
-      if (
-        err.name === 'ServerSelectionError' &&
-        err.message === 'connection timed out'
-      ) {
-        console.error('Error connecting to the database:', err.message)
-      }
-    })
-  } catch (error) {
-    console.error('Error connecting to the database:', error.message)
-  }
+  // Add error connection handler
+  app.on('error', (err) => {
+    if (
+      err.name === 'ServerSelectionError' &&
+      err.message === 'connection timed out'
+    ) {
+      console.log('Error connecting to the database:', err.message)
+      // Handle the MongoDB connection error gracefully
+    }
+  })
 }
 
 module.exports = addLoggerMiddleware
