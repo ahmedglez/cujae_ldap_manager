@@ -2,6 +2,7 @@ const winston = require('winston')
 const { MongoDB } = require('winston-mongodb')
 const config = require('../config/config')
 const morgan = require('morgan')
+const mongoose = require('mongoose') // Import Mongoose
 
 const logger = winston.createLogger({
   level: 'info',
@@ -49,10 +50,24 @@ const logFormat = (tokens, req, res) => {
 const addLoggerMiddleware = (app) => {
   try {
     // Attempt to establish the database connection and configure logger
-    winston.add(logger.transports[0])
+    mongoose.connect(config.mongodb.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
 
-    // Register the morgan middleware
-    app.use(morgan(logFormat))
+    const db = mongoose.connection
+
+    db.on('error', (error) => {
+      console.error('Error connecting to the database:', error.message)
+    })
+
+    db.once('open', () => {
+      console.log('Connected to MongoDB (ldapDB)')
+      winston.add(logger.transports[0])
+
+      // Register the morgan middleware
+      app.use(morgan(logFormat))
+    })
 
     // Add error connection handler
     app.on('error', (err) => {
