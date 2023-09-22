@@ -230,8 +230,6 @@ const login = function (req, res, next) {
         const rootBaseDN = extractBaseFromDn(ldapDn)
         const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
 
-        console.log('user', user)
-
         let roles = ['user']
         const isSpAdmin = await isSuperAdmin(user.uid)
         if (isSpAdmin) {
@@ -262,20 +260,21 @@ const login = function (req, res, next) {
         const token = signToken(payload, { expiresIn: '15 minutes' })
         const refreshToken = signToken(payload, { expiresIn: '1 day' })
 
-        await storeRefreshToken(user.uid, refreshToken)
+        /*  await storeRefreshToken(user.uid, refreshToken) */
 
         req.login(user, (loginErr) => {
           if (loginErr) {
             return next(loginErr)
           }
-          _insertFunc(user).then((user) => {
+          console.log('user', user)
+          if (!!user) {
             const data = {
               token: token,
               refreshToken: refreshToken,
               user: userObj,
             }
             return responseSuccess(res, 'authentication succeeded', data)
-          })
+          }
         })
       }
     }
