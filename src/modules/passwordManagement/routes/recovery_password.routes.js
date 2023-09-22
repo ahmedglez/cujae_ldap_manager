@@ -43,7 +43,7 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
       ? await userService.getByEmail(emailOrUsername)
       : await userService.getByUsername(emailOrUsername)
 
-    if (user.uid === undefined) {
+    if (user === undefined) {
       return res.status(404).json({ message: 'User not found.' })
     }
 
