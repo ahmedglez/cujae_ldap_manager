@@ -117,7 +117,6 @@ router.server = (server) => {
 router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
   const payload = decodeJWT(req.headers.authorization.split(' ')[1])
   const isSuperAdmin = payload.roles.includes('superadmin')
-
   const queryParams = req.query
   const logs = parseLogFileToJson()
 
@@ -139,7 +138,58 @@ router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
     })
   })
 
-  res.json(filteredLogs)
+  // Function to filter logs by date range
+  const filterLogsByDateRange = (logs, startDate, endDate) => {
+    return logs.filter((log) => {
+      const logDate = new Date(log.date)
+      return logDate >= startDate && logDate <= endDate
+    })
+  }
+
+  const period = req.query.period
+  if (period === 'daily') {
+    const currentDate = new Date()
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    )
+    const endDate = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate() + 1
+    )
+    const dailyLogs = filterLogsByDateRange(filteredLogs, startDate, endDate)
+    res.json(dailyLogs)
+  } else if (period === 'weekly') {
+    const currentDate = new Date()
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() - 7
+    )
+    const weeklyLogs = filterLogsByDateRange(
+      filteredLogs,
+      startDate,
+      currentDate
+    )
+    res.json(weeklyLogs)
+  } else if (period === 'monthly') {
+    const currentDate = new Date()
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() - 30
+    )
+    const monthlyLogs = filterLogsByDateRange(
+      filteredLogs,
+      startDate,
+      currentDate
+    )
+    res.json(monthlyLogs)
+  } else {
+    res.json(filteredLogs) // Return filtered logs without date filtering if no period is specified
+  }
 })
 
 // Define a route to retrieve the log file
