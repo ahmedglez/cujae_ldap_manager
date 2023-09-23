@@ -4,32 +4,37 @@ const router = express.Router()
 const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
 const { decodeJWT } = require('@src/utils/authentication/tokens/jwtUtils')
 const { WebSocketServer, OPEN } = require('ws')
+const Tail = require('tail').Tail
+
+// Initialize the tail instance to monitor the log file
+const tail = new Tail('logs/all.log', {
+  fromBeginning: true, // Start reading from the beginning of the file
+  follow: true, // Continue monitoring the file for new lines
+})
+
+// Create a set to store connected WebSocket clients
+const clients = new Set()
+
+// Function to send logs to connected WebSocket clients
+const sendLogsToClients = (logs) => {
+  const logEntries = logs.split('\n').filter(Boolean)
+  clients.forEach((client) => {
+    if (client.readyState === OPEN) {
+      logEntries.forEach((log) => {
+        client.send(log)
+      })
+    }
+  })
+}
 
 // Read and parse the log file
 const parseLogFile = () => {
   const logData = fs.readFileSync('logs/all.log', 'utf-8')
-  const logs = logData
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => {
-      const splittedLine = line.split(' ')
-      const message = splittedLine[3].replace(/^"(.*)"$/, '$1')
-      const parsedMessage = JSON.parse(message)
-
-      const log = {
-        date: splittedLine[0],
-        time: splittedLine[1],
-        level: splittedLine[2],
-        message: parsedMessage,
-      }
-      return log
-    })
-
-  return logs
+  return logData
 }
 
 const wss = new WebSocketServer({
-  port: 5005,
+  port: 5006,
   perMessageDeflate: {
     zlibDeflateOptions: {
       // See zlib defaults.
@@ -51,32 +56,29 @@ const wss = new WebSocketServer({
   },
 })
 
-// WebSocket connection handler
+tail.on('line', (data) => {
+  sendLogsToClients(data)
+})
+
 wss.on('error', console.error)
 
 wss.on('open', function open() {
   wss.send('something')
 })
 
-wss.on('message', function message(data) {
+wss.on('message', function message(client, data) {
   console.log('received: %s', data)
 })
 
-// Function to send logs to connected WebSocket clients
-const sendLogsToClients = (clients, logs) => {
-  clients.forEach((client) => {
-    if (client.readyState === OPEN) {
-      client.send(JSON.stringify(logs))
-    }
-  })
-}
+// Serve the last log entry to new WebSocket clients
+wss.on('connection', (client) => {
+  clients.add(client) // Add the client to the set
+  client.send(parseLogFile()) // Send the current log content to the new client
+})
 
-// Watch for changes in the log file and notify connected clients
-fs.watch('logs/all.log', (eventType, filename) => {
-  if (eventType === 'change') {
-    const logs = parseLogFile()
-    sendLogsToClients([...wss.clients], logs)
-  }
+// Remove clients from the set when they close the connection
+wss.on('close', (client) => {
+  clients.delete(client)
 })
 
 // WebSocket upgrade handler
@@ -96,23 +98,26 @@ router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
   const queryParams = req.query
   const logs = parseLogFile()
 
-  const filteredLogs = logs.filter((log) => {
-    return Object.entries(queryParams).every(([key, value]) => {
-      if (key === 'level' && !log.level.startsWith(value)) {
-        return false
-      }
+  const filteredLogs = logs
+    .split('\n')
+    .filter(Boolean)
+    .filter((log) => {
+      return Object.entries(queryParams).every(([key, value]) => {
+        if (key === 'level' && !log.includes(`"level":"${value}"`)) {
+          return false
+        }
 
-      if (!isSuperAdmin) {
-        return log.message.branch === payload.localBase
-      }
+        if (!isSuperAdmin) {
+          return log.includes(`"branch":"${payload.localBase}"`)
+        }
 
-      if (key in log.message && log.message[key] !== value) {
-        return false
-      }
+        if (log.includes(`"${key}":"${value}"`)) {
+          return false
+        }
 
-      return true
+        return true
+      })
     })
-  })
 
   res.json(filteredLogs)
 })

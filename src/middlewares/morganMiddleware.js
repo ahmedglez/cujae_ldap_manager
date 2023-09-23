@@ -22,9 +22,9 @@ const logFormat = (tokens, req, res) => {
   const log = {
     method: tokens.method(req, res),
     url: tokens.url(req, res),
-    status: tokens.status(req, res),
+    status: parseInt(tokens.status(req, res)),
     content_length: tokens.res(req, res, 'content-length'),
-    response_time: tokens['response-time'](req, res),
+    response_time: parseFloat(tokens['response-time'](req, res)),
     user:
       payload !== undefined
         ? payload.uid
