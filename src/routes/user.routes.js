@@ -23,7 +23,7 @@ router.use(validateResponse)
 // Route handler for getting all users
 router.get('/', async (req, res) => {
   try {
-    const { localBase } = req.user
+    const { localBase, roles } = req.user
     const isValid = validateQuery(req.query)
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
@@ -33,12 +33,13 @@ router.get('/', async (req, res) => {
 
     // Call the performLdapSearch function to retrieve users matching the group filters
     const searchResults = await service.handleFilteredSearch(
-      localBase,
+      roles.includes('superadmin') ? config.ldap.base : localBase,
       ldapFilter,
       attributes,
       req.query.page,
       req.query.limit
     )
+
     // Send the search results
     res.json({
       success: true,
