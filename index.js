@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const addRoutes = require('@src/routes/routes.js')
 const sessionMiddleWare = require('@src/middlewares/session.handler.js')
-const addLoggerMiddleware = require('@src/middlewares/logger.handler.js')
+const addLoggerMiddleware = require('@src/middlewares/morganMiddleware')
 const ldap_initialization = require('@src/utils/ldap_initialization.js')
 const path = require('path')
 const cors = require('cors')
@@ -15,6 +15,7 @@ const limiter = require('@src/middlewares/rate_limiter.handler.js')
 const paginate = require('express-paginate')
 const compression = require('compression')
 const cache = require('express-cache-ctrl')
+const logger = require('@src/utils/logger')
 
 //app initialization
 const app = express()
@@ -45,7 +46,7 @@ ldap_initialization(app)
 app.use(paginate.middleware(100, CONFIG.ldap.sizeLimit))
 
 // Middleware de caché
-app.use(cache.private(3600)) 
+app.use(cache.private(3600))
 
 //add routes to application
 addRoutes(app)
