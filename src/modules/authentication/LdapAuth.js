@@ -266,7 +266,6 @@ const login = function (req, res, next) {
           if (loginErr) {
             return next(loginErr)
           }
-          console.log('user', user)
           if (!!user) {
             const data = {
               token: token,
