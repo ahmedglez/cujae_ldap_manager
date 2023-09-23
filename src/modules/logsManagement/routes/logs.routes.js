@@ -57,6 +57,28 @@ const wss = new WebSocketServer({
   },
 })
 
+const parseLogFileToJson = () => {
+  const logData = fs.readFileSync('logs/all.log', 'utf-8')
+  const logs = logData
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const splittedLine = line.split(' ')
+      const message = splittedLine[3].replace(/^"(.*)"$/, '$1')
+      const parsedMessage = JSON.parse(message)
+      const log = {
+        date: splittedLine[0],
+        time: splittedLine[1],
+        level: splittedLine[2],
+        message: parsedMessage,
+      }
+
+      return log
+    })
+
+  return logs
+}
+
 tail.on('line', (data) => {
   sendLogsToClients(data)
 })
@@ -97,28 +119,25 @@ router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
   const isSuperAdmin = payload.roles.includes('superadmin')
 
   const queryParams = req.query
-  const logs = parseLogFile()
+  const logs = parseLogFileToJson()
 
-  const filteredLogs = logs
-    .split('\n')
-    .filter(Boolean)
-    .filter((log) => {
-      return Object.entries(queryParams).every(([key, value]) => {
-        if (key === 'level' && !log.includes(`"level":"${value}"`)) {
-          return false
-        }
+  const filteredLogs = logs.filter((log) => {
+    return Object.entries(queryParams).every(([key, value]) => {
+      if (key === 'level' && !log.level.startsWith(value)) {
+        return false
+      }
 
-        if (!isSuperAdmin) {
-          return log.includes(`"branch":"${payload.localBase}"`)
-        }
+      if (!isSuperAdmin) {
+        return log.message.branch === payload.localBase
+      }
 
-        if (log.includes(`"${key}":"${value}"`)) {
-          return false
-        }
+      if (key in log.message && log.message[key] !== value) {
+        return false
+      }
 
-        return true
-      })
+      return true
     })
+  })
 
   res.json(filteredLogs)
 })
