@@ -19,6 +19,8 @@ const logFormat = (tokens, req, res) => {
       ? decodeJWT(req.headers.authorization.split(' ')[1])
       : undefined
 
+  console.log(payload)
+
   const log = {
     method: tokens.method(req, res),
     url: tokens.url(req, res),
@@ -31,6 +33,8 @@ const logFormat = (tokens, req, res) => {
         : req.body.username !== undefined
         ? req.body.username
         : 'anonymus',
+    dn: payload !== undefined ? payload.dn : 'unknown',
+    branch: payload !== undefined ? payload.localBase : 'unknown',
   }
   if (status < 400) {
     logger.info({ ...log })
