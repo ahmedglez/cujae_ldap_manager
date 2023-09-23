@@ -1,6 +1,8 @@
 const fs = require('fs')
 const express = require('express')
 const router = express.Router()
+const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
+const { decodeJWT } = require('@src/utils/authentication/tokens/jwtUtils')
 
 // Read and parse the log file
 const parseLogFile = () => {
@@ -24,7 +26,10 @@ const parseLogFile = () => {
 
   return logs
 }
-router.get('/logs', (req, res) => {
+router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
+  const payload = decodeJWT(req.headers.authorization.split(' ')[1])
+  const isSuperAdmin = payload.roles.includes('superadmin')
+
   const queryParams = req.query
   const logs = parseLogFile()
 
@@ -33,9 +38,15 @@ router.get('/logs', (req, res) => {
       if (key === 'level' && !log.level.startsWith(value)) {
         return false
       }
+
+      if (!isSuperAdmin) {
+        return log.message.branch === payload.localBase
+      }
+
       if (key in log.message && log.message[key] !== value) {
         return false
       }
+
       return true
     })
   })
