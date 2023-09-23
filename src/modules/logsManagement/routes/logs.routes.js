@@ -5,6 +5,7 @@ const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
 const { decodeJWT } = require('@src/utils/authentication/tokens/jwtUtils')
 const { WebSocketServer, OPEN } = require('ws')
 const Tail = require('tail').Tail
+const path = require('path')
 
 // Initialize the tail instance to monitor the log file
 const tail = new Tail('logs/all.log', {
@@ -121,5 +122,17 @@ router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
 
   res.json(filteredLogs)
 })
+
+// Define a route to retrieve the log file
+router.get('/log-file', (req, res) => {
+  const logFilePath = path.join(__dirname, '../../../../logs/all.log'); // Adjust the path as needed
+  const fileStream = fs.createReadStream(logFilePath);
+
+  // Set response headers for downloading the log file
+  res.setHeader('Content-Disposition', 'attachment; filename="all.log"');
+  res.setHeader('Content-Type', 'text/plain');
+
+  fileStream.pipe(res);
+});
 
 module.exports = router
