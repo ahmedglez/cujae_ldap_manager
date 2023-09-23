@@ -20,14 +20,35 @@ winston.addColors(colors)
 
 const format = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
-  winston.format.colorize({ all: true }),
   winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`
+    (info) =>
+      `${info.timestamp} ${info.level}: ${
+        typeof info.message === 'string'
+          ? info.message
+          : JSON.stringify(info.message)
+      }`
+  )
+)
+
+const colorizedFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
+  winston.format.colorize({
+    all: true,
+  }),
+  winston.format.printf(
+    (info) =>
+      `${info.timestamp} ${info.level}: ${
+        typeof info.message === 'string'
+          ? info.message
+          : JSON.stringify(info.message)
+      }`
   )
 )
 
 const transports = [
-  new winston.transports.Console({}),
+  new winston.transports.Console({
+    format: colorizedFormat,
+  }),
   new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
   new winston.transports.File({ filename: 'logs/all.log' }),
   new MongoDB({
