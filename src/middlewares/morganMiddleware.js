@@ -3,24 +3,43 @@ const winston = require('winston')
 const mongoose = require('mongoose') // Import mongoose
 const { MongoDB } = require('winston-mongodb') // Import MongoDB transport
 const config = require('@src/config/config')
+const { decodeJWT } = require('@src/utils/authentication/tokens/jwtUtils')
 
 const logger = require('@src/utils/logger')
+const { validate } = require('@src/schemas/logs.schema')
 
 morgan.token('user', (req) => {
   return req.user ? req.user.uid : 'anonymous'
 })
 
 const logFormat = (tokens, req, res) => {
+  const status = tokens.status(req, res)
+  const payload =
+    req.headers.authorization !== undefined
+      ? decodeJWT(req.headers.authorization.split(' ')[1])
+      : undefined
+
   const log = {
     method: tokens.method(req, res),
     url: tokens.url(req, res),
     status: tokens.status(req, res),
     content_length: tokens.res(req, res, 'content-length'),
     response_time: tokens['response-time'](req, res),
-    user: req.user === undefined ? 'anonymous' : req?.user?.uid,
+    user:
+      payload !== undefined
+        ? payload.uid
+        : req.body.username !== undefined
+        ? req.body.username
+        : 'anonymus',
   }
-
-  logger.info({ ...log })
+  if (status < 400) {
+    logger.info({ ...log })
+  }
+  if (status >= 400) {
+    logger.error({
+      ...log,
+    })
+  }
 }
 
 const addLoggerMiddleware = (app) => {
