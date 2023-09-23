@@ -124,15 +124,15 @@ router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
 })
 
 // Define a route to retrieve the log file
-router.get('/log-file', (req, res) => {
-  const logFilePath = path.join(__dirname, '../../../../logs/all.log'); // Adjust the path as needed
-  const fileStream = fs.createReadStream(logFilePath);
+router.get('/log-file', checkAuth, checkRoles('superadmin'), (req, res) => {
+  const logFilePath = path.join(__dirname, '../../../../logs/all.log') // Adjust the path as needed
+  const fileStream = fs.createReadStream(logFilePath)
 
   // Set response headers for downloading the log file
-  res.setHeader('Content-Disposition', 'attachment; filename="all.log"');
-  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Disposition', 'attachment; filename="all.log"')
+  res.setHeader('Content-Type', 'text/plain')
 
-  fileStream.pipe(res);
-});
+  fileStream.pipe(res)
+})
 
 module.exports = router
