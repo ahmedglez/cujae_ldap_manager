@@ -8,7 +8,7 @@ const {
 const GroupServices = () => {
   const getGroup = async (group) => {
     try {
-      const baseDN = config.ldap.base
+      const baseDN = 'dc=cu'
       const ldapFilter = `(ou=${group})`
       const results = await performLdapSearch(baseDN, ldapFilter)
       if (results[0] === undefined) {

@@ -8,9 +8,11 @@ const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const config = require('@src/config/config')
 const service = GroupServices()
 
-router.get('/', checkAuth, validateResponse, async (req, res) => {
+router.get('/:group', checkAuth, validateResponse, async (req, res) => {
   try {
     const payload = verifyToken(req.headers.authorization.split(' ')[1])
+    const group = req.params.group
+    const { withChildrens = true } = req.query
 
     if (!payload) {
       throw new Error(`Invalid token.`)
@@ -24,7 +26,10 @@ router.get('/', checkAuth, validateResponse, async (req, res) => {
       throw new Error(`Invalid token.`)
     }
 
-    const response = await service.getGroupsInBaseDN(baseDN)
+    const response =
+      withChildrens === true
+        ? await service.getGroupsInBaseDN(baseDN, withChildrens)
+        : await service.getGroup(group)
 
     res.json({
       success: true,
