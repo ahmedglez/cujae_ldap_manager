@@ -3,6 +3,7 @@ const config = require('../config/config')
 const {
   performLdapSearch,
   performScopedLdapSearch,
+  performBaseLdapSearch,
 } = require('@src/utils/ldapUtils')
 
 const GroupServices = () => {
@@ -19,6 +20,23 @@ const GroupServices = () => {
     } catch (err) {
       console.error(err)
       throw err
+    }
+  }
+
+  const getGroups = async (
+    baseDN = 'dc=cu',
+    ldapFilter,
+    withChildrens = true
+  ) => {
+    try {
+      const results =
+        withChildrens === true
+          ? await performLdapSearch(baseDN, ldapFilter)
+          : await performBaseLdapSearch(baseDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getChildrens', error)
+      throw error
     }
   }
 
@@ -72,6 +90,7 @@ const GroupServices = () => {
   return {
     getAdminGroup,
     getGroup,
+    getGroups,
     getGroupByCN,
     getGroupsInBaseDN,
     getChildrensBaseDN,

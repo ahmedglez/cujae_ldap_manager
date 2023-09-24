@@ -8,11 +8,10 @@ const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const config = require('@src/config/config')
 const service = GroupServices()
 
-router.get('/:group', checkAuth, validateResponse, async (req, res) => {
+router.get('/byName/:group', checkAuth, validateResponse, async (req, res) => {
   try {
     const payload = verifyToken(req.headers.authorization.split(' ')[1])
     const group = req.params.group
-    const { withChildrens = true } = req.query
 
     if (!payload) {
       throw new Error(`Invalid token.`)
@@ -26,10 +25,33 @@ router.get('/:group', checkAuth, validateResponse, async (req, res) => {
       throw new Error(`Invalid token.`)
     }
 
-    const response =
-      withChildrens === true
-        ? await service.getGroupsInBaseDN(baseDN, withChildrens)
-        : await service.getGroup(group)
+    const response = await service.getGroup(group)
+
+    res.json({
+      success: true,
+      data: response,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching group',
+      error: `It seems that the group does not exist.`,
+    })
+  }
+})
+
+router.get('/', checkAuth, validateResponse, async (req, res) => {
+  try {
+    const { baseDN = 'dc=cu' } = req.body
+    const { withChildrens = true } = req.query
+
+    const ldapFilter = `(&(objectClass=organizationalUnit))`
+
+    if (!baseDN) {
+      throw new Error(`Invalid token.`)
+    }
+
+    const response = await service.getGroups(baseDN, ldapFilter, withChildrens)
 
     res.json({
       success: true,

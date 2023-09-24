@@ -34,6 +34,7 @@ const attributeFilters = {
   orgRole: (value) => `orgRole=${value}`,
   educationalCategory: (value) => `educationalCategory=${value}`,
   scientificCategory: (value) => `scientificCategory=${value}`,
+  ou: (value) => `ou=${value}`,
 }
 
 const userTypeFilters = {
@@ -44,6 +45,7 @@ const userTypeFilters = {
 
 const createLdapFilterFromQuery = (query) => {
   const filters = []
+  console.log('query', query)
 
   for (const key in query) {
     if (attributeFilters[key] && query[key]) {
