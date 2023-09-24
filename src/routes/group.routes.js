@@ -40,7 +40,7 @@ router.get('/byName/:group', checkAuth, validateResponse, async (req, res) => {
   }
 })
 
-router.get('/', checkAuth, validateResponse, async (req, res) => {
+router.post('/', checkAuth, validateResponse, async (req, res) => {
   try {
     const { baseDN = 'dc=cu' } = req.body
     const { scope = 'sub' } = req.query
