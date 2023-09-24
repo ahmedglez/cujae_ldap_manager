@@ -23,16 +23,14 @@ const GroupServices = () => {
     }
   }
 
-  const getGroups = async (
-    baseDN = 'dc=cu',
-    ldapFilter,
-    withChildrens = true
-  ) => {
+  const getGroups = async (baseDN = 'dc=cu', ldapFilter, scope = 'sub') => {
     try {
       const results =
-        withChildrens === true
+        scope === 'sub'
           ? await performLdapSearch(baseDN, ldapFilter)
-          : await performBaseLdapSearch(baseDN, ldapFilter)
+          : scope === 'base'
+          ? await performBaseLdapSearch(baseDN, ldapFilter)
+          : await performScopedLdapSearch(baseDN, ldapFilter)
       return results
     } catch (error) {
       console.error('Error in getChildrens', error)

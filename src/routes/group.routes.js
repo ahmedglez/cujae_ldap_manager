@@ -43,7 +43,7 @@ router.get('/byName/:group', checkAuth, validateResponse, async (req, res) => {
 router.get('/', checkAuth, validateResponse, async (req, res) => {
   try {
     const { baseDN = 'dc=cu' } = req.body
-    const { withChildrens = true } = req.query
+    const { scope = 'sub' } = req.query
 
     const ldapFilter = `(&(objectClass=organizationalUnit))`
 
@@ -51,7 +51,7 @@ router.get('/', checkAuth, validateResponse, async (req, res) => {
       throw new Error(`Invalid token.`)
     }
 
-    const response = await service.getGroups(baseDN, ldapFilter, withChildrens)
+    const response = await service.getGroups(baseDN, ldapFilter, scope)
 
     res.json({
       success: true,
