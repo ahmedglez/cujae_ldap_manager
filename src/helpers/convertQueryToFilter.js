@@ -4,7 +4,7 @@ const attributeFilters = {
   uid: (value) => `uid=${value}`,
   cn: (value) => `cn=${value}`,
   username: (value) => `uid=${value}`,
-  ci: (value) => `ci=${value}`,
+  CI: (value) => `CI=${value}`,
   email: (value) => `maildrop=${value}`,
   lastName: (value) => `lastName=${value}`,
   sex: (value) => `sex=${value}`,
