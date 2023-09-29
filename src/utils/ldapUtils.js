@@ -144,7 +144,6 @@ const performBaseLdapSearch = async (baseDn, filter, attributes) => {
 }
 
 const performLdapUpdate = async (userDN, att, value) => {
-  console.log('userDN', userDN)
   return new Promise((resolve, reject) => {
     try {
       bindLdapClient() // Bind before search
