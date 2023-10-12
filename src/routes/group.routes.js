@@ -66,7 +66,7 @@ router.post('/', checkAuth, validateResponse, async (req, res) => {
   }
 })
 
-router.get(
+router.post(
   '/getChilds',
   checkAuth,
   checkRoles('admin'),
@@ -93,7 +93,7 @@ router.get(
     }
   }
 )
-router.get('/byType/:type', checkAuth, validateResponse, async (req, res) => {
+router.post('/byType/:type', checkAuth, validateResponse, async (req, res) => {
   try {
     const type = req.params.type
     const baseDN = req.body.dn
