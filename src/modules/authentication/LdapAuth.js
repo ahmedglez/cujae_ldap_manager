@@ -257,7 +257,7 @@ const login = function (req, res, next) {
         }
 
         const userObj = { ...user }
-        const token = signToken(payload, { expiresIn: '15 minutes' })
+        const token = signToken(payload, { expiresIn: '45 minutes' })
         const refreshToken = signToken(payload, { expiresIn: '1 day' })
 
         /*  await storeRefreshToken(user.uid, refreshToken) */
