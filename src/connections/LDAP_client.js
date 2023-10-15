@@ -13,6 +13,14 @@ try {
     console.log('Error trying to connect to LDAP', err)
   })
 
+  client.on('error', (err) => {
+    console.error('LDAP Error:', err.message)
+  })
+
+  client.on('end', (result) => {
+    console.log('LDAP Result:', result.status)
+  })
+
   client.bind(config.ldap.admin.username, config.ldap.admin.password, (err) => {
     try {
       if (err) {
