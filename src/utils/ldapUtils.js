@@ -176,57 +176,6 @@ const performLdapAddition = async (dn, entry) => {
     try {
       bindLdapClient() // Bind before search
 
-      /*  const entry = {
-        CI: '85100804881',
-        middleName: 'Lorenzo',
-        lastName: 'Neyra',
-        name: 'Javier',
-        homeAddress: 'Ave. 31 B # 4208',
-        telephoneNumber: '(7) 202-73-19',
-        dayRegister: '2019-10-19',
-        sex: 'M',
-        area: 'null',
-        userCondition: 'Externo',
-        userStatus: 'Activo',
-        sedeMunicipio: 'PLAYA',
-        userType: 'Estudiante',
-        userInformation: 'Curso por Encuentros',
-        career: 'Ingeniería Informática',
-        studentClassGroup: '23',
-        studentYear: '2',
-        country: 'Cuba',
-        UJC: 'no',
-        skinColor: 'Blanco',
-        nameInstitution: 'Filial 10 de Octubre',
-        right: 'Todos',
-        hash: '44dacf000071e4b68d826bc96ff9909d4b8e25e1',
-        lastTimeChange: '13-Jul-2023-19:21:41',
-        uid: 'tommy.test',
-        homeDirectory: '/home/tommy.test',
-        givenName: 'tommy.test',
-        cn: 'Tommy',
-        sn: 'Lorenzo Neyra',
-        displayName: 'Javier',
-        uidNumber: '1000',
-        userPassword: '{SHA}qlPBpNoITztMtAoTi+qrhqSXK+88',
-        mail: ['tommy.test@cujae.edu.cu'],
-        maildrop: ['tommy.test@cujae.edu.cu'],
-        gidNumber: '1000842',
-        sambaSID: 'sambaSID',
-        objectClass: [
-          'top',
-          'person',
-          'posixAccount',
-          'shadowAccount',
-          'inetOrgPerson',
-          'iesServices',
-          'sambaSamAccount',
-          'radiusprofile',
-          'CourierMailAlias',
-          'iesMember',
-        ],
-      } */
-
       ldapClient.add(dn, entry, (err) => {
         if (err) {
           console.log('error', err)

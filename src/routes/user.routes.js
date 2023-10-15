@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const UserServices = require('@src/services/user.services.js')
-const validateResponse = require('@src/middlewares/validateResponse')
 const {
   checkAuth,
   checkRoles,
@@ -199,4 +198,35 @@ router.post('/modify-ldap', async (req, res) => {
   }
 })
 
+router.post('/newUser', async (req, res) => {
+  try {
+    const { newUser, userDN } = req.body
+
+    if (!newUser || !userDN) {
+      throw new Error('Missing atts')
+    }
+
+    if (newUser && newUser.hasOwnProperty('dn')) {
+      delete newUser.dn
+    }
+
+    if (newUser && newUser.hasOwnProperty('controls')) {
+      delete newUser.controls
+    }
+
+    // Call the service function with the required parameters
+    const response = await service.addUser(userDN, newUser) // Replace 'YourDNHere' with the appropriate DN.
+
+    if (response) {
+      res.status(200).json({ message: 'New user added successfully.' })
+    } else {
+      res
+        .status(500)
+        .json({ error: 'Failed to add the new user to the LDAP directory.' })
+    }
+  } catch (error) {
+    console.error('Error in route:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
 module.exports = router
