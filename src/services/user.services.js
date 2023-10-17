@@ -5,46 +5,12 @@ const {
   performLdapUpdate,
   performLdapAddition,
 } = require('@src/utils/ldapUtils')
-const Joi = require('joi')
-const ldapEntrySchema = Joi.object({
-  CI: Joi.string().required(),
-  middleName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  name: Joi.string().required(),
-  homeAddress: Joi.string().required(),
-  telephoneNumber: Joi.string().required(),
-  dayRegister: Joi.date().iso().required(),
-  sex: Joi.string().valid('M', 'F').required(),
-  area: Joi.string().allow(null).required(),
-  userCondition: Joi.string().required(),
-  userStatus: Joi.string().required(),
-  sedeMunicipio: Joi.string().required(),
-  userType: Joi.string().required(),
-  userInformation: Joi.string().required(),
-  career: Joi.string().required(),
-  studentClassGroup: Joi.string().required(),
-  studentYear: Joi.string().required(),
-  country: Joi.string().required(),
-  UJC: Joi.string().required(),
-  skinColor: Joi.string().required(),
-  nameInstitution: Joi.string().required(),
-  right: Joi.string().required(),
-  hash: Joi.string().required(),
-  lastTimeChange: Joi.string().required(),
-  uid: Joi.string().required(),
-  homeDirectory: Joi.string().required(),
-  givenName: Joi.string().required(),
-  cn: Joi.string().required(),
-  sn: Joi.string().required(),
-  displayName: Joi.string().required(),
-  uidNumber: Joi.string().required(),
-  userPassword: Joi.string().required(),
-  mail: Joi.array().items(Joi.string()).required(),
-  maildrop: Joi.array().items(Joi.string()).required(),
-  gidNumber: Joi.string().required(),
-  sambaSID: Joi.string().required(),
-  objectClass: Joi.array().items(Joi.string()).required(),
-})
+const {
+  ldapEntrySchema,
+  studentSchema,
+  employeeSchema,
+} = require('@src/schemas/ldapEntry.schema')
+const { userTypes } = require('@src/constants/userTypes')
 
 const UserServices = () => {
   const handleFilteredSearch = async (
@@ -110,11 +76,16 @@ const UserServices = () => {
         throw new Error('Missing required parameters.')
       }
 
+      if (!userTypes.includes(newUser.userType)) {
+        throw new Error(`Invalid userType`)
+      }
+
       const { error, value } = ldapEntrySchema.validate(newUser)
 
-      if (error) {
-        throw new Error(`Validation failed: ${error.details[0].message}`)
-      }
+      if (newUser.userType === userTypes)
+        if (error) {
+          throw new Error(`Validation failed: ${error.details[0].message}`)
+        }
 
       // Check if the user already exists
       const alreadyExistingUser = await handleFilteredSearch(
