@@ -11,6 +11,7 @@ const {
   employeeSchema,
 } = require('@src/schemas/ldapEntry.schema')
 const { userTypes } = require('@src/constants/userTypes')
+const { objectClasses } = require('@src/constants/user_objectClasses')
 
 const UserServices = () => {
   const handleFilteredSearch = async (
@@ -96,6 +97,10 @@ const UserServices = () => {
       if (!!alreadyExistingUser && alreadyExistingUser.length !== 0) {
         throw new Error(`User already exists with the given DN.`)
       }
+
+      /* Add necessary atts */
+      newUser.objectclass = objectClasses
+      newUser.homeDirectory = `/home/${newUser.uid}`
 
       // Perform LDAP addition
       const addedUser = await performLdapAddition(dn, newUser)

@@ -40,6 +40,13 @@ const transform = (entry) => {
   return data
 }
 
+function generateUniqueUID() {
+  // Generate a random 4-digit number
+  const randomPart = Math.floor(1000 + Math.random() * 9000)
+
+  return `${randomPart}`
+}
+
 // Perform a search using the provided filter and return the results
 const performLdapSearch = async (baseDn, filter, attributes) => {
   return new Promise((resolve, reject) => {
@@ -172,6 +179,14 @@ const performLdapUpdate = async (userDN, att, value) => {
 }
 
 const performLdapAddition = async (dn, entry) => {
+  entry.uidNumber = generateUniqueUID()
+  entry.gidNumber = '1000'
+  entry.right = 'Todos'
+  entry.lastTimeChange = new Date().toISOString()
+  entry.sambaSID = 'S-1-5-21-1255719363-1350762778-3568053751-513'
+
+  console.log('entry', entry)
+
   return new Promise((resolve, reject) => {
     try {
       bindLdapClient() // Bind before search
@@ -179,7 +194,10 @@ const performLdapAddition = async (dn, entry) => {
       ldapClient.add(dn, entry, (err) => {
         if (err) {
           console.log('error', err)
-          assert.ifError(err)
+          reject({
+            success: true,
+            message: err,
+          })
         } else {
           console.log('created user')
           resolve('created User')
@@ -198,4 +216,5 @@ module.exports = {
   performScopedLdapSearch,
   performBaseLdapSearch,
   performLdapAddition,
+  generateUniqueUID,
 }

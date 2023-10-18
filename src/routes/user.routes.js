@@ -201,18 +201,17 @@ router.post('/modify-ldap', async (req, res) => {
 router.post('/newUser', async (req, res) => {
   try {
     const { newUser, userDN } = req.body
+    const propertiesToDelete = ['dn', 'controls', 'objectClass', 'objectclass']
 
     if (!newUser || !userDN) {
       throw new Error('Missing atts')
     }
 
-    if (newUser && newUser.hasOwnProperty('dn')) {
-      delete newUser.dn
-    }
-
-    if (newUser && newUser.hasOwnProperty('controls')) {
-      delete newUser.controls
-    }
+    propertiesToDelete.map((att) => {
+      if (newUser && newUser.hasOwnProperty(att)) {
+        delete newUser[att]
+      }
+    })
 
     // Call the service function with the required parameters
     const response = await service.addUser(userDN, newUser) // Replace 'YourDNHere' with the appropriate DN.
