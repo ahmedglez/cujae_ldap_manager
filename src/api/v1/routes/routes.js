@@ -7,13 +7,13 @@ const dnController = require('@src/controllers/dn.controller')
 const logsController = require('@src/modules/logsManagement/controllers/logs.controller')
 
 const addRoutes = (app) => {
-  app.use('/v1/users', userController)
-  app.use('/v1/groups', groupController)
-  app.use('/v1/profile', profileController)
-  app.use('/v1/recovery-password', recoveryPasswordController)
-  app.use('/v1/update-password', updatePasswordController)
-  app.use('/v1/dn', dnController)
-  app.use('/v1/logs', logsController)
+  app.use('/api/v1/users', userController)
+  app.use('/api/v1/groups', groupController)
+  app.use('/api/v1/profile', profileController)
+  app.use('/api/v1/recovery-password', recoveryPasswordController)
+  app.use('/api/v1/update-password', updatePasswordController)
+  app.use('/api/v1/dn', dnController)
+  app.use('/api/v1/logs', logsController)
 }
 
 module.exports = addRoutes
