@@ -68,8 +68,8 @@ var init = function (
   }
   _findFunc = findFunc
   _insertFunc = insertFunc
-  _loginUrl = loginUrl || '/login'
-  _logoutUrl = logoutUrl || '/logout'
+  _loginUrl = loginUrl || '/api/v1/login'
+  _logoutUrl = logoutUrl || '/api/v1/logout'
   _usernameAttributeName = ''
 
   passport.use(
@@ -172,7 +172,54 @@ var init = function (
   router.use(passport.initialize())
   router.use(passport.session())
   // login
+
+  /**
+   * @openapi
+   * /api/v1/workouts:
+   *   get:
+   *     tags:
+   *       - Workouts
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: OK
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   */
   router.post(_loginUrl, login)
+
+  /**
+   * @openapi
+   * /api/v1/workouts:
+   *   get:
+   *     tags:
+   *       - Workouts
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 status:
+   *                   type: string
+   *                   example: OK
+   *                 data:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   */
+
   router.post(_logoutUrl, logout)
   router.post('/refresh', refresh)
 }
