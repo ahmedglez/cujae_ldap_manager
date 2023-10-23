@@ -171,56 +171,102 @@ var init = function (
 
   router.use(passport.initialize())
   router.use(passport.session())
-  // login
 
   /**
    * @openapi
-   * /api/v1/workouts:
-   *   get:
-   *     tags:
-   *       - Workouts
+   * /api/v1/login:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: User login.
+   *     description: Authenticate a user using LDAP credentials.
+   *     operationId: loginUser
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *           required:
+   *             - username
+   *             - password
    *     responses:
    *       200:
-   *         description: OK
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 status:
-   *                   type: string
-   *                   example: OK
-   *                 data:
-   *                   type: array
-   *                   items:
-   *                     type: object
+   *         description: User authenticated successfully.
+   *       401:
+   *         description: Authentication failed. Invalid credentials or user not found.
+   *       500:
+   *         description: An error occurred during authentication.
    */
+
   router.post(_loginUrl, login)
 
   /**
    * @openapi
-   * /api/v1/workouts:
-   *   get:
-   *     tags:
-   *       - Workouts
+   * /api/v1/logout:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: User logout.
+   *     description: Log out a user and invalidate their access token.
+   *     operationId: logoutUser
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               accessToken:
+   *                 type: string
+   *           required:
+   *             - accessToken
    *     responses:
    *       200:
-   *         description: OK
+   *         description: User logged out successfully.
+   *       400:
+   *         description: Bad request. Access token is required.
+   */
+
+  router.post(_logoutUrl, logout)
+
+  /**
+   * @openapi
+   * /api/v1/refresh:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: Refresh access token.
+   *     description: Refresh the user's access token using a refresh token.
+   *     operationId: refreshAccessToken
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *           required:
+   *             - username
+   *     responses:
+   *       200:
+   *         description: Access token successfully refreshed.
    *         content:
    *           application/json:
    *             schema:
    *               type: object
    *               properties:
-   *                 status:
+   *                 newToken:
    *                   type: string
-   *                   example: OK
-   *                 data:
-   *                   type: array
-   *                   items:
-   *                     type: object
+   *                   description: The new access token.
+   *                 newRefreshToken:
+   *                   type: string
+   *                   description: The new refresh token.
+   *       401:
+   *         description: User not found or refresh token not found.
    */
 
-  router.post(_logoutUrl, logout)
   router.post('/refresh', refresh)
 }
 
