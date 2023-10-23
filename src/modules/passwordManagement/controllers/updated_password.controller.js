@@ -14,6 +14,50 @@ const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const { checkAuth, checkBlacklist } = require('@src/middlewares/auth.handler')
 const boom = require('@hapi/boom')
 
+/**
+ * @openapi
+ * /api/v1/update-password:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Update user password
+ *     description: Update a user's password. The user must provide the old password, a new password, and confirm the new password.
+ *     operationId: updateUserPassword
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 description: The user's old password.
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password.
+ *               confirmPassword:
+ *                 type: string
+ *                 description: Confirmation of the new password.
+ *           required:
+ *             - oldPassword
+ *             - newPassword
+ *             - confirmPassword
+ *     responses:
+ *       200:
+ *         description: Password updated successfully.
+ *       400:
+ *         description: Bad Request. The request is missing required fields or the passwords do not match.
+ *       401:
+ *         description: Unauthorized. The user is not authenticated.
+ *       404:
+ *         description: Not Found. User not found.
+ *       500:
+ *         description: Internal Server Error.
+ */
+
 router.post(
   '/update-password',
   checkAuth,

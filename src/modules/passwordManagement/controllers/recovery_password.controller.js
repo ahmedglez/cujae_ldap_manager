@@ -28,7 +28,36 @@ const validateEmailOrUsername = [
     .escape(),
 ]
 
-// Endpoint for initiating the password reset process
+/**
+ * @openapi
+ * /api/v1/forgot-password:
+ *   post:
+ *     tags: [Password]
+ *     summary: Request a password reset.
+ *     description: Request a password reset for a user.
+ *     operationId: requestPasswordReset
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               emailOrUsername:
+ *                 type: string
+ *           required:
+ *             - emailOrUsername
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *       400:
+ *         description: Bad request. Invalid input data.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Internal Server Error.
+ */
+
 router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
   const errors = validationResult(req)
 
@@ -70,13 +99,68 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' })
   }
 })
+
+/**
+ * @openapi
+ * /api/v1/update-password:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Update user password
+ *     description: Update a user's password. The user must provide the old password, a new password, and confirm the new password.
+ *     operationId: updateUserPassword
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 description: The user's old password.
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password.
+ *               confirmPassword:
+ *                 type: string
+ *                 description: Confirmation of the new password.
+ *           required:
+ *             - oldPassword
+ *             - newPassword
+ *             - confirmPassword
+ *     responses:
+ *       200:
+ *         description: Password updated successfully.
+ *       400:
+ *         description: Bad Request. The request is missing required fields or the passwords do not match.
+ *       401:
+ *         description: Unauthorized. The user is not authenticated.
+ *       404:
+ *         description: Not Found. User not found.
+ *       500:
+ *         description: Internal Server Error.
+ */
 router.post(
   '/reset-password',
   checkAuth,
   passwordValidationMiddleware,
   async (req, res) => {
     try {
-      const { recoveryCode, newPassword } = req.body
+      const { newPassword, confirmPassword, oldPassword } = req.body
+
+      if (!newPassword || !confirmPassword) {
+        throw boom.unauthorized(
+          'New password and confirm password are required'
+        )
+      }
+
+      if (newPassword !== confirmPassword) {
+        throw boom.unauthorized('Passwords must be equal')
+      }
+
       const payload = verifyToken(req.headers.authorization.split(' ')[1])
 
       if (!payload) {
@@ -105,7 +189,7 @@ router.post(
       }
     } catch (error) {
       console.error('Error resetting password:', error)
-      res.status(400).json({ message: 'Invalid or expired recovery code.' })
+      res.status(500).json({ message: 'Error updating password' })
     }
   }
 )
