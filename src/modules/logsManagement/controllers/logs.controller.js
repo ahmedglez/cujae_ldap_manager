@@ -114,6 +114,34 @@ router.server = (server) => {
   })
 }
 
+/**
+ * @openapi
+ * /api/v1/logs:
+ *   get:
+ *     tags: [Logs]
+ *     summary: Get log entries.
+ *     description: Retrieve log entries based on query parameters.
+ *     operationId: getLogEntries
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: level
+ *         schema:
+ *           type: string
+ *         description: Filter log entries by level.
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *         description: Filter log entries by period (daily, weekly, monthly).
+ *     responses:
+ *       200:
+ *         description: A list of log entries.
+ *       401:
+ *         description: Unauthorized or insufficient permissions.
+ */
+
 router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
   const payload = decodeJWT(req.headers.authorization.split(' ')[1])
   const isSuperAdmin = payload.roles.includes('superadmin')
@@ -192,7 +220,23 @@ router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
   }
 })
 
-// Define a route to retrieve the log file
+/**
+ * @openapi
+ * /api/v1/log-file:
+ *   get:
+ *     tags: [Logs]
+ *     summary: Download log file.
+ *     description: Download the log file containing all log entries.
+ *     operationId: downloadLogFile
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Log file download.
+ *       401:
+ *         description: Unauthorized or insufficient permissions.
+ */
+
 router.get('/log-file', checkAuth, checkRoles('superadmin'), (req, res) => {
   const logFilePath = path.join(__dirname, '../../../../logs/all.log') // Adjust the path as needed
   const fileStream = fs.createReadStream(logFilePath)
