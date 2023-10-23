@@ -10,7 +10,27 @@ const {
 } = require('../middlewares/auth.handler')
 const service = ProfileServices()
 
-//Get all users
+/**
+ * @openapi
+ * /api/v1/profile:
+ *   get:
+ *     tags: [Profile]
+ *     summary: Get the user profile.
+ *     description: Retrieve the user profile based on the UID (User ID) contained in the JSON Web Token (JWT) passed in the request headers. The endpoint requires authentication and user role permissions to access the profile information.
+ *     operationId: getUserProfile
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully.
+ *       401:
+ *         description: Unauthorized. The user is not authenticated.
+ *       403:
+ *         description: Forbidden. The user does not have the required permissions to access the profile.
+ *       500:
+ *         description: An error occurred while retrieving the user profile.
+ */
+
 router.get(
   '/',
   checkAuth,
@@ -24,6 +44,53 @@ router.get(
       .catch((err) => responseError(res, err.message, err.errors))
   }
 )
+
+/**
+ * @openapi
+ * /api/v1/profile:
+ *   put:
+ *     tags: [Profile]
+ *     summary: Update the user profile.
+ *     description: Update the user profile based on the provided information in the request body. This endpoint requires authentication and user role permissions to access and modify the profile information.
+ *     operationId: updateUserProfile
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: Profile update information.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: New email address for the user.
+ *               password:
+ *                 type: string
+ *                 description: New password for the user.
+ *               confirmPassword:
+ *                 type: string
+ *                 description: Confirm the new password (required if password is provided).
+ *             required:
+ *               - email
+ *           examples:
+ *             UpdateProfileExample:
+ *               value:
+ *                 email: new.email@example.com
+ *                 password: newPassword123
+ *                 confirmPassword: newPassword123
+ *     responses:
+ *       200:
+ *         description: User profile updated successfully.
+ *       400:
+ *         description: Bad request. Invalid or missing parameters in the request body.
+ *       401:
+ *         description: Unauthorized. The user is not authenticated.
+ *       403:
+ *         description: Forbidden. The user does not have the required permissions to update the profile.
+ *       500:
+ *         description: An error occurred while updating the user profile.
+ */
 
 router.put(
   '/',
