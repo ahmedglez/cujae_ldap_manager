@@ -7,6 +7,38 @@ const { checkAuth, checkRoles } = require('../middlewares/auth.handler')
 const { verifyToken } = require('@src/utils/authentication/tokens/token_verify')
 const config = require('@src/config/config')
 
+/**
+ * @openapi
+ * /api/v1/searchByDN:
+ *   get:
+ *     tags: [DN]
+ *     summary: Search by Distinguished Name (DN).
+ *     description: Retrieve information by providing a Distinguished Name (DN).
+ *     operationId: searchByDN
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: baseDN
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The Distinguished Name (DN) to search for.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved information.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LDAPResponse'
+ *       400:
+ *         description: Bad Request. Base DN is missing.
+ *       401:
+ *         description: Unauthorized. Requires admin role.
+ *       500:
+ *         description: Internal Server Error. Failed to fetch information.
+ */
+
 router.get(
   '/searchByDN',
   checkAuth,
