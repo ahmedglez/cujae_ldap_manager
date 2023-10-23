@@ -50,6 +50,10 @@ const options = {
         description: 'API para la actualización de contraseña',
       },
       {
+        name: 'Reset Password',
+        description: 'API para el reseteo de contraseña',
+      },
+      {
         name: 'Logs',
         description: 'API para la administración de logs',
       },
@@ -309,6 +313,87 @@ const options = {
           ],
         },
 
+        JWTPayload: {
+          type: 'object',
+          properties: {
+            sub: {
+              type: 'string',
+              description: 'Subject (sub) del usuario.',
+            },
+            dn: {
+              type: 'string',
+              description: 'Distinguished Name (DN) del usuario.',
+            },
+            uid: {
+              type: 'string',
+              description: 'Identificador único del usuario.',
+            },
+            groups: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Grupos a los que pertenece el usuario.',
+            },
+            base: {
+              type: 'string',
+              description: 'Base DN principal.',
+            },
+            localBase: {
+              type: 'string',
+              description: 'Base DN local.',
+            },
+            firstname: {
+              type: 'string',
+              description: 'Nombre del usuario.',
+            },
+            lastname: {
+              type: 'string',
+              description: 'Apellido del usuario.',
+            },
+            fullname: {
+              type: 'string',
+              description: 'Nombre completo del usuario.',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Dirección de correo electrónico del usuario.',
+            },
+            ci: {
+              type: 'string',
+              description: 'Número de identidad del usuario.',
+            },
+            roles: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              enum: ['user', 'admin', 'superadmin'],
+              description: 'Roles del usuario.',
+            },
+            last_time_logged: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Fecha y hora de la última sesión iniciada.',
+            },
+            loginInfo: {
+              type: 'string',
+              description: 'Información de inicio de sesión.',
+            },
+            iat: {
+              type: 'integer',
+              format: 'int64',
+              description: 'Tiempo de emisión del token JWT.',
+            },
+            exp: {
+              type: 'integer',
+              format: 'int64',
+              description: 'Tiempo de expiración del token JWT.',
+            },
+          },
+        },
+
         UserResponse: {
           type: 'object',
           properties: {
@@ -332,6 +417,7 @@ const options = {
     './src/controllers/*.js',
     './src/modules/logsManagement/controllers/*.js',
     './src/modules/passwordManagement/controllers/*.js',
+    './src/modules/authentication/LdapAuth.js',
     './src/api/v1/swagger.js',
   ],
 }
