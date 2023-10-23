@@ -25,8 +25,37 @@ const options = {
     ],
     tags: [
       {
+        name: 'Authentication',
+        description: 'API para la autenticación de usuarios',
+      },
+
+      {
         name: 'Users',
         description: 'API para la administración de usuarios LDAP',
+      },
+      {
+        name: 'Groups',
+        description: 'API para la administración de grupos LDAP',
+      },
+      {
+        name: 'Profile',
+        description: 'API para la administración del perfil de usuario',
+      },
+      {
+        name: 'Recovery Password',
+        description: 'API para la recuperación de contraseña',
+      },
+      {
+        name: 'Update Password',
+        description: 'API para la actualización de contraseña',
+      },
+      {
+        name: 'Logs',
+        description: 'API para la administración de logs',
+      },
+      {
+        name: 'DN',
+        description: 'API para la administración de DNs',
       },
     ],
 
