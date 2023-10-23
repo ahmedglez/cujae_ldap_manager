@@ -70,6 +70,7 @@ var init = function (
   _insertFunc = insertFunc
   _loginUrl = loginUrl || '/api/v1/login'
   _logoutUrl = logoutUrl || '/api/v1/logout'
+  _refreshUrl = '/api/v1/refresh'
   _usernameAttributeName = ''
 
   passport.use(
@@ -267,7 +268,7 @@ var init = function (
    *         description: User not found or refresh token not found.
    */
 
-  router.post('/refresh', refresh)
+  router.post(_refreshUrl, refresh)
 }
 
 /**
