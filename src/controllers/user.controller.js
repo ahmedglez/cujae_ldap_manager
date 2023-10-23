@@ -15,6 +15,7 @@ const ldapClient = require('@src/connections/LDAP_client')
  * @openapi
  * /api/v1/users:
  *   get:
+ *     tags: [Users]
  *     summary: Get a list of users.
  *     description: Retrieve a list of users based on query parameters. You can filter the results by providing one or more of the following query parameters.
  *     operationId: getUsers
@@ -245,6 +246,7 @@ router.get('/', async (req, res) => {
  * @openapi
  * /api/v1/group/{group}:
  *   get:
+ *     tags: [Users]
  *     summary: Get a list of users in a specific group.
  *     description: Retrieve a list of users in the specified group based on query parameters.
  *     parameters:
