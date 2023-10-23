@@ -102,12 +102,11 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
 
 /**
  * @openapi
- * /api/v1/update-password:
+ * /reset-password:
  *   post:
  *     tags: [Reset Password]
- *     summary: Update user password
- *     description: Update a user's password. The user must provide the old password, a new password, and confirm the new password.
- *     operationId: updateUserPassword
+ *     summary: Restablecer la contraseña del usuario.
+ *     description: Restablece la contraseña del usuario usando un código de recuperación.
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -117,38 +116,37 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               oldPassword:
- *                 type: string
- *                 description: The user's old password.
  *               newPassword:
  *                 type: string
- *                 description: The new password.
+ *                 description: La nueva contraseña.
  *               confirmPassword:
  *                 type: string
- *                 description: Confirmation of the new password.
+ *                 description: Confirmación de la nueva contraseña.
+ *               recoveryCode:
+ *                 type: string
+ *                 description: Código de recuperación.
  *           required:
- *             - oldPassword
  *             - newPassword
  *             - confirmPassword
+ *             - recoveryCode
  *     responses:
  *       200:
- *         description: Password updated successfully.
+ *         description: Contraseña restablecida exitosamente.
  *       400:
- *         description: Bad Request. The request is missing required fields or the passwords do not match.
+ *         description: Código de recuperación inválido o caducado.
  *       401:
- *         description: Unauthorized. The user is not authenticated.
- *       404:
- *         description: Not Found. User not found.
+ *         description: No autorizado. El token no es válido.
  *       500:
- *         description: Internal Server Error.
+ *         description: Error interno del servidor.
  */
+
 router.post(
   '/reset-password',
   checkAuth,
   passwordValidationMiddleware,
   async (req, res) => {
     try {
-      const { newPassword, confirmPassword, oldPassword } = req.body
+      const { newPassword, confirmPassword, recoveryCode } = req.body
 
       if (!newPassword || !confirmPassword) {
         throw boom.unauthorized(
@@ -188,7 +186,7 @@ router.post(
       }
     } catch (error) {
       console.error('Error resetting password:', error)
-      res.status(500).json({ message: 'Error updating password' })
+      res.status(500).json({ message: error.message })
     }
   }
 )
