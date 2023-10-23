@@ -104,7 +104,7 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
  * @openapi
  * /api/v1/update-password:
  *   post:
- *     tags: [Update Password]
+ *     tags: [Reset Password]
  *     summary: Update user password
  *     description: Update a user's password. The user must provide the old password, a new password, and confirm the new password.
  *     operationId: updateUserPassword
