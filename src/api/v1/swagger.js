@@ -64,41 +64,251 @@ const options = {
         User: {
           type: 'object',
           properties: {
+            CI: {
+              type: 'string',
+              description: 'Carnet de identidad del usuario',
+            },
+            middleName: {
+              type: 'string',
+              description: 'Segundo nombre del usuario',
+            },
+            lastName: {
+              type: 'string',
+              description: 'Apellido del usuario',
+            },
+            name: {
+              type: 'string',
+              description: 'Nombre del usuario',
+            },
+            homeAddress: {
+              type: 'string',
+              description: 'Dirección del usuario',
+            },
+            telephoneNumber: {
+              type: 'string',
+              description: 'Número de teléfono del usuario',
+            },
+            dayRegister: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Fecha de registro del usuario',
+            },
+            sex: {
+              type: 'string',
+              enum: ['M', 'F'],
+              description: 'Sexo del usuario',
+            },
+            area: {
+              type: 'string',
+              nullable: true,
+              description: 'Área del usuario',
+            },
+            userCondition: {
+              type: 'string',
+              description: 'Condición del usuario',
+            },
+            userStatus: {
+              type: 'string',
+              description: 'Estado del usuario',
+              enum: ['Activo', 'Inactivo'],
+            },
+            sedeMunicipio: {
+              type: 'string',
+              description: 'Municipio de la sede del usuario',
+            },
+            userType: {
+              type: 'string',
+              description: 'Tipo de usuario',
+              enum: ['Estudiante', 'Trabajador', 'Trabajador Docente'],
+            },
+            userInformation: {
+              type: 'string',
+              description: 'Información del usuario acerca del curso',
+            },
+            career: {
+              type: 'string',
+              description: 'Carrera del usuario',
+            },
+            studentClassGroup: {
+              type: 'string',
+              description: 'Grupo del usuario',
+            },
+            studentYear: {
+              type: 'string',
+              description: 'Año del usuario',
+            },
+            country: {
+              type: 'string',
+              description: 'País del usuario',
+              default: 'Cuba',
+            },
+            UJC: {
+              type: 'string',
+              description: 'Pertenece a la UJC',
+            },
+            skinColor: {
+              type: 'string',
+              description: 'Color de piel del usuario',
+            },
+            nameInstitution: {
+              type: 'string',
+              description: 'Nombre de la institución del usuario',
+              default: 'CUJAE',
+            },
+            right: {
+              type: 'string',
+              description: 'Derecho del usuario',
+              default: 'Todos',
+            },
+            hash: {
+              type: 'string',
+              description: 'Hash de la contraseña del usuario',
+            },
+            lastTimeChange: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Fecha de la última actualización de la contraseña',
+            },
             uid: {
               type: 'string',
-              description: 'El uid del usuario',
-              example: 'ahmediglez',
+              description: 'UID del usuario. Formato: nombre.apellido',
+              required: true,
+            },
+            homeDirectory: {
+              type: 'string',
+              description: 'Directorio del usuario. Formato: /home/uid',
+            },
+            givenName: {
+              type: 'string',
+              description: 'Nombre del usuario',
             },
             cn: {
               type: 'string',
-              description: 'El nombre del usuario',
-              example: 'Ahmed González',
+              description: 'Nombre completo del usuario',
             },
             sn: {
               type: 'string',
-              description: 'El apellido del usuario',
-              example: 'González',
+              description: 'Apellido del usuario',
+            },
+            displayName: {
+              type: 'string',
+              description: 'Nombre de visualización del usuario',
+            },
+            uidNumber: {
+              type: 'string',
+              description: 'Número de UID del usuario. Formato: 1000',
+            },
+            userPassword: {
+              type: 'string',
+              description: 'Contraseña del usuario. Formato: {SSHA}hash',
             },
             mail: {
-              type: 'string',
-              description: 'El correo electrónico del usuario',
-              example: 'ahmediglez@gmaul.com',
-            },
-            password: {
-              type: 'string',
-              description: 'La contraseña del usuario',
-              example: '123456',
-            },
-            roles: {
               type: 'array',
-              description: 'Los roles del usuario',
               items: {
                 type: 'string',
-                example: 'admin',
               },
+              description: 'Correo electrónico del usuario',
+            },
+            maildrop: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Correo electrónico del usuario',
+            },
+            gidNumber: {
+              type: 'string',
+              description: 'Número de GID del usuario. Formato: 1000',
+            },
+            sambaSID: {
+              type: 'string',
+              description:
+                'SID del usuario. Formato: S-1-5-21-1004336348-1177238915-682003330-1000',
+            },
+            objectClass: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description:
+                'Clases del usuario. Formato: top, person, organizationalPerson, inetOrgPerson, posixAccount, shadowAccount, sambaSamAccount',
             },
           },
         },
+
+        Student: {
+          type: 'object',
+          properties: {
+            career: {
+              type: 'string',
+            },
+            studentYear: {
+              type: 'string',
+            },
+            studentClassGroup: {
+              type: 'string',
+            },
+            userInformation: {
+              type: 'string',
+            },
+            userCondition: {
+              type: 'string',
+            },
+            userStatus: {
+              type: 'string',
+            },
+          },
+        },
+
+        Employee: {
+          type: 'object',
+          properties: {
+            dateContract: {
+              type: 'string',
+              format: 'date-time',
+            },
+            dateEndContract: {
+              type: 'string',
+              format: 'date-time',
+            },
+            educationalCategory: {
+              type: 'string',
+            },
+            orgRole: {
+              type: 'string',
+            },
+            schoolLevel: {
+              type: 'string',
+            },
+            scientificCategory: {
+              type: 'string',
+            },
+            userYears: {
+              type: 'string',
+            },
+            workerContract: {
+              type: 'string',
+            },
+            workArea: {
+              type: 'string',
+            },
+            workerID: {
+              type: 'string',
+            },
+          },
+        },
+
+        LdapEntry: {
+          oneOf: [
+            {
+              $ref: '#/components/schemas/Student',
+            },
+            {
+              $ref: '#/components/schemas/Employee',
+            },
+          ],
+        },
+
         UserResponse: {
           type: 'object',
           properties: {
