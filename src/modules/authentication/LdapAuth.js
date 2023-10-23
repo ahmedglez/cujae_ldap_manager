@@ -291,10 +291,6 @@ const initialize = function (
   return init(opt, '', router, findFunc, insertFunc, loginUrl, logoutUrl)
 }
 
-/**
- * Customized login authentication handler to send {success: true}
- * on successful authenticate, or {success: false} on failed authenticate
- */
 const login = function (req, res, next) {
   passport.authenticate(
     'ldap',
