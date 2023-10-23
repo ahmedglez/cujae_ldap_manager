@@ -43,7 +43,11 @@ const logout = (req, res) => {
 const refresh = async (req, res) => {
   const { username } = req.body
 
-  const refreshToken = await getRefreshToken(username)
+  const refreshToken = await getRefreshToken(username, (err) => {
+    if (err) {
+      console.error('Error getting refresh token:', err)
+    }
+  })
 
   if (!refreshToken) {
     return res.status(401).json({ message: 'Refresh token not found' })
