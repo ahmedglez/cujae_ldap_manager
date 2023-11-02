@@ -308,7 +308,7 @@ const login = function (req, res, next) {
       if (!user) {
         res
           .status(401)
-          .json({ success: false, message: 'User cannot be found' })
+          .json({ success: false, message: 'Usario no encontrado' })
       } else {
         const last_time_logged = await profileService.getLastLoginByUsername(
           user.uid

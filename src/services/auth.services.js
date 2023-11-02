@@ -118,6 +118,8 @@ const isAdmin = async (uid, baseDN = config.ldap.base) => {
   }
 }
 
+
+
 module.exports = {
   addToBlackList,
   getRefreshToken,

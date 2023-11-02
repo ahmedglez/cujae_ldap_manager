@@ -23,9 +23,9 @@ const checkRoles = (...roles) => {
     } else {
       responseError(
         res,
-        `You don't have permission to access`,
+        `No tiene permiso de acceso`,
         boom.unauthorized(
-          'Invalid token, you are not authorized to perform this action'
+          'Operación inválida, usted no está autorizado a realizar esta acción.'
         )
       )
     }
@@ -37,7 +37,7 @@ const checkBlacklist = async (req, res, next) => {
   const token = req.headers.authorization.split(' ')[1] // Assuming the token is in the Authorization header
 
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized' })
+    return res.status(401).json({ message: 'No autorizado' })
   }
 
   try {
@@ -47,8 +47,8 @@ const checkBlacklist = async (req, res, next) => {
     if (isBlacklisted) {
       return res.status(401).json({
         success: false,
-        error: 'Token is expired',
-        message: 'Try to Log In again',
+        error: 'Token expirado',
+        message: 'Intente autenticarse nuevamente',
       })
     }
 
