@@ -95,7 +95,7 @@ const UserServices = () => {
       )
 
       if (!!alreadyExistingUser && alreadyExistingUser.length !== 0) {
-        throw new Error(`User already exists with the given DN.`)
+        throw new Error(`User already exists, check the uid, CI and email again`)
       }
 
       /* Add necessary atts */
