@@ -2,6 +2,9 @@ require('dotenv').config({ path: __dirname + '/../../.env' })
 const iesObjectClasses = require('../schemas/ies.schema')
 
 module.exports = {
+  api: {
+    version: 'v1',
+  },
   server: {
     port: process.env.SERVER_PORT,
     host: process.env.HOST,
@@ -28,7 +31,6 @@ module.exports = {
     timeLimit: parseInt(process.env.LDAP_TIME_LIMIT),
   },
   redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
+    url: process.env.REDIS_URL,
   },
 }
