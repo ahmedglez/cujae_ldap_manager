@@ -216,7 +216,6 @@ router.get('/', async (req, res) => {
     const isValid = validateQuery(req.query)
     const queryFilter = createLdapFilterFromQuery(req.query)
     const ldapFilter = `(&(objectClass=person)${queryFilter})`
-    console.log('User', req.user)
 
     // Define the LDAP attributes you want to retrieve
     const attributes = null
