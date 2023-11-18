@@ -9,7 +9,6 @@ const Log = require('@src/schemas/logs.schema')
 
 router.use(checkAuth, checkRoles('superadmin'))
 
-
 // Initialize the tail instance to monitor the log file
 const tail = new Tail('logs/all.log', {
   fromBeginning: true, // Start reading from the beginning of the file
@@ -157,13 +156,14 @@ router.get('/', async (req, res) => {
       order = 'desc',
     } = req.query
 
-    const query = {}
-    if (method) query['message'] = { $regex: `method: '${method}'` }
-    if (url) query['message'] = { ...query['message'], $regex: `url: '${url}'` }
-    if (user)
-      query['message'] = { ...query['message'], $regex: `user: '${user}'` }
-    if (status)
-      query['message'] = { ...query['message'], $regex: `status: '${status}'` }
+    const conditions = []
+
+    if (method) conditions.push({ message: { $regex: `method: '${method}'` } })
+    if (url) conditions.push({ message: { $regex: `url: '${url}'` } })
+    if (user) conditions.push({ message: { $regex: `user: '${user}'` } })
+    if (status) conditions.push({ message: { $regex: `status: ${status}` } })
+
+    const query = conditions.length > 0 ? { $and: conditions } : {}
 
     const sortOrder = order === 'asc' ? 1 : -1
 
