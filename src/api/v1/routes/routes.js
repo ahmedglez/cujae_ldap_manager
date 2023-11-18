@@ -17,7 +17,7 @@ const addRoutes = (app) => {
   app.use(`/api/${version}/dn`, dnController)
   app.use(`/api/${version}/`, recoveryPasswordController)
   app.use(`/api/${version}/`, updatePasswordController)
-  app.use(`/api/${version}`, logsController)
+  app.use(`/api/${version}/logs`, logsController)
 }
 
 module.exports = addRoutes

@@ -23,6 +23,6 @@ const logSchema = new mongoose.Schema(
   }
 )
 
-const Log = mongoose.model('Log', logSchema)
+const Log = mongoose.model('Logs', logSchema)
 
 module.exports = Log

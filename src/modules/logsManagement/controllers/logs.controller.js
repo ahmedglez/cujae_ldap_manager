@@ -2,10 +2,13 @@ const fs = require('fs')
 const express = require('express')
 const router = express.Router()
 const { checkAuth, checkRoles } = require('@src/middlewares/auth.handler')
-const { decodeJWT } = require('@src/utils/authentication/tokens/jwtUtils')
 const { WebSocketServer, OPEN } = require('ws')
 const Tail = require('tail').Tail
 const path = require('path')
+const Log = require('@src/schemas/logs.schema')
+
+router.use(checkAuth, checkRoles('superadmin'))
+
 
 // Initialize the tail instance to monitor the log file
 const tail = new Tail('logs/all.log', {
@@ -142,81 +145,42 @@ router.server = (server) => {
  *         description: Unauthorized or insufficient permissions.
  */
 
-router.get('/logs', checkAuth, checkRoles('admin'), (req, res) => {
-  const payload = decodeJWT(req.headers.authorization.split(' ')[1])
-  const isSuperAdmin = payload.roles.includes('superadmin')
-  const queryParams = req.query
-  const logs = parseLogFileToJson()
+router.get('/', async (req, res) => {
+  try {
+    const {
+      method,
+      url,
+      user,
+      status,
+      page = 1,
+      limit = 10,
+      order = 'desc',
+    } = req.query
 
-  const filteredLogs = logs.filter((log) => {
-    return Object.entries(queryParams).every(([key, value]) => {
-      if (key === 'level' && !log.level.startsWith(value)) {
-        return false
-      }
+    const query = {}
+    if (method) query['message'] = { $regex: `method: '${method}'` }
+    if (url) query['message'] = { ...query['message'], $regex: `url: '${url}'` }
+    if (user)
+      query['message'] = { ...query['message'], $regex: `user: '${user}'` }
+    if (status)
+      query['message'] = { ...query['message'], $regex: `status: '${status}'` }
 
-      if (!isSuperAdmin) {
-        return log.message.branch === payload.localBase
-      }
+    const sortOrder = order === 'asc' ? 1 : -1
 
-      if (key in log.message && log.message[key] !== value) {
-        return false
-      }
+    const logs = await Log.find(query)
+      .sort({ timestamp: sortOrder }) // Always sort by timestamp
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
 
-      return true
+    res.json({
+      success: true,
+      logs,
     })
-  })
-
-  // Function to filter logs by date range
-  const filterLogsByDateRange = (logs, startDate, endDate) => {
-    return logs.filter((log) => {
-      const logDate = new Date(log.date)
-      return logDate >= startDate && logDate <= endDate
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     })
-  }
-
-  const period = req.query.period
-  if (period === 'daily') {
-    const currentDate = new Date()
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    )
-    const endDate = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate() + 1
-    )
-    const dailyLogs = filterLogsByDateRange(filteredLogs, startDate, endDate)
-    res.json(dailyLogs)
-  } else if (period === 'weekly') {
-    const currentDate = new Date()
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate() - 7
-    )
-    const weeklyLogs = filterLogsByDateRange(
-      filteredLogs,
-      startDate,
-      currentDate
-    )
-    res.json(weeklyLogs)
-  } else if (period === 'monthly') {
-    const currentDate = new Date()
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate() - 30
-    )
-    const monthlyLogs = filterLogsByDateRange(
-      filteredLogs,
-      startDate,
-      currentDate
-    )
-    res.json(monthlyLogs)
-  } else {
-    res.json(filteredLogs) // Return filtered logs without date filtering if no period is specified
   }
 })
 
