@@ -6,6 +6,9 @@ const { WebSocketServer, OPEN } = require('ws')
 const Tail = require('tail').Tail
 const path = require('path')
 const Log = require('@src/schemas/logs.schema')
+const {
+  filterLogsByTimeframe,
+} = require('@src/modules/logsManagement/utils/datesFilters')
 
 router.use(checkAuth, checkRoles('superadmin'))
 
@@ -58,28 +61,6 @@ const wss = new WebSocketServer({
     // should not be compressed if context takeover is disabled.
   },
 })
-
-const parseLogFileToJson = () => {
-  const logData = fs.readFileSync('logs/all.log', 'utf-8')
-  const logs = logData
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => {
-      const splittedLine = line.split(' ')
-      const message = splittedLine[3].replace(/^"(.*)"$/, '$1')
-      const parsedMessage = JSON.parse(message)
-      const log = {
-        date: splittedLine[0],
-        time: splittedLine[1],
-        level: splittedLine[2],
-        message: parsedMessage,
-      }
-
-      return log
-    })
-
-  return logs
-}
 
 tail.on('line', (data) => {
   sendLogsToClients(data)
@@ -154,6 +135,7 @@ router.get('/', async (req, res) => {
       page = 1,
       limit = 10,
       order = 'desc',
+      timeframe = 'all',
     } = req.query
 
     const conditions = []
@@ -172,9 +154,16 @@ router.get('/', async (req, res) => {
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
 
+    let filteredLogs = logs
+
+    if (timeframe) {
+      filteredLogs = filterLogsByTimeframe(filteredLogs, timeframe)
+    }
+
     res.json({
       success: true,
-      logs,
+      length: filteredLogs.length,
+      logs: filteredLogs,
     })
   } catch (error) {
     res.status(500).json({
