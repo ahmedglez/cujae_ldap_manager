@@ -12,7 +12,8 @@ const options = {
     info: {
       title: 'CUJAE LDAP API',
       version: '1.0.0',
-      description: 'API para la administración de usuarios LDAP de la CUJAE',
+      description:
+        'API para la administración de usuarios LDAP de la CUJAE. Esta API facilita la gestión de la autenticación de usuarios, la administración de usuarios y grupos LDAP, perfiles de usuario, recuperación de contraseña, actualización y restablecimiento de contraseña, logs, administración de DNs y configuración de LDAP. Sirve como una solución integral para manejar varios aspectos de la administración de usuarios y directorios en el sistema LDAP de la CUJAE. Desarrollada por Ahmed González, contactable en ahmediglez@gmail.com.',
       contact: {
         name: 'Ahmed González',
         email: 'ahmediglez@gmail.com',
@@ -60,6 +61,10 @@ const options = {
       {
         name: 'DN',
         description: 'API para la administración de DNs',
+      },
+      {
+        name: 'LDAP',
+        description: 'API para la administración de la configuración del LDAP',
       },
     ],
 
