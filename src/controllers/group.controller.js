@@ -164,9 +164,7 @@ router.post('/getChilds', checkAuth, checkRoles('admin'), async (req, res) => {
     if (!baseDN) {
       throw new Error(`Base DN requerido.`)
     }
-    console.log('entro')
     const response = await service.getChildrensBaseDN(baseDN)
-    console.log('response', response)
     res.json({
       success: true,
       data: response,
@@ -175,7 +173,7 @@ router.post('/getChilds', checkAuth, checkRoles('admin'), async (req, res) => {
     console.log(error)
     res.status(500).json({
       success: false,
-      message: 'Parece que el grupo seleccionado no existe o está vacío',
+      message: 'Parece que el grupo seleccionado no existe o se encuentra vacío',
       error: error,
     })
   }
