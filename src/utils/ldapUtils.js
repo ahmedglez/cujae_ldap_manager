@@ -6,6 +6,8 @@ var assert = require('assert')
 // Bind to the LDAP server using appropriate credentials
 const bindLdapClient = () => {
   return new Promise((resolve, reject) => {
+    console.log('username', config.ldap.admin.username)
+    console.log('password', config.ldap.admin.password)
     ldapClient.bind(
       config.ldap.admin.username,
       config.ldap.admin.password,
@@ -75,6 +77,9 @@ const performLdapSearch = async (baseDn, filter, attributes) => {
         searchResponse.on('end', () => {
           resolve(searchResults)
         })
+        searchResponse.on('error', (error) => {
+          reject(error)
+        })
       })
     } catch (err) {
       reject(err)
@@ -83,6 +88,7 @@ const performLdapSearch = async (baseDn, filter, attributes) => {
 }
 
 const performScopedLdapSearch = async (baseDn, filter, attributes) => {
+  console.log('baseDN', baseDn)
   return new Promise((resolve, reject) => {
     try {
       bindLdapClient() // Bind before search
@@ -109,9 +115,13 @@ const performScopedLdapSearch = async (baseDn, filter, attributes) => {
         searchResponse.on('end', () => {
           resolve(searchResults)
         })
+
+        searchResponse.on('error', (error) => {
+          reject(error)
+        })
       })
-    } catch (err) {
-      reject(err)
+    } catch (error) {
+      reject(error)
     }
   })
 }
@@ -142,6 +152,9 @@ const performBaseLdapSearch = async (baseDn, filter, attributes) => {
 
         searchResponse.on('end', () => {
           resolve(searchResults)
+        })
+        searchResponse.on('error', (error) => {
+          reject(error)
         })
       })
     } catch (err) {

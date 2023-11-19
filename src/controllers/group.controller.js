@@ -157,33 +157,29 @@ router.post('/', checkAuth, validateResponse, async (req, res) => {
  *         description: An error occurred while fetching child groups.
  */
 
-router.post(
-  '/getChilds',
-  checkAuth,
-  checkRoles('admin'),
-  validateResponse,
-  async (req, res) => {
-    try {
-      const { baseDN } = req.body
+router.post('/getChilds', checkAuth, checkRoles('admin'), async (req, res) => {
+  try {
+    const { baseDN } = req.body
 
-      if (!baseDN) {
-        throw new Error(`Base DN required.`)
-      }
-
-      const response = await service.getChildrensBaseDN(baseDN)
-      res.json({
-        success: true,
-        data: response,
-      })
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error fetching group',
-        error: `It seems that the group does not exist.`,
-      })
+    if (!baseDN) {
+      throw new Error(`Base DN requerido.`)
     }
+    console.log('entro')
+    const response = await service.getChildrensBaseDN(baseDN)
+    console.log('response', response)
+    res.json({
+      success: true,
+      data: response,
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: 'Parece que el grupo seleccionado no existe o está vacío',
+      error: error,
+    })
   }
-)
+})
 
 /**
  * @openapi

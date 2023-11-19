@@ -4,6 +4,7 @@ const iesObjectClasses = require('../schemas/ies.schema')
 module.exports = {
   api: {
     version: 'v1',
+    url: process.env.API_URL,
   },
   server: {
     port: process.env.SERVER_PORT,
