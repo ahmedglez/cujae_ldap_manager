@@ -133,17 +133,21 @@ router.get('/', async (req, res) => {
       user,
       status,
       page = 1,
-      limit = 10,
+      limit = 9000,
       order = 'desc',
       timeframe = 'all',
     } = req.query
 
     const conditions = []
 
-    if (method) conditions.push({ message: { $regex: `method: '${method}'` } })
-    if (url) conditions.push({ message: { $regex: `url: '${url}'` } })
-    if (user) conditions.push({ message: { $regex: `user: '${user}'` } })
-    if (status) conditions.push({ message: { $regex: `status: ${status}` } })
+    if (method && method !== 'all' && method !== 'ALL' && method !== 'All')
+      conditions.push({ message: { $regex: `method: '${method}'` } })
+    if (url && url !== 'all' && url !== 'ALL' && url !== 'All')
+      conditions.push({ message: { $regex: `url: '${url}'` } })
+    if (user && user !== 'all' && user !== 'ALL' && user !== 'All')
+      conditions.push({ message: { $regex: `user: '${user}'` } })
+    if (status && status !== 'all' && status !== 'ALL' && status !== 'All')
+      conditions.push({ message: { $regex: `status: ${status}` } })
 
     const query = conditions.length > 0 ? { $and: conditions } : {}
 
