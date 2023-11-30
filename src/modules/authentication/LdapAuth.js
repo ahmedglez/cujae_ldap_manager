@@ -339,7 +339,7 @@ const login = async function (req, res, next) {
       if (!user) {
         res
           .status(401)
-          .json({ success: false, message: 'Usario no encontrado' })
+          .json({ success: false, message: 'Usuario no encontrado' })
       } else {
         // Agrega un nuevo registro al usuario
         await addUserRegistry(user)
@@ -381,8 +381,8 @@ const login = async function (req, res, next) {
         }
 
         const userObj = { ...user }
-        const token = signToken(payload, { expiresIn: '45 minutes' })
-        const refreshToken = signToken(payload, { expiresIn: '1 day' })
+        const token = signToken(payload, { expiresIn: '15 minutes' })
+        const refreshToken = signToken(payload, { expiresIn: '1 hour' })
 
         /*  await storeRefreshToken(user.uid, refreshToken) */
 
