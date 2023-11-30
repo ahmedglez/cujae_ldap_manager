@@ -3,22 +3,19 @@ const ldapClient = require('@src/connections/LDAP_client')
 const config = require('@src/config/config')
 var assert = require('assert')
 
+const ADMIN_USER = process.env.ADMIN_USER || 'cn=admin,dc=cu'
+const ADMIN_PASS = process.env.ADMIN_PASS || ''
+
 // Bind to the LDAP server using appropriate credentials
 const bindLdapClient = () => {
   return new Promise((resolve, reject) => {
-    console.log('username', config.ldap.admin.username)
-    console.log('password', config.ldap.admin.password)
-    ldapClient.bind(
-      config.ldap.admin.username,
-      config.ldap.admin.password,
-      (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
+    ldapClient.bind(ADMIN_USER, ADMIN_PASS, (err) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve()
       }
-    )
+    })
   })
 }
 
@@ -198,7 +195,6 @@ const performLdapAddition = async (dn, entry) => {
   entry.lastTimeChange = new Date().toISOString()
   entry.sambaSID = 'S-1-5-21-1255719363-1350762778-3568053751-513'
 
-  console.log('entry', entry)
 
   return new Promise((resolve, reject) => {
     try {
@@ -211,8 +207,7 @@ const performLdapAddition = async (dn, entry) => {
             success: true,
             message: err,
           })
-        } else {
-          console.log('created user')
+        } else {          
           resolve('created User')
         }
       })
