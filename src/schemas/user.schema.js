@@ -1,14 +1,5 @@
 const mongoose = require('mongoose')
 
-const loginRecordSchema = new mongoose.Schema(
-  {
-    timestamp: { type: Date, required: true },
-  },
-  {
-    _id: false, // Disable automatic generation of _id for subdocuments
-  }
-)
-
 const userSchema = new mongoose.Schema(
   {
     // Fields from LDAP
