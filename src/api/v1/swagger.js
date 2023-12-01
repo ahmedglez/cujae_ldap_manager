@@ -66,6 +66,10 @@ const options = {
         name: 'LDAP',
         description: 'API para la administración de la configuración del LDAP',
       },
+      {
+        name: 'SIGENU',
+        description: 'API para la integracion con los modulos de SIGENU',
+      },
     ],
 
     components: {

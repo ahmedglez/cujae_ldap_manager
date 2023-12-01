@@ -8,6 +8,11 @@ const JwtStrategy = require('@src/utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
 const userService = require('@src/services/user.services')()
 const User = require('@src/schemas/user.schema').User
+const config = require('@src/config/config')
+const {
+  login_sigenu,
+} = require('@src/modules/sigenu_integration/controllers/auth.controller')
+const { version } = config.api
 
 const {
   login,
@@ -36,6 +41,7 @@ var _usernameAttributeName
  * @param {function} insertFunc - function(user) to upsert user into local db
  * @param {string} [loginUrl] - path to login page. Default: /login
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
+ * @param {string} [sigenuLoginUrl]
  */
 
 var init = function (
@@ -57,9 +63,10 @@ var init = function (
   }
   _findFunc = findFunc
   _insertFunc = insertFunc
-  _loginUrl = loginUrl || '/api/v1/login'
-  _logoutUrl = logoutUrl || '/api/v1/logout'
-  _refreshUrl = '/api/v1/refresh'
+  _loginUrl = loginUrl || `/api/${version}/login`
+  _logoutUrl = logoutUrl || `/api/${version}/logout`
+  _sigenuLoginUrl = `/api/${version}/sigenu/login`
+  _refreshUrl = '/api/${version}/refresh'
   _usernameAttributeName = ''
 
   passport.use(
@@ -196,6 +203,37 @@ var init = function (
 
   /**
    * @openapi
+   * /api/v1/sigenu/login:
+   *   post:
+   *     tags: [Authentication, SIGENU]
+   *     summary: User login.
+   *     description: Authenticate a user using LDAP credentials.
+   *     operationId: loginUser
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *           required:
+   *             - username
+   *             - password
+   *     responses:
+   *       200:
+   *         description: User authenticated successfully.
+   *       401:
+   *         description: Authentication failed. Invalid credentials or user not found.
+   *       500:
+   *         description: An error occurred during authentication.
+   */
+  router.post(_sigenuLoginUrl, login_sigenu)
+
+  /**
+   * @openapi
    * /api/v1/logout:
    *   post:
    *     tags: [Authentication]
@@ -280,8 +318,6 @@ const initialize = function (
 ) {
   return init(opt, '', router, findFunc, insertFunc, loginUrl, logoutUrl)
 }
-
-
 
 module.exports.init = init
 module.exports.initialize = initialize
