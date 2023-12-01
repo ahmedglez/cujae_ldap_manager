@@ -12,8 +12,22 @@
 }
  */
 
-const parseLoginPayload = (ldapUser) => {
+/*   {
+        "address": "Dirección Particular",
+        "email": "Correo del profesor",
+        "identification": "CI del profesor",
+        "lastname": "Segundo apellido",
+        "name": "Nombre",
+        "phone": "Teléfono",
+        "scientificCategory": "Categoría Científica|null",
+        "surname": "Segundo apellido",
+        "teachingCategory": "Categoría Docente|null ",
+        "area": "Nombre del area a la que pertece|null",
+        "user": "Nombre de usuario"
+    }
+ */
 
+const parseLoginPayload = (ldapUser) => {
   const payload = {
     email: ldapUser?.mail || ldapUser?.maildrop,
     facultyId: ldapUser?.area || ldapUser?.workArea || null,
@@ -33,4 +47,49 @@ const parseLoginPayload = (ldapUser) => {
   return payload
 }
 
-module.exports = { parseLoginPayload }
+const createProfessorsFilter = (queryJson) => {
+  const { identification, name, lastname, surname, email } = queryJson
+  const filters = []
+
+  if (!!identification && identification !== '')
+    filters.push(`(CI=${identification})`)
+  if (!!name && name !== '') filters.push(`(name=${name})`)
+  if (!!lastname && lastname !== '') filters.push(`(lastName=${lastname})`)
+  if (!!surname && surname !== '') filters.push(`(middleName=${surname})`)
+  if (!!email && email !== '') filters.push(`(mail=${email})`)
+
+  if (filters.length === 0) {
+    return ''
+  }
+
+  const ldapFilter = filters.join('')
+
+  return ldapFilter
+}
+
+// Parsea un array de entradas del LDAP a un array de Json customizados
+const parseLdapEntryToProfessorDto = (entries) => {
+  const parsedEntries = entries.map((entry) => {
+    return {
+      address: entry.homeAddress,
+      email: entry.mail,
+      identification: entry.CI,
+      lastname: entry.lastName,
+      name: entry.name,
+      phone: entry.telephoneNumber,
+      scientificCategory: entry.scientificCategory || null,
+      surname: entry.middleName,
+      teachingCategory: entry.schoolLevel || null,
+      area: entry.area || null,
+      user: entry.user,
+    }
+  })
+
+  return parsedEntries
+}
+
+module.exports = {
+  parseLoginPayload,
+  createProfessorsFilter,
+  parseLdapEntryToProfessorDto,
+}

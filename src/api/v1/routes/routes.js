@@ -9,6 +9,8 @@ const dnController = require('@src/controllers/dn.controller')
 const logsController = require('@src/modules/logsManagement/controllers/logs.controller')
 const ldapController = require('@src/controllers/ldap.controller')
 
+const addSigenuRoutes = require('@src/modules/sigenu_integration/routes/routes')
+
 const addRoutes = (app) => {
   app.use(`/api/${version}/users`, userController)
   app.use(`/api/${version}/groups`, groupController)
@@ -18,6 +20,7 @@ const addRoutes = (app) => {
   app.use(`/api/${version}/`, recoveryPasswordController)
   app.use(`/api/${version}/`, updatePasswordController)
   app.use(`/api/${version}/logs`, logsController)
+  addSigenuRoutes(app)
 }
 
 module.exports = addRoutes
