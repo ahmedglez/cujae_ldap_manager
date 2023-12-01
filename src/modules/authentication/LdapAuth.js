@@ -4,27 +4,16 @@
 
 const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
-const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
+const JwtStrategy = require('@src/utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
-const userService = require('../../services/user.services')()
-const { isSuperAdmin, isAdmin } = require('@src/services/auth.services')
-const User = require('../../schemas/user.schema').User
-const profileService = require('../../services/profile.services')()
-const { checkAuth } = require('@src/middlewares/auth.handler')
-const { logout, refresh } = require('./functions/index.js')
-const {
-  storeRefreshToken,
-  getRefreshToken,
-} = require('@src/services/auth.services')
+const userService = require('@src/services/user.services')()
+const User = require('@src/schemas/user.schema').User
 
-/* helpers */
 const {
-  extractBaseFromDn,
-  extractGroupsFromDn,
-} = require('../../helpers/dnHelper')
-
-const { signToken } = require('../../utils/authentication/tokens/token_sign')
-const { responseSuccess } = require('../../schemas/response.schema')
+  login,
+  logout,
+  refresh,
+} = require('@src/modules/authentication/controllers/auth.controller.js')
 
 var _backwardCompatible = false
 var _dn
@@ -292,117 +281,7 @@ const initialize = function (
   return init(opt, '', router, findFunc, insertFunc, loginUrl, logoutUrl)
 }
 
-const addUserRegistry = async (user) => {
-  const { uid, cn, sn, dn, mail } = user
 
-  try {
-    // Busca al usuario por su nombre de usuario
-    let existingUser = await User.findOne({ username: uid })
-
-    if (existingUser) {
-      // El usuario ya existe, agrega un nuevo registro a su matriz "registry"
-      existingUser.registry.push({ timestamp: new Date() })
-      await existingUser.save()
-    } else {
-      // El usuario no existe, crea un nuevo usuario con el registro inicial
-      const newUser = new User({
-        username: uid,
-        cn,
-        sn,
-        dn,
-        mail,
-        registry: [{ timestamp: new Date() }],
-      })
-      await newUser.save()
-    }
-
-    console.log('Registro de usuario exitoso')
-  } catch (error) {
-    console.error('Error al agregar registro de usuario:', error)
-    throw error // Puedes manejar el error según tus necesidades
-  }
-}
-
-const login = async function (req, res, next) {
-  passport.authenticate(
-    'ldap',
-    {
-      successRedirect: '/dashboard',
-      failureRedirect: '/login',
-      failureFlash: true,
-    },
-    async (err, user) => {
-      if (err) {
-        res.status(401).json({ success: false, message: err.message })
-        return
-      }
-      if (!user) {
-        res
-          .status(401)
-          .json({ success: false, message: 'Usuario no encontrado' })
-      } else {
-        // Agrega un nuevo registro al usuario
-        await addUserRegistry(user)
-
-        const last_time_logged = await profileService.getLastLoginByUsername(
-          user.uid
-        )
-        const loginInfo = await profileService.updateLastTimeLogged(user.uid)
-        // Example usage
-        const ldapDn = user.dn
-        const groups = extractGroupsFromDn(ldapDn)
-        const rootBaseDN = extractBaseFromDn(ldapDn)
-        const localBaseDN = user.dn.replace(`uid=${user.uid},`, '')
-
-        let roles = ['user']
-        const isSpAdmin = await isSuperAdmin(user.uid)
-        if (isSpAdmin) {
-          roles = [...roles, 'admin', 'superadmin']
-        } else {
-          const isAdm = await isAdmin(user.uid, localBaseDN)
-          isAdm ? (roles = [...roles, 'admin']) : [...roles]
-        }
-
-        const payload = {
-          sub: user.uid,
-          dn: user.dn,
-          uid: user.uid,
-          groups: groups,
-          base: rootBaseDN,
-          localBase: localBaseDN,
-          firstname: user.givenName,
-          lastname: user.sn,
-          fullname: user.cn,
-          email: user.mail,
-          ci: user.CI,
-          roles: roles,
-          last_time_logged,
-          loginInfo,
-        }
-
-        const userObj = { ...user }
-        const token = signToken(payload, { expiresIn: '15 minutes' })
-        const refreshToken = signToken(payload, { expiresIn: '1 hour' })
-
-        /*  await storeRefreshToken(user.uid, refreshToken) */
-
-        req.login(user, (loginErr) => {
-          if (loginErr) {
-            return next(loginErr)
-          }
-          if (!!user) {
-            const data = {
-              token: token,
-              refreshToken: refreshToken,
-              user: userObj,
-            }
-            return responseSuccess(res, 'authentication succeeded', data)
-          }
-        })
-      }
-    }
-  )(req, res, next)
-}
 
 module.exports.init = init
 module.exports.initialize = initialize
