@@ -3,7 +3,10 @@ const winston = require('winston')
 const mongoose = require('mongoose') // Import mongoose
 const { MongoDB } = require('winston-mongodb') // Import MongoDB transport
 const config = require('@src/config/config')
-const { decodeJWT } = require('@src/utils/authentication/tokens/jwtUtils')
+const {
+  decodeJWT,
+  getAuthTokenType,
+} = require('@src/utils/authentication/tokens/jwtUtils')
 
 const logger = require('@src/utils/logger')
 const { validate } = require('@src/schemas/logs.schema')
@@ -14,10 +17,25 @@ morgan.token('user', (req) => {
 
 const logFormat = (tokens, req, res) => {
   const status = tokens.status(req, res)
-  const payload =
-    req.headers.authorization !== undefined
-      ? decodeJWT(req.headers.authorization.split(' ')[1])
-      : undefined
+  const authorizationHeader = req.headers.authorization
+  const authType = getAuthTokenType(authorizationHeader)
+
+  let payload
+
+  if (authType?.type === 'Bearer') {
+    payload = decodeJWT(authorizationHeader.split(' ')[1])
+  } else if (authType?.type === 'Basic') {
+    const decodedToken = Buffer.from(
+      authorizationHeader.split(' ')[1],
+      'base64'
+    ).toString('utf-8')
+    const [username, password] = decodedToken.split(':')
+    payload = {
+      uid: username,
+      dn: undefined,
+      localBase: undefined,
+    }
+  }
 
   const log = {
     method: tokens.method(req, res),
