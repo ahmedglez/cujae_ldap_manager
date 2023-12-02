@@ -9,10 +9,15 @@ const { User } = require('../schemas/user.schema')
 
 const ProfileServices = () => {
   const getProfile = (req) => {
-    const token = req.headers.authorization.split(' ')[1]
-    const payload = verifyToken(token)
-    const { sub } = payload
-    return service.getByUsername(sub)
+    try {
+      const token = req.headers.authorization.split(' ')[1]
+      const payload = verifyToken(token)
+      const { sub } = payload
+      return service.getByUsername(sub)
+    } catch (error) {
+      throw new Error('Invalid token')
+      return null
+    }
   }
 
   const updateProfile = async (email, password, req) => {

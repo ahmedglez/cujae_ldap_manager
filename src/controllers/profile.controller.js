@@ -34,7 +34,7 @@ const service = ProfileServices()
 router.get(
   '/',
   checkAuth,
-  checkBlacklist,
+/*   checkBlacklist, */
   checkRoles('user'),
   validateResponse,
   (req, res) => {

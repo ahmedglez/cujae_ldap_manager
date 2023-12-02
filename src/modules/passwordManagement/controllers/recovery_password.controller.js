@@ -96,7 +96,7 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
     })
   } catch (error) {
     console.error('Error in /forgot-password:', error)
-    res.status(500).json({ message: 'Internal Server Error' })
+    res.status(500).json({ message: error.message })
   }
 })
 
@@ -171,7 +171,7 @@ router.post(
       )
       if (!checkedCode.isValid) {
         const error = boom.unauthorized(checkedCode.isValid.message)
-        throw error
+        throw new Error("Invalid code")
       }
 
       const encriptedPassword = hashPassword(newPassword)
@@ -182,7 +182,7 @@ router.post(
       )
       if (!!updatedUser) {
         await sendSuccessPasswordEmailTo(payload.name, payload.email)
-        res.status(200).json({ success: true, message: 'updated user' })
+        res.status(200).json({ success: true, message: 'updated password' })
       }
     } catch (error) {
       console.error('Error resetting password:', error)

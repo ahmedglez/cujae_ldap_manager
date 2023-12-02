@@ -79,7 +79,7 @@ const sendRecoveryPasswordEmailTo = async (user, code) => {
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: email,
-          subject: 'Reestablecimiento de Contrasena',
+          subject: 'Reestablecimiento de Contraseña',
           html: htmlToSend,
         }
 

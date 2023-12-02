@@ -5,25 +5,45 @@ const { responseError } = require('../schemas/response.schema')
 const { isBlackListed } = require('@src/services/auth.services')
 
 const checkAuth = (req, res, next) => {
-  const auth = passport.authenticate('jwt', { session: false })
-  auth(req, res, next)
+  try {
+    const auth = passport.authenticate('jwt', { session: false })
+    auth(req, res, next)
+  } catch (error) {
+    responseError(
+      res,
+      `Token Invalido`,
+      boom.unauthorized(
+        'Operación inválida, usted no está autorizado a realizar esta acción.'
+      )
+    )
+  }
 }
 
 const checkRoles = (...roles) => {
   return (req, res, next) => {
-    const payload = verifyToken(req.headers.authorization.split(' ')[1])
-    if (!payload) {
-      const error = boom.unauthorized('Token is not valid')
-      next(error)
-    }
-    const { roles: userRoles } = payload
-    const hasRole = roles.some((role) => userRoles.includes(role))
-    if (hasRole) {
-      next()
-    } else {
+    try {
+      const payload = verifyToken(req.headers.authorization.split(' ')[1])
+      if (!payload) {
+        const error = boom.unauthorized('Token is not valid')
+        throw error
+      }
+      const { roles: userRoles } = payload
+      const hasRole = roles.some((role) => userRoles.includes(role))
+      if (hasRole) {
+        next()
+      } else {
+        responseError(
+          res,
+          `No tiene permiso de acceso`,
+          boom.unauthorized(
+            'Operación inválida, usted no está autorizado a realizar esta acción.'
+          )
+        )
+      }
+    } catch (error) {
       responseError(
         res,
-        `No tiene permiso de acceso`,
+        `Token Invalido`,
         boom.unauthorized(
           'Operación inválida, usted no está autorizado a realizar esta acción.'
         )
