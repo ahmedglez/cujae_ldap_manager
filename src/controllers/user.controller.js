@@ -433,7 +433,6 @@ router.post('/baseDN', async (req, res) => {
  *       500:
  *         description: An error occurred while updating user attributes.
  */
-
 router.put('/:username', async (req, res) => {
   try {
     const { att, value } = req.body
@@ -568,7 +567,6 @@ router.post('/modify-ldap', async (req, res) => {
  *       500:
  *         description: An error occurred while adding the new user to LDAP.
  */
-
 router.post('/newUser', async (req, res) => {
   try {
     const { newUser, userDN } = req.body
@@ -599,4 +597,5 @@ router.post('/newUser', async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 })
+
 module.exports = router

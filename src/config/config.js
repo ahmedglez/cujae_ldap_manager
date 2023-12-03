@@ -6,6 +6,10 @@ module.exports = {
     version: 'v1',
     url: process.env.API_URL,
   },
+  tests: {
+    username: process.env.USERNAME_TEST,
+    password: process.env.PASSWORD_TEST,
+  },
   server: {
     port: process.env.SERVER_PORT,
     host: process.env.HOST,

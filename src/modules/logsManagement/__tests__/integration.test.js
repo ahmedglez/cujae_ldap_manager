@@ -1,57 +1,47 @@
-const axios = require('axios')
-const axiosMockAdapter = require('axios-mock-adapter')
-const WebSocket = require('ws')
+const request = require('supertest')
+const apiUrl = 'http://127.0.0.1:4000/api/v1'
+const config = require('@src/config/config')
 
-// Import your REST API server module here.
-// Import your WebSocket server module here.
+const username = config.tests.username
+const password = config.tests.password
 
-describe('Integration Test', () => {
-  let axiosMock
-  let ws
-  let wsMessages
+const randomNumber = Math.floor(Math.random() * 100000000)
+  .toString()
+  .padStart(8, '0')
+const TEST_URL_ID = `/${randomNumber}`
 
-  beforeAll(() => {
-    // Start your REST API server (if it's not already running)
-    // Start your WebSocket server (if it's not already running)
-
-    // Create a WebSocket connection
-    ws = new WebSocket('ws://localhost:8080')
-    wsMessages = []
-
-    // Handle messages from the WebSocket server
-    ws.on('message', (message) => {
-      wsMessages.push(message)
+describe('API Tests', () => {
+  it('should handle authentication with incorrect credentials', async () => {
+    const response = await request(apiUrl).post('/login').send({
+      username: 'incorrectUsername',
+      password: 'incorrectPassword',
     })
 
-    // Create an instance of the axios mock adapter
-    axiosMock = new axiosMockAdapter(axios)
-
-    // Mock the HTTP request to your REST API
-    axiosMock
-      .onGet('http://localhost:3000/logs')
-      .reply(200, { data: 'Mocked data from REST API' })
+    expect(response.statusCode).toBe(401)
   })
 
-  afterAll(() => {
-    // Close the WebSocket connection and perform any necessary cleanup
-    ws.close()
-    axiosMock.restore()
-  })
+  it('should get logs with a valid JWT token', async () => {
+    const response = await request(apiUrl).post('/login').send({
+      username: username,
+      password: password,
+    })
 
-  it('should perform HTTP and WebSocket communication', async () => {
-    // Make an HTTP request to your REST API
-    const response = await axios.get('http://localhost:3000/logs')
+    expect(response.statusCode).toBe(200)
+    
+    const authToken = response.body.data.token
 
-    expect(response.status).toBe(200)
-    expect(response.data).toEqual({ data: 'Mocked data from REST API' })
+    const testRequest = await request(apiUrl)
+      .get(TEST_URL_ID)
+      .set('Authorization', `Bearer ${authToken}`)
 
-    // Send a message to the WebSocket server
-    ws.send('Hello, WebSocket server!')
+    const responselogs = await request(apiUrl)
+      .get(
+        `/logs?method=GET&user=${username}&url=/api/v1${TEST_URL_ID}&timeframe=today`
+      )
+      .set('Authorization', `Bearer ${authToken}`)
 
-    // Wait for a moment to allow the WebSocket server to process the message
-    await new Promise((resolve) => setTimeout(resolve, 100))
-
-    // Assertions for WebSocket messages
-    expect(wsMessages).toContain('Hello, WebSocket server!')
+    expect(responselogs.statusCode).toBe(200)
+    expect(responselogs._body.logs.length).toBeGreaterThan(0)
+   
   })
 })
