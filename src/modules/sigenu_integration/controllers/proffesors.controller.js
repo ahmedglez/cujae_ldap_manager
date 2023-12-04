@@ -36,8 +36,7 @@ router.post(`${BASE_ROUTE}/`, async (req, res) => {
     const ldapFilter = `(&(objectClass=person)(userType=${USER_TYPE})${queryFilter})`
 
     const attributes = null
-    console.log('roles', roles)
-    console.log('ldapFilter', ldapFilter)
+    
 
     // Call the performLdapSearch function to retrieve users matching the group filters
     const searchResults = await service.handleFilteredSearch(
@@ -48,11 +47,11 @@ router.post(`${BASE_ROUTE}/`, async (req, res) => {
       LIMIT
     )
 
-    console.log('searchResults', searchResults)
+    
 
     const parsedResults = parseLdapEntryToProfessorDto(searchResults)
 
-    console.log('parsedResults', parsedResults)
+    
 
     res.status(200).json(parsedResults)
   } catch (error) {
