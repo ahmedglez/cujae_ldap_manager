@@ -6,7 +6,7 @@ const validateResponse = require('../middlewares/validateResponse')
 const {
   checkAuth,
   checkRoles,
-  checkBlacklist,
+  /* checkBlacklist, */
 } = require('../middlewares/auth.handler')
 const service = ProfileServices()
 
@@ -95,12 +95,12 @@ router.get(
 router.put(
   '/',
   checkAuth,
-  checkBlacklist,
+  /* checkBlacklist, */
   checkRoles('user'),
   validateResponse,
   (req, res) => {
     const { email, password, confirmPassword } = req.body
-    if (!email && !password) {
+    if (!email || !password) {
       responseError(res, 'fields cannot be empty', null)
     } else if (password) {
       if (password !== confirmPassword) {
