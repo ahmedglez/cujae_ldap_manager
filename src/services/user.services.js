@@ -52,7 +52,7 @@ const UserServices = () => {
   const getByEmail = async (email) => {
     const results = await performLdapSearch(
       config.ldap.base,
-      `(maildrop=${email})`,
+      `(|(maildrop=${email})(mail=${email}))`,
       null
     )
     return results[0]
