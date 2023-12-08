@@ -25,7 +25,7 @@ const generateRecoveryCode = async (user, expiration) => {
         username: user.uid, // Adjust the field name as needed
         // Set other user fields as needed (e.g., name, email, password)
         // ...
-        email: user.maildrop,
+        email: user.mail.length !== 0 ? user.mail[0] : user.maildrop.length !==0 ? user.maildrop[0] : user.uid,
         recoveryCode: {
           code: code,
           expiresAt: expiration,
@@ -44,10 +44,9 @@ const generateRecoveryCode = async (user, expiration) => {
   }
 }
 
-const sendRecoveryPasswordEmailTo = async (user, code) => {
+const sendRecoveryPasswordEmailTo = async (user, code, email) => {
   try {
     const name = user.name
-    const email = user.maildrop
 
     const transporter = nodemailer.createTransport(
       smtpTransport({

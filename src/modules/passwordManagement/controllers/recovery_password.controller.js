@@ -87,8 +87,16 @@ router.post('/forgot-password', validateEmailOrUsername, async (req, res) => {
     const currentTime = new Date()
     const expiration = new Date(currentTime.getTime() + 15 * 60 * 1000) // 15 minutes in milliseconds
 
-    const recoveryCode = await generateRecoveryCode(user, expiration)
-    await sendRecoveryPasswordEmailTo(user, recoveryCode)
+    if (user.mail.length === 0) {
+      throw new Error(
+        'Lo sentimos, este usuario no tiene asignado ningun correo de recuperación'
+      )
+    } else {
+      user.mail.map(async (email) => {
+        const recoveryCode = await generateRecoveryCode(user, expiration)
+        await sendRecoveryPasswordEmailTo(user, recoveryCode, email)
+      })
+    }
 
     res.json({
       message: 'Password reset email sent successfully.',
@@ -171,7 +179,7 @@ router.post(
       )
       if (!checkedCode.isValid) {
         const error = boom.unauthorized(checkedCode.isValid.message)
-        throw new Error("Invalid code")
+        throw new Error('Invalid code')
       }
 
       const encriptedPassword = hashPassword(newPassword)

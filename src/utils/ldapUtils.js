@@ -27,7 +27,11 @@ const unbindLdapClient = () => {
 const getObject = (arr) => {
   const newObj = {}
   arr.forEach((obj) => {
-    newObj[obj.type] = obj.values.length === 1 ? obj.values[0] : obj.values
+    if (obj.type === 'mail' || obj.type === 'maildrop') {
+      newObj[obj.type] = obj.values
+    } else {
+      newObj[obj.type] = obj.values.length === 1 ? obj.values[0] : obj.values
+    }
   })
   return newObj
 }
@@ -195,7 +199,6 @@ const performLdapAddition = async (dn, entry) => {
   entry.lastTimeChange = new Date().toISOString()
   entry.sambaSID = 'S-1-5-21-1255719363-1350762778-3568053751-513'
 
-
   return new Promise((resolve, reject) => {
     try {
       bindLdapClient() // Bind before search
@@ -207,7 +210,7 @@ const performLdapAddition = async (dn, entry) => {
             success: true,
             message: err,
           })
-        } else {          
+        } else {
           resolve('created User')
         }
       })
