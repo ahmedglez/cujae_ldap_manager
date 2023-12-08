@@ -67,7 +67,7 @@ describe('Test ldap authenticate', () => {
       .send({ username: 'gauss', password: 'bbb' })
     expect(response.statusCode).toBe(401)
     expect(response.body.success).toBeFalsy()
-    expect(response.body.message).toEqual('Invalid Credentials')
+    expect(response.body.message).toEqual('Credenciales inválidas')
     expect(response.body.user).toBeUndefined()
     let user = User.find((u) => {
       return u.username === 'gauss'

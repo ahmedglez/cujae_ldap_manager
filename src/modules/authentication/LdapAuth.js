@@ -4,20 +4,21 @@
 
 const passport = require('passport')
 const CustomStrategy = require('passport-custom').Strategy
-const JwtStrategy = require('../../utils/authentication/strategies/jwtStrategy')
+const JwtStrategy = require('@src/utils/authentication/strategies/jwtStrategy')
 const { authenticate } = require('ldap-authentication')
-const TreeServices = require('../../services/user.services')
-const logger = require('../../middlewares/logger.handler')
-const morgan = require('morgan')
-
-const { signToken } = require('../../utils/authentication/tokens/token_sign')
+const userService = require('@src/services/user.services')()
+const User = require('@src/schemas/user.schema').User
+const config = require('@src/config/config')
 const {
-  responseSuccess,
-  responseError,
-} = require('../../schemas/response.schema')
-const validateResponse = require('../../middlewares/validateResponse')
+  login_sigenu,
+} = require('@src/modules/sigenu_integration/controllers/auth.controller')
+const { version } = config.api
 
-const service = TreeServices()
+const {
+  login,
+  logout,
+  refresh,
+} = require('@src/modules/authentication/controllers/auth.controller.js')
 
 var _backwardCompatible = false
 var _dn
@@ -40,7 +41,9 @@ var _usernameAttributeName
  * @param {function} insertFunc - function(user) to upsert user into local db
  * @param {string} [loginUrl] - path to login page. Default: /login
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
+ * @param {string} [sigenuLoginUrl]
  */
+
 var init = function (
   opt,
   ldapurl,
@@ -60,8 +63,10 @@ var init = function (
   }
   _findFunc = findFunc
   _insertFunc = insertFunc
-  _loginUrl = loginUrl || '/login'
-  _logoutUrl = logoutUrl || '/logout'
+  _loginUrl = loginUrl || `/api/${version}/login`
+  _logoutUrl = logoutUrl || `/api/${version}/logout`
+  _sigenuLoginUrl = `/api/${version}/sigenu/login`
+  _refreshUrl = '/api/${version}/refresh'
   _usernameAttributeName = ''
 
   passport.use(
@@ -71,15 +76,21 @@ var init = function (
         if (!req.body.username || !req.body.password) {
           throw new Error('username and password must be both provided')
         }
-        let username = req.body.username
-        let password = req.body.password
-        let response = await service.getByUsername(username)
-        const branch = response.objectName
-          .toString()
-          .split(',')[2]
-          .replace('ou=', '')
-        // construct the parameter to pass in authenticate() function
-        let options
+        const username = req.body.username
+        const password = req.body.password
+
+        const localSession = { user: username }
+
+        /* if (localSession.user === req.session?.passport?.user)
+          throw new Error('log out before logging back in') */
+
+        const response = await userService.getByUsername(username)
+
+        // if user doesn't exists
+        if (response === undefined) {
+          throw new Error('username or password incorrect')
+        }
+        let options = {}
         if (_backwardCompatible) {
           _usernameAttributeName = 'uid'
           options = {
@@ -105,7 +116,10 @@ var init = function (
           if (opt.userDn) {
             options.userDn = opt.userDn
               .replace('{{username}}', username)
-              .replace('{{branch}}', branch)
+              .replace(
+                '{{branch}}',
+                response.objectName.split(',')[2].replace('ou=', '')
+              )
           }
           if (opt.adminDn) {
             options.adminDn = opt.adminDn
@@ -114,8 +128,11 @@ var init = function (
             options.adminPassword = opt.adminPassword
           }
         }
+
+        console.log('options', options)
         // ldap authenticate the user
-        let user = await authenticate(options)
+        const user = await authenticate(options)
+        console.log('user authenticated', user)
         // success
         done(null, user)
       } catch (error) {
@@ -137,22 +154,151 @@ var init = function (
     }
   })
 
-  passport.deserializeUser((id, done) => {
-    _findFunc(id).then((user) => {
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findOne({
+        username: id,
+      })
       if (!user) {
-        done(
-          new Error(`Deserialize user failed. ${id} is deleted from local DB`)
-        )
-      } else {
-        done(null, user)
+        // User does not exist
+        return done(null, user)
       }
-    })
+      return done(null, user)
+    } catch (error) {
+      return done(error)
+    }
   })
 
   router.use(passport.initialize())
   router.use(passport.session())
-  // login
+
+  /**
+   * @openapi
+   * /api/v1/login:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: User login.
+   *     description: Authenticate a user using LDAP credentials.
+   *     operationId: loginUser
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *           required:
+   *             - username
+   *             - password
+   *     responses:
+   *       200:
+   *         description: User authenticated successfully.
+   *       401:
+   *         description: Authentication failed. Invalid credentials or user not found.
+   *       500:
+   *         description: An error occurred during authentication.
+   */
+
   router.post(_loginUrl, login)
+
+  /**
+   * @openapi
+   * /api/v1/sigenu/login:
+   *   post:
+   *     tags: [Authentication, SIGENU]
+   *     summary: User login.
+   *     description: Authenticate a user using LDAP credentials.
+   *     operationId: loginUser
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               password:
+   *                 type: string
+   *           required:
+   *             - username
+   *             - password
+   *     responses:
+   *       200:
+   *         description: User authenticated successfully.
+   *       401:
+   *         description: Authentication failed. Invalid credentials or user not found.
+   *       500:
+   *         description: An error occurred during authentication.
+   */
+  router.post(_sigenuLoginUrl, login_sigenu)
+
+  /**
+   * @openapi
+   * /api/v1/logout:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: User logout.
+   *     description: Log out a user and invalidate their access token.
+   *     operationId: logoutUser
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               accessToken:
+   *                 type: string
+   *           required:
+   *             - accessToken
+   *     responses:
+   *       200:
+   *         description: User logged out successfully.
+   *       400:
+   *         description: Bad request. Access token is required.
+   */
+
+  router.post(_logoutUrl, logout)
+
+  /**
+   * @openapi
+   * /api/v1/refresh:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: Refresh access token.
+   *     description: Refresh the user's access token using a refresh token.
+   *     operationId: refreshAccessToken
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *           required:
+   *             - username
+   *     responses:
+   *       200:
+   *         description: Access token successfully refreshed.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 newToken:
+   *                   type: string
+   *                   description: The new access token.
+   *                 newRefreshToken:
+   *                   type: string
+   *                   description: The new refresh token.
+   *       401:
+   *         description: User not found or refresh token not found.
+   */
+
+  router.post(_refreshUrl, refresh)
 }
 
 /**
@@ -165,7 +311,7 @@ var init = function (
  * @param {string} [loginUrl] - path to login page. Default: /login
  * @param {string} [logoutUrl] - path to logout page. Default: /logout
  */
-var initialize = function (
+const initialize = function (
   opt,
   router,
   findFunc,
@@ -174,52 +320,6 @@ var initialize = function (
   logoutUrl
 ) {
   return init(opt, '', router, findFunc, insertFunc, loginUrl, logoutUrl)
-}
-
-/**
- * Customized login authentication handler to send {success: true}
- * on successful authenticate, or {success: false} on failed authenticate
- */
-var login = function (req, res, next) {
-  passport.authenticate('ldap', (err, user) => {
-    if (err) {
-      res.status(401).json({ success: false, message: err.message })
-      return
-    }
-    if (!user) {
-      res.status(401).json({ success: false, message: 'User cannot be found' })
-    } else {
-      const payload = {
-        sub: user.uid,
-        dn: user.dn,
-        firstname: user.givenName,
-        lastname: user.sn,
-        fullname: user.cn,
-        email: user.mail,
-        password: user.userPassword,
-        ci: user.CI,
-        roles: ['user'],
-      }
-      const token = signToken(payload, { expiresIn: '15 minutes' })
-      const refreshToken = signToken(payload, { expiresIn: '1 day' })
-
-      req.login(user, (loginErr) => {
-        if (loginErr) {
-          return next(loginErr)
-        }
-        _insertFunc(user).then((user) => {
-          var userObj =
-            typeof user.toObject === 'function' ? user.toObject() : user
-          const data = {
-            token: token,
-            refreshToken: refreshToken,
-            user: userObj,
-          }
-          return responseSuccess(res, 'authentication succeeded', data)
-        })
-      })
-    }
-  })(req, res, next)
 }
 
 module.exports.init = init

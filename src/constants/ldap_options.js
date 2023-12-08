@@ -25,5 +25,4 @@ let userOptions = {
   //starttls: true
 }
 
-
-module.exports = {usernameAttr, searchBase, admOptions, userOptions}
+module.exports = { usernameAttr, searchBase, admOptions, userOptions }

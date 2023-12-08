@@ -1,10 +1,16 @@
 const responseSuccess = (res, message, data) => {
-  res.status(200).json({
-    success: true,
-    message: message,
-    data: data,
-  })
-
+  data.length > 1
+    ? res.status(200).json({
+        success: true,
+        message: message,
+        length: data.results !== undefined ? data.results.length : data.length,
+        data: data,
+      })
+    : res.status(200).json({
+        success: true,
+        message: message,
+        data: data,
+      })
   return res
 }
 
@@ -18,7 +24,7 @@ const responseError = (res, message, errors) => {
   return res
 }
 
-module.exports = {  
+module.exports = {
   responseSuccess,
   responseError,
 }

@@ -2,6 +2,14 @@ require('dotenv').config({ path: __dirname + '/../../.env' })
 const iesObjectClasses = require('../schemas/ies.schema')
 
 module.exports = {
+  api: {
+    version: 'v1',
+    url: process.env.API_URL,
+  },
+  tests: {
+    username: process.env.USERNAME_TEST,
+    password: process.env.PASSWORD_TEST,
+  },
   server: {
     port: process.env.SERVER_PORT,
     host: process.env.HOST,
@@ -20,5 +28,14 @@ module.exports = {
     password: process.env.LDAP_PASS,
     password_bind: process.env.LDAP_PASS_BIND,
     username_bind: process.env.LDAP_USER_BIND,
+    admin: {
+      username: process.env.ADMIN_USER,
+      password: process.env.ADMIN_PASS,
+    },
+    sizeLimit: parseInt(process.env.LDAP_SIZE_LIMIT),
+    timeLimit: parseInt(process.env.LDAP_TIME_LIMIT),
+  },
+  redis: {
+    url: process.env.REDIS_URL,
   },
 }

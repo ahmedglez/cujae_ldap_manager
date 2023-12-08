@@ -1,0 +1,915 @@
+{
+	"info": {
+		"_postman_id": "0f9807c7-756a-4575-829a-7614776ae8ce",
+		"name": "LDAP_INF",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14986624"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Log In",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\r\n    \"username\": \"javier.lorenzo\",\r\n    \"password\": \"85100804886\"\r\n}     \r\n\r\n\r\n\r\n /*  {\r\n    \"username\": \"ahmedivan.gonzalez\",\r\n    \"password\": \"Ba12345678#\"\r\n}     */\r\n\r\n\r\n/* {\r\n    \"username\":\"fernando.picayo\",\r\n    \"password\":\"84110906021\"\r\n} */\r\n\r\n/* {\r\n    \"username\": \"ssigenu\",\r\n    \"password\": \"RSEfxVSL90rGP#LMs3v%\"\r\n}  */  ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/login",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log out",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXZpZXIubG9yZW56byIsImRuIjoidWlkPWphdmllci5sb3JlbnpvLG91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsInVpZCI6Imphdmllci5sb3JlbnpvIiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiYXJlYUNlbnRyYWwiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6Imphdmllci5sb3JlbnpvIiwibGFzdG5hbWUiOiJMb3JlbnpvIE5leXJhIiwiZnVsbG5hbWUiOiJKYXZpZXIiLCJlbWFpbCI6Imphdmllci5sb3JlbnpvQGN1amFlLmVkdS5jdSIsImNpIjoiODUxMDA4MDQ4ODYiLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMDktMDhUMjI6MjQ6MjAuNjU2WiIsImxvZ2luSW5mbyI6IjkvOC8yMDIzLCA2OjMzOjUwIFBNIiwiaWF0IjoxNjk0MjEyNDMwLCJleHAiOjE2OTQyMTMzMzB9.V9h8gWJq6ARY_wvZ715lvGMK1lsKb4LhWPB5nNqU45c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accessToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIiwiZW1haWwiOiJhaG1lZGl2YW4uZ29uemFsZXpAY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbInVzZXIiLCJhZG1pbiJdLCJsYXN0X3RpbWVfbG9nZ2VkIjoiMjAyMy0wOS0yMlQxNTozMDo1Ni4wMDFaIiwibG9naW5JbmZvIjoiOS8yMi8yMDIzLCAxMjoxNTo1MyBQTSIsImlhdCI6MTY5NTM5OTM1MywiZXhwIjoxNjk1NDAwMjUzfQ.B7l3Ol0aC_u4572k93ifHfsfXgeNpzrs77kCi2cY8Wc\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/logout",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6IkFobWVkIiwibGFzdG5hbWUiOiJHb256YWxleiBCZXRhbmNvdXJ0IiwiZnVsbG5hbWUiOiJBaG1lZCIsImVtYWlsIjoiYWhtZWRpdmFuLmdvbnphbGV6QGN1amFlLmVkdS5jdSIsImNpIjoiMDAwOTIwNjg0MjYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMTAtMjJUMjI6MjI6NTcuMjc5WiIsImxvZ2luSW5mbyI6IjEwLzIyLzIwMjMsIDExOjE2OjA2IFBNIiwiaWF0IjoxNjk4MDMwOTY3LCJleHAiOjE2OTgxMTczNjd9.VEStEVLdOTuOOEzbKWpe_pfdwShG7raZ956jNQbKFts",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"javier.lorenzo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/refresh",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "recover-password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsIm5hbWUiOiJBaG1lZCBJdsOhbiIsImVtYWlsIjoiYWhtZWRpZ2xlekBnbWFpbC5jb20iLCJpYXQiOjE2OTgwMzE1NTUsImV4cCI6MTY5ODAzMjQ1NX0.r9MD3WdBIUgIDrZTWUjEhql9v-o6lzDKizUCu4mDI-k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"recoveryCode\": \"892945\",\r\n    \"newPassword\": \"A1222234a#\",\r\n    \"confirmPassword\": \"A1222234a#\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/reset-password",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgot-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"emailOrUsername\":\"ahmediglez@gmail.com\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/forgot-password",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIiwiZW1haWwiOiJhaG1lZGl2YW4uZ29uemFsZXpAY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbInVzZXIiLCJhZG1pbiJdLCJsYXN0X3RpbWVfbG9nZ2VkIjoiMjAyMy0wOS0xMlQwMTowNjowNy4zMzVaIiwibG9naW5JbmZvIjoiOS8xMi8yMDIzLCAzOjE1OjQyIFBNIiwiaWF0IjoxNjk0NTQ2MTQyLCJleHAiOjE2OTQ1NDcwNDJ9.6GG2b2hRGD6NEC4-UcxzV1Z5grlvc9ieqW91UlM68-U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\":\"abc\",\r\n    \"newPassword\": \"Aa12345678#\",\r\n    \"confirmPassword\": \"\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/update-password",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "groups",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIiwiZW1haWwiOiJhaG1lZGl2YW4uZ29uemFsZXpAY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbInVzZXIiLCJhZG1pbiJdLCJsYXN0X3RpbWVfbG9nZ2VkIjoiMjAyMy0wOS0yNFQxOToxNDo1NC4zMjVaIiwibG9naW5JbmZvIjoiOS8yNC8yMDIzLCAzOjMwOjA3IFBNIiwiaWF0IjoxNjk1NTgzODA3LCJleHAiOjE2OTU1ODQ3MDd9.i9wKhiqpdOLRQBUZ3gMgK3vxR8RxygHSDf88DEASFQ4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"baseDN\" : \"dc=cujae,dc=edu,dc=cu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/groups?scope=one",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"groups"
+							],
+							"query": [
+								{
+									"key": "scope",
+									"value": "one"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get admins groups",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXZpZXIubG9yZW56byIsImRuIjoidWlkPWphdmllci5sb3JlbnpvLG91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsInVpZCI6Imphdmllci5sb3JlbnpvIiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiYXJlYUNlbnRyYWwiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6Imphdmllci5sb3JlbnpvIiwibGFzdG5hbWUiOiJMb3JlbnpvIE5leXJhIiwiZnVsbG5hbWUiOiJKYXZpZXIiLCJlbWFpbCI6Imphdmllci5sb3JlbnpvQGN1amFlLmVkdS5jdSIsImNpIjoiODUxMDA4MDQ4ODYiLCJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMDktMDlUMDA6MDY6NTQuNzMxWiIsImxvZ2luSW5mbyI6IjkvMTEvMjAyMywgMTA6MTI6NDUgQU0iLCJpYXQiOjE2OTQ0NDE1NjYsImV4cCI6MTY5NDQ0MjQ2Nn0.VftMhpDtwnJ3qvqYwJyL9XhKCDdwwllumW_nxf8ifOI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dn\":\"dc=cujae,dc=edu,dc=cu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/groups/type/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"groups",
+								"type",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get childrens",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6IkFobWVkIiwibGFzdG5hbWUiOiJHb256YWxleiBCZXQiLCJmdWxsbmFtZSI6IkFobWVkY2l0byIsImVtYWlsIjoiYWhtZWRpdmFuLmdvbnphbGV6QGN1amFlLmVkdS5jdSIsImNpIjoiMDAwOTIwNjg0MjYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMTAtMDRUMjM6Mjc6NDEuNjk4WiIsImxvZ2luSW5mbyI6IjEwLzQvMjAyMywgMTA6NTY6NDMgUE0iLCJpYXQiOjE2OTY0NzQ2MDYsImV4cCI6MTY5NjQ3NzMwNn0.G7ACYk4AZj1EK1Zw8rIXVX6yYYDVSNqm4jO56wAZRv0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"baseDN\": \"ou=roles,ou=informatica,dc=cujae,dc=edu,dc=cu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/groups/getChilds",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"groups",
+								"getChilds"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "get all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXZpZXIubG9yZW56byIsImRuIjoidWlkPWphdmllci5sb3JlbnpvLG91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsInVpZCI6Imphdmllci5sb3JlbnpvIiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiYXJlYUNlbnRyYWwiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6Imphdmllci5sb3JlbnpvIiwibGFzdG5hbWUiOiJMb3JlbnpvIE5leXJhIiwiZnVsbG5hbWUiOiJKYXZpZXIiLCJlbWFpbCI6Imphdmllci5sb3JlbnpvQGN1amFlLmVkdS5jdSIsImNpIjoiODUxMDA4MDQ4ODYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iLCJzdXBlcmFkbWluIl0sImxhc3RfdGltZV9sb2dnZWQiOiIyMDIzLTExLTI3VDA0OjMzOjEyLjQwMloiLCJsb2dpbkluZm8iOiIxMS8yNy8yMDIzLCA0OjMzOjEyIEFNIiwiaWF0IjoxNzAxMDU5NTkzLCJleHAiOjE3MDEwNjIyOTN9.Rg6xm0AdLCVMBbQ2Zh9sTO-54On003Wnv0lLPLzp83o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users?lastName=Gonzalez&studentYear=4&userCondition=Seminterno&userStatus=Activo",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "lastName",
+									"value": "Gonzalez"
+								},
+								{
+									"key": "studentYear",
+									"value": "4"
+								},
+								{
+									"key": "userCondition",
+									"value": "Seminterno"
+								},
+								{
+									"key": "userStatus",
+									"value": "Activo"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by groups",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIiwiZW1haWwiOiJhaG1lZGl2YW4uZ29uemFsZXpAY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJsYXN0X3RpbWVfbG9nZ2VkIjoiMjAyMy0wOC0yOVQxOTo0MjowNC40NTRaIiwibG9naW5JbmZvIjoiOC8yOS8yMDIzLCA1OjM1OjI3IFBNIiwiaWF0IjoxNjkzMzQ0OTMzLCJleHAiOjE2OTMzNDc2MzN9.xOUoO0HTFmTHJ8h-dharjm2PKRKxMrTUlwJLmrTCvs0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"groups\":[\"usuarios,informatica\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/getByGroups",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"getByGroups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by baseDN",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIiwiZW1haWwiOiJhaG1lZGl2YW4uZ29uemFsZXpAY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbInVzZXIiLCJhZG1pbiJdLCJsYXN0X3RpbWVfbG9nZ2VkIjoiMjAyMy0wOS0yNFQyMDoyMTozNC4zMDVaIiwibG9naW5JbmZvIjoiOS8yNC8yMDIzLCA0OjI0OjIyIFBNIiwiaWF0IjoxNjk1NTg3MDYzLCJleHAiOjE2OTU1ODc5NjN9.gsRDQvmVXtzIlCreZ9OG7fFZfR2ml31wPUj1HLfVeRE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"baseDN\": \"ou=informatica,dc=cujae,dc=edu,dc=cu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/baseDN?limit=50000",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"baseDN"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add new user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6IkFobWVkIiwibGFzdG5hbWUiOiJHb256YWxleiBCZXRhbmNvdXJ0IiwiZnVsbG5hbWUiOiJBaG1lZCIsImVtYWlsIjoiYWhtZWRpdmFuLmdvbnphbGV6QGN1amFlLmVkdS5jdSIsImNpIjoiMDAwOTIwNjg0MjYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMTEtMDNUMTg6MTI6NDEuNTI5WiIsImxvZ2luSW5mbyI6IjExLzMvMjAyMywgMjoxMjo0MSBQTSIsImlhdCI6MTY5OTAzNTE2MSwiZXhwIjoxNjk5MDM3ODYxfQ.R3MEA2IfQ78HMHEOWV0nKP1FyFOQzuo0nqwvXRGNslY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"newUser\": {            \r\n    \"CI\": \"00082068486\",\r\n    \"middleName\": \"Ahmedtestnueve\",\r\n    \"lastName\": \"Glez\",\r\n    \"name\": \"Ahmedtestnueve\",\r\n    \"homeAddress\": \"SM 027 M 11 L 16 AV. TANKAH E1\",\r\n    \"telephoneNumber\": \"83445888\",\r\n    \"sex\": \"M\",\r\n    \"area\": \"INGENIERIA Informatica\",\r\n    \"sedeMunicipio\": \"Diez de Octubre\",\r\n    \"userType\": \"Estudiante\",\r\n    \"country\": \"México\",\r\n    \"UJC\": \"Si\",\r\n    \"skinColor\": \"Blanco\",\r\n    \"nameInstitution\": \"null\",\r\n    \"userStatus\": \"Activo\",\r\n    \"uid\": \"ahmedtestnueve.glez\",\r\n    \"givenName\": \"Ahmedtestnueve\",\r\n    \"cn\": \"Ahmedtestnueve\",\r\n    \"sn\": \"Glez\",\r\n    \"displayName\": \"Ahmedtestnueve\",\r\n    \"userPassword\": \"00082068410\",\r\n    \"mail\": [\r\n        \"ahmedtestnueve.glez@cujae.edu.cu\"\r\n    ],\r\n    \"maildrop\": [\r\n        \"ahmedtestnueve.glez@cujae.edu.cu\"\r\n    ]\r\n   \r\n},\r\n        \"userDN\":\"uid=ahmedtestnueve.gonzalez,ou=usuarios,ou=informatica,dc=cujae,dc=edu,dc=cu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/newUser",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"newUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/users/ahmedivan.gonzalez",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"ahmedivan.gonzalez"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update ldap user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6IkFobWVkIiwibGFzdG5hbWUiOiJBaG1lZCBJdmFuIiwiZnVsbG5hbWUiOiJBaG1lZCBJdsOhbiIsImVtYWlsIjoiYWhtZWRpdmFuLmdvbnphbGV6QGN1amFlLmVkdS5jdSIsImNpIjoiMDAwOTIwNjg0MjYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMDktMjlUMTc6MDM6NTYuNDU1WiIsImxvZ2luSW5mbyI6IjkvMjkvMjAyMywgNjo0ODowOCBQTSIsImlhdCI6MTY5NjAyNzY4OCwiZXhwIjoxNjk2MDI4NTg4fQ.hNHpjDSSD17xH_UUWxsynPriuBKDb1AkNocIEHfD28U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"dn\": \"uid=ahmedivan.gonzalez,ou=usuarios,ou=informatica,dc=cujae,dc=edu,dc=cu\",\r\n  \"attributes\": {\r\n    \"displayName\": \"Ahmed Ivan\",\r\n    \"sn\": \"Ahmed Ivan\",\r\n    \"maildrop\": \"ahmedglez.dev@gmail.com\",\r\n    \"givenName\":\"Ahmed\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/modify-ldap",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"modify-ldap"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "profile",
+			"item": [
+				{
+					"name": "me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6ImFobWVkaXZhbi5nb256YWxleiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIiwiZW1haWwiOiJhaG1lZGl2YW4uZ29uemFsZXpAY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbInVzZXIiLCJhZG1pbiJdLCJsYXN0X3RpbWVfbG9nZ2VkIjoiMjAyMy0wOS0yOVQwMDowMToyMS4xMzJaIiwibG9naW5JbmZvIjoiOS8yOS8yMDIzLCAxMjo0Nzo0NiBQTSIsImlhdCI6MTY5NjAwNjA2NywiZXhwIjoxNjk2MDA2OTY3fQ.lUyms3OUqMgK93foh6HhPeJKqeASYkhz-1qMiHcTGC4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/profile",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZ29uemFsZXpiIiwiZG4iOiJ1aWQ9YWdvbnphbGV6YixvdT11c3VhcmlvcyxvdT1pbmZvcm1hdGljYSxkYz1jdWphZSxkYz1lZHUsZGM9Y3UiLCJmaXJzdG5hbWUiOiJBaG1lZCBJdsOhbiIsImxhc3RuYW1lIjoiR29uesOhbGV6IEJldGFuY291cnQiLCJmdWxsbmFtZSI6IkFobWVkIEl2w6FuIEdvbnrDoWxleiBCZXRhbmNvdXJ0IiwiZW1haWwiOiJhZ29uemFsZXpiQGNlaXMuY3VqYWUuZWR1LmN1IiwiY2kiOiIwMDA5MjA2ODQyNiIsInJvbGVzIjpbImFkbWluIiwidXNlciJdLCJpYXQiOjE2ODI0NzAxMzcsImV4cCI6MTY4MjQ3MjgzN30.vxHLbykyqTYBeOGbHcEUHrqt14i-J0THxoyYiDxynBs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"ahmedglez@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/profile",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "logs",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXZpZXIubG9yZW56byIsImRuIjoidWlkPWphdmllci5sb3JlbnpvLG91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsInVpZCI6Imphdmllci5sb3JlbnpvIiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiYXJlYUNlbnRyYWwiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6Imphdmllci5sb3JlbnpvIiwibGFzdG5hbWUiOiJMb3JlbnpvIE5leXJhIiwiZnVsbG5hbWUiOiJKYXZpZXIiLCJlbWFpbCI6Imphdmllci5sb3JlbnpvQGN1amFlLmVkdS5jdSIsImNpIjoiODUxMDA4MDQ4ODYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iLCJzdXBlcmFkbWluIl0sImxhc3RfdGltZV9sb2dnZWQiOiIyMDIzLTExLTIwVDAxOjQ0OjU0LjQwOVoiLCJsb2dpbkluZm8iOiIxMS8xOS8yMDIzLCA4OjQ0OjU0IFBNIiwiaWF0IjoxNzAwNDQ0Njk0LCJleHAiOjE3MDA0NDczOTR9._nKn1y29UoTR61Ez8KzF-waA77wwyVmAYJiFtoNxq7E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/logs?method=all&user=all&url=all&timeframe=all",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"logs"
+							],
+							"query": [
+								{
+									"key": "method",
+									"value": "all"
+								},
+								{
+									"key": "user",
+									"value": "all"
+								},
+								{
+									"key": "url",
+									"value": "all"
+								},
+								{
+									"key": "timeframe",
+									"value": "all"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get log file",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYXZpZXIubG9yZW56byIsImRuIjoidWlkPWphdmllci5sb3JlbnpvLG91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsInVpZCI6Imphdmllci5sb3JlbnpvIiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiYXJlYUNlbnRyYWwiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWFyZWFDZW50cmFsLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6Imphdmllci5sb3JlbnpvIiwibGFzdG5hbWUiOiJMb3JlbnpvIE5leXJhIiwiZnVsbG5hbWUiOiJKYXZpZXIiLCJlbWFpbCI6Imphdmllci5sb3JlbnpvQGN1amFlLmVkdS5jdSIsImNpIjoiODUxMDA4MDQ4ODYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iLCJzdXBlcmFkbWluIl0sImxhc3RfdGltZV9sb2dnZWQiOiIyMDIzLTExLTE4VDIxOjMxOjU2LjI5NloiLCJsb2dpbkluZm8iOiIxMS8xOC8yMDIzLCA0OjMxOjU2IFBNIiwiaWF0IjoxNzAwMzQzMTE2LCJleHAiOjE3MDAzNDU4MTZ9.KNZPR4UBHCE9-vZGw3xIY4tCBc8gc4i3zgPIxmpQVIY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/logs/log-file",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"logs",
+								"log-file"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "docs",
+			"item": [
+				{
+					"name": "getSwaggerDoc",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ldap",
+			"item": [
+				{
+					"name": "Get Query Info",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get Config",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhaG1lZGl2YW4uZ29uemFsZXoiLCJkbiI6InVpZD1haG1lZGl2YW4uZ29uemFsZXosb3U9dXN1YXJpb3Msb3U9aW5mb3JtYXRpY2EsZGM9Y3VqYWUsZGM9ZWR1LGRjPWN1IiwidWlkIjoiYWhtZWRpdmFuLmdvbnphbGV6IiwiZ3JvdXBzIjpbInVzdWFyaW9zIiwiaW5mb3JtYXRpY2EiXSwiYmFzZSI6ImRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImxvY2FsQmFzZSI6Im91PXVzdWFyaW9zLG91PWluZm9ybWF0aWNhLGRjPWN1amFlLGRjPWVkdSxkYz1jdSIsImZpcnN0bmFtZSI6IkFobWVkIiwibGFzdG5hbWUiOiJHb256YWxleiBCZXRhbmNvdXJ0IiwiZnVsbG5hbWUiOiJBaG1lZCIsImVtYWlsIjoiYWhtZWRpdmFuLmdvbnphbGV6QGN1amFlLmVkdS5jdSIsImNpIjoiMDAwOTIwNjg0MjYiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iXSwibGFzdF90aW1lX2xvZ2dlZCI6IjIwMjMtMTEtMThUMjE6MDk6NTMuMDYxWiIsImxvZ2luSW5mbyI6IjExLzE4LzIwMjMsIDQ6MDk6NTMgUE0iLCJpYXQiOjE3MDAzNDE3OTQsImV4cCI6MTcwMDM0NDQ5NH0.490kaI11eawQX8G_7zmOssMgWmI29-njOB2jAGyHlIE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/ldap/config",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"ldap",
+								"config"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "sigenu",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "Log In",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\r\n    \"username\": \"javier.lorenzo\",\r\n    \"password\": \"85100804886\"\r\n}     \r\n\r\n\r\n\r\n /*  {\r\n    \"username\": \"ahmedivan.gonzalez\",\r\n    \"password\": \"Ba12345678#\"\r\n}     */\r\n\r\n\r\n/* {\r\n    \"username\":\"fernando.picayo\",\r\n    \"password\":\"84110906021\"\r\n} */\r\n\r\n/* {\r\n    \"username\": \"ssigenu\",\r\n    \"password\": \"RSEfxVSL90rGP#LMs3v%\"\r\n}  */  ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{server}}/login",
+									"host": [
+										"{{server}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "professors",
+					"item": [
+						{
+							"name": "Filter Professors",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "groupldap2021*+",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "Administrator",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{sigenu}}/professors/",
+									"host": [
+										"{{sigenu}}"
+									],
+									"path": [
+										"professors",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Ahmed\",\r\n    \"email\": \"ahmedglez@gmail.com\",\r\n    \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/users/artillery",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"users",
+						"artillery"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "server",
+			"value": "http://127.0.0.1:4000",
+			"type": "string"
+		},
+		{
+			"key": "sigenu",
+			"value": "http://127.0.0.1:4000/api/sigenu",
+			"type": "string"
+		}
+	]
+}

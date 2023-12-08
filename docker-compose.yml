@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  nodejs:
+    image: node:18.12.1
+    container_name: nodejs
+    restart: always
+    volumes:
+      - ./app:/app
+    environment:
+      - SERVER_HOST=127.0.0.1
+      - SERVER_PORT=4000
+      - MONGODB_URL=mongodb://127.0.0.1/ldapDB
+      - SESSION_SECRET=ZXaffeqe123!$2
+      - API_KEY=sK23#!skb$$d3*03&83#b3nd9#$%#%c83943nqls993nLP#pU%exJk8uSsk
+      - LDAP_URL=ldap://10.8.1.104
+      - LDAP_PORT=389
+      - LDAP_BASE=dc=cujae,dc=edu,dc=cu
+      - LDAP_DN=dc=cujae,dc=edu,dc=cu
+      - LDAP_PASS=00092068426
+      - LDAP_USER_BIND=cn=admin,dc=cu
+      - LDAP_USER_BIND=cn=admin,dc=cu
+      - LDAP_SIZE_LIMIT=5000
+      - LDAP_TIME_LIMIT=20000
+      - ADMIN_USER=cn=admin,dc=cu
+      - ADMIN_PASS=h015060810
+      - REDIS_URL=redis://localhost:6379
+      - NODE_ENV=development
+      - EMAIL_PASSWORD=zolnfnkfhfzrilfr
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_USER=ahmedglez.dev@gmail.com
+    ports:
+      - '4000:4000'
+    networks:
+      - mynetwork
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=admin134
+    ports:
+      - '27017:27017'
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - '6379:6379'
+    networks:
+      - mynetwork
+
+  nextjs:
+    image: node:16.0.0
+    container_name: nextjs
+    restart: always
+    volumes:
+      - ./client:/app
+    environment:
+      - NODE_ENV=development
+      - API_URL=http://nodejs:4000
+    ports:
+      - '3000:3000'
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

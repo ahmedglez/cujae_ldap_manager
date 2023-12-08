@@ -1,0 +1,1602 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "CUJAE LDAP API",
+        "version": "1.0.0",
+        "description": "API para la administración de usuarios LDAP de la CUJAE",
+        "contact": {
+            "name": "Ahmed González",
+            "email": "ahmediglez@gmail.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:4005"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "API para la autenticación de usuarios"
+        },
+        {
+            "name": "Users",
+            "description": "API para la administración de usuarios LDAP"
+        },
+        {
+            "name": "Groups",
+            "description": "API para la administración de grupos LDAP"
+        },
+        {
+            "name": "Profile",
+            "description": "API para la administración del perfil de usuario"
+        },
+        {
+            "name": "Recovery Password",
+            "description": "API para la recuperación de contraseña"
+        },
+        {
+            "name": "Update Password",
+            "description": "API para la actualización de contraseña"
+        },
+        {
+            "name": "Reset Password",
+            "description": "API para el reseteo de contraseña"
+        },
+        {
+            "name": "Logs",
+            "description": "API para la administración de logs"
+        },
+        {
+            "name": "DN",
+            "description": "API para la administración de DNs"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "CI": {
+                        "type": "string",
+                        "description": "Carnet de identidad del usuario"
+                    },
+                    "middleName": {
+                        "type": "string",
+                        "description": "Segundo nombre del usuario"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "Apellido del usuario"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nombre del usuario"
+                    },
+                    "homeAddress": {
+                        "type": "string",
+                        "description": "Dirección del usuario"
+                    },
+                    "telephoneNumber": {
+                        "type": "string",
+                        "description": "Número de teléfono del usuario"
+                    },
+                    "dayRegister": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha de registro del usuario"
+                    },
+                    "sex": {
+                        "type": "string",
+                        "enum": [
+                            "M",
+                            "F"
+                        ],
+                        "description": "Sexo del usuario"
+                    },
+                    "area": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Área del usuario"
+                    },
+                    "userCondition": {
+                        "type": "string",
+                        "description": "Condición del usuario"
+                    },
+                    "userStatus": {
+                        "type": "string",
+                        "description": "Estado del usuario",
+                        "enum": [
+                            "Activo",
+                            "Inactivo"
+                        ]
+                    },
+                    "sedeMunicipio": {
+                        "type": "string",
+                        "description": "Municipio de la sede del usuario"
+                    },
+                    "userType": {
+                        "type": "string",
+                        "description": "Tipo de usuario",
+                        "enum": [
+                            "Estudiante",
+                            "Trabajador",
+                            "Trabajador Docente"
+                        ]
+                    },
+                    "userInformation": {
+                        "type": "string",
+                        "description": "Información del usuario acerca del curso"
+                    },
+                    "career": {
+                        "type": "string",
+                        "description": "Carrera del usuario"
+                    },
+                    "studentClassGroup": {
+                        "type": "string",
+                        "description": "Grupo del usuario"
+                    },
+                    "studentYear": {
+                        "type": "string",
+                        "description": "Año del usuario"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "País del usuario",
+                        "default": "Cuba"
+                    },
+                    "UJC": {
+                        "type": "string",
+                        "description": "Pertenece a la UJC"
+                    },
+                    "skinColor": {
+                        "type": "string",
+                        "description": "Color de piel del usuario"
+                    },
+                    "nameInstitution": {
+                        "type": "string",
+                        "description": "Nombre de la institución del usuario",
+                        "default": "CUJAE"
+                    },
+                    "right": {
+                        "type": "string",
+                        "description": "Derecho del usuario",
+                        "default": "Todos"
+                    },
+                    "hash": {
+                        "type": "string",
+                        "description": "Hash de la contraseña del usuario"
+                    },
+                    "lastTimeChange": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha de la última actualización de la contraseña"
+                    },
+                    "uid": {
+                        "type": "string",
+                        "description": "UID del usuario. Formato: nombre.apellido",
+                        "required": true
+                    },
+                    "homeDirectory": {
+                        "type": "string",
+                        "description": "Directorio del usuario. Formato: /home/uid"
+                    },
+                    "givenName": {
+                        "type": "string",
+                        "description": "Nombre del usuario"
+                    },
+                    "cn": {
+                        "type": "string",
+                        "description": "Nombre completo del usuario"
+                    },
+                    "sn": {
+                        "type": "string",
+                        "description": "Apellido del usuario"
+                    },
+                    "displayName": {
+                        "type": "string",
+                        "description": "Nombre de visualización del usuario"
+                    },
+                    "uidNumber": {
+                        "type": "string",
+                        "description": "Número de UID del usuario. Formato: 1000"
+                    },
+                    "userPassword": {
+                        "type": "string",
+                        "description": "Contraseña del usuario. Formato: {SSHA}hash"
+                    },
+                    "mail": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Correo electrónico del usuario"
+                    },
+                    "maildrop": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Correo electrónico del usuario"
+                    },
+                    "gidNumber": {
+                        "type": "string",
+                        "description": "Número de GID del usuario. Formato: 1000"
+                    },
+                    "sambaSID": {
+                        "type": "string",
+                        "description": "SID del usuario. Formato: S-1-5-21-1004336348-1177238915-682003330-1000"
+                    },
+                    "objectClass": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Clases del usuario. Formato: top, person, organizationalPerson, inetOrgPerson, posixAccount, shadowAccount, sambaSamAccount"
+                    }
+                }
+            },
+            "Student": {
+                "type": "object",
+                "properties": {
+                    "career": {
+                        "type": "string"
+                    },
+                    "studentYear": {
+                        "type": "string"
+                    },
+                    "studentClassGroup": {
+                        "type": "string"
+                    },
+                    "userInformation": {
+                        "type": "string"
+                    },
+                    "userCondition": {
+                        "type": "string"
+                    },
+                    "userStatus": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Employee": {
+                "type": "object",
+                "properties": {
+                    "dateContract": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "dateEndContract": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "educationalCategory": {
+                        "type": "string"
+                    },
+                    "orgRole": {
+                        "type": "string"
+                    },
+                    "schoolLevel": {
+                        "type": "string"
+                    },
+                    "scientificCategory": {
+                        "type": "string"
+                    },
+                    "userYears": {
+                        "type": "string"
+                    },
+                    "workerContract": {
+                        "type": "string"
+                    },
+                    "workArea": {
+                        "type": "string"
+                    },
+                    "workerID": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LdapEntry": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/Student"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Employee"
+                    }
+                ]
+            },
+            "JWTPayload": {
+                "type": "object",
+                "properties": {
+                    "sub": {
+                        "type": "string",
+                        "description": "Subject (sub) del usuario."
+                    },
+                    "dn": {
+                        "type": "string",
+                        "description": "Distinguished Name (DN) del usuario."
+                    },
+                    "uid": {
+                        "type": "string",
+                        "description": "Identificador único del usuario."
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Grupos a los que pertenece el usuario."
+                    },
+                    "base": {
+                        "type": "string",
+                        "description": "Base DN principal."
+                    },
+                    "localBase": {
+                        "type": "string",
+                        "description": "Base DN local."
+                    },
+                    "firstname": {
+                        "type": "string",
+                        "description": "Nombre del usuario."
+                    },
+                    "lastname": {
+                        "type": "string",
+                        "description": "Apellido del usuario."
+                    },
+                    "fullname": {
+                        "type": "string",
+                        "description": "Nombre completo del usuario."
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Dirección de correo electrónico del usuario."
+                    },
+                    "ci": {
+                        "type": "string",
+                        "description": "Número de identidad del usuario."
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "enum": [
+                            "user",
+                            "admin",
+                            "superadmin"
+                        ],
+                        "description": "Roles del usuario."
+                    },
+                    "last_time_logged": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora de la última sesión iniciada."
+                    },
+                    "loginInfo": {
+                        "type": "string",
+                        "description": "Información de inicio de sesión."
+                    },
+                    "iat": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Tiempo de emisión del token JWT."
+                    },
+                    "exp": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Tiempo de expiración del token JWT."
+                    }
+                }
+            },
+            "UserResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "El estado de la respuesta",
+                        "example": "OK"
+                    },
+                    "data": {
+                        "type": "object",
+                        "description": "El usuario",
+                        "$ref": "#/components/schemas/User"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/api/v1/searchByDN": {
+            "get": {
+                "tags": [
+                    "DN"
+                ],
+                "summary": "Search by Distinguished Name (DN).",
+                "description": "Retrieve information by providing a Distinguished Name (DN).",
+                "operationId": "searchByDN",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "baseDN",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The Distinguished Name (DN) to search for."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved information.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LDAPResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request. Base DN is missing."
+                    },
+                    "401": {
+                        "description": "Unauthorized. Requires admin role."
+                    },
+                    "500": {
+                        "description": "Internal Server Error. Failed to fetch information."
+                    }
+                }
+            }
+        },
+        "/api/v1/groups/byName/{group}": {
+            "get": {
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "Get a LDAP group by its name.",
+                "description": "Retrieve information about an LDAP group by specifying its name in the URL path. This endpoint requires authentication to access group information.",
+                "operationId": "getGroupByName",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "group",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The name of the LDAP group to retrieve."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "LDAP group information retrieved successfully."
+                    },
+                    "401": {
+                        "description": "Unauthorized. The user is not authenticated."
+                    },
+                    "500": {
+                        "description": "An error occurred while fetching group information."
+                    }
+                }
+            }
+        },
+        "/api/v1/groups/getChilds": {
+            "post": {
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "Get child groups of a specified base DN.",
+                "description": "Retrieve child groups of a specified base DN. This endpoint is restricted to administrators and requires authentication.",
+                "operationId": "getChildGroups",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "baseDN",
+                        "required": true,
+                        "description": "The base DN (Distinguished Name) for which to retrieve child groups.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "baseDN": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Child groups retrieved successfully."
+                    },
+                    "401": {
+                        "description": "Unauthorized. The user is not authenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden. The user does not have sufficient privileges to access this endpoint."
+                    },
+                    "500": {
+                        "description": "An error occurred while fetching child groups."
+                    }
+                }
+            }
+        },
+        "/api/v1/groups/byType/{type}": {
+            "post": {
+                "tags": [
+                    "Groups"
+                ],
+                "summary": "Get a group by type.",
+                "description": "Retrieve a group by its type using the specified DN. This endpoint requires authentication.",
+                "operationId": "getGroupByType",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "type",
+                        "required": true,
+                        "description": "The type of the group to retrieve.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "body",
+                        "name": "dn",
+                        "description": "The DN (Distinguished Name) to search for the group.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "dn": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Group retrieved successfully by type."
+                    },
+                    "401": {
+                        "description": "Unauthorized. The user is not authenticated."
+                    },
+                    "500": {
+                        "description": "An error occurred while fetching the group by type."
+                    }
+                }
+            }
+        },
+        "/api/v1/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Get the user profile.",
+                "description": "Retrieve the user profile based on the UID (User ID) contained in the JSON Web Token (JWT) passed in the request headers. The endpoint requires authentication and user role permissions to access the profile information.",
+                "operationId": "getUserProfile",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved successfully."
+                    },
+                    "401": {
+                        "description": "Unauthorized. The user is not authenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden. The user does not have the required permissions to access the profile."
+                    },
+                    "500": {
+                        "description": "An error occurred while retrieving the user profile."
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Update the user profile.",
+                "description": "Update the user profile based on the provided information in the request body. This endpoint requires authentication and user role permissions to access and modify the profile information.",
+                "operationId": "updateUserProfile",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "Profile update information.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "New email address for the user."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "New password for the user."
+                                    },
+                                    "confirmPassword": {
+                                        "type": "string",
+                                        "description": "Confirm the new password (required if password is provided)."
+                                    }
+                                },
+                                "required": [
+                                    "email"
+                                ]
+                            },
+                            "examples": {
+                                "UpdateProfileExample": {
+                                    "value": {
+                                        "email": "new.email@example.com",
+                                        "password": "newPassword123",
+                                        "confirmPassword": "newPassword123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User profile updated successfully."
+                    },
+                    "400": {
+                        "description": "Bad request. Invalid or missing parameters in the request body."
+                    },
+                    "401": {
+                        "description": "Unauthorized. The user is not authenticated."
+                    },
+                    "403": {
+                        "description": "Forbidden. The user does not have the required permissions to update the profile."
+                    },
+                    "500": {
+                        "description": "An error occurred while updating the user profile."
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a list of users.",
+                "description": "Retrieve a list of users based on query parameters. You can filter the results by providing one or more of the following query parameters.",
+                "operationId": "getUsers",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "description": "The page number."
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        },
+                        "description": "The number of items per page."
+                    },
+                    {
+                        "in": "query",
+                        "name": "uid",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by UID."
+                    },
+                    {
+                        "in": "query",
+                        "name": "cn",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by CN."
+                    },
+                    {
+                        "in": "query",
+                        "name": "username",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by username."
+                    },
+                    {
+                        "in": "query",
+                        "name": "CI",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by CI."
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by email."
+                    },
+                    {
+                        "in": "query",
+                        "name": "lastName",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by last name."
+                    },
+                    {
+                        "in": "query",
+                        "name": "sex",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by sex."
+                    },
+                    {
+                        "in": "query",
+                        "name": "area",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by area."
+                    },
+                    {
+                        "in": "query",
+                        "name": "userCondition",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by condition."
+                    },
+                    {
+                        "in": "query",
+                        "name": "userStatus",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by status."
+                    },
+                    {
+                        "in": "query",
+                        "name": "sedeMunicipio",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by municipality."
+                    },
+                    {
+                        "in": "query",
+                        "name": "userInformation",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by information."
+                    },
+                    {
+                        "in": "query",
+                        "name": "career",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by career."
+                    },
+                    {
+                        "in": "query",
+                        "name": "studentClassGroup",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by class group."
+                    },
+                    {
+                        "in": "query",
+                        "name": "studentYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by student year."
+                    },
+                    {
+                        "in": "query",
+                        "name": "country",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by country."
+                    },
+                    {
+                        "in": "query",
+                        "name": "UJC",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by UJC."
+                    },
+                    {
+                        "in": "query",
+                        "name": "skinColor",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by skin color."
+                    },
+                    {
+                        "in": "query",
+                        "name": "sn",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by SN."
+                    },
+                    {
+                        "in": "query",
+                        "name": "displayName",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by display name."
+                    },
+                    {
+                        "in": "query",
+                        "name": "mail",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by mail."
+                    },
+                    {
+                        "in": "query",
+                        "name": "maildrop",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by maildrop."
+                    },
+                    {
+                        "in": "query",
+                        "name": "objectName",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by object name."
+                    },
+                    {
+                        "in": "query",
+                        "name": "dn",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by DN."
+                    },
+                    {
+                        "in": "query",
+                        "name": "workerID",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by worker ID."
+                    },
+                    {
+                        "in": "query",
+                        "name": "workArea",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by work area."
+                    },
+                    {
+                        "in": "query",
+                        "name": "nameInstitution",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by institution name."
+                    },
+                    {
+                        "in": "query",
+                        "name": "workercontract",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by worker contract."
+                    },
+                    {
+                        "in": "query",
+                        "name": "userYears",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by years of service."
+                    },
+                    {
+                        "in": "query",
+                        "name": "schoolLevel",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by school level."
+                    },
+                    {
+                        "in": "query",
+                        "name": "orgRole",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by organizational role."
+                    },
+                    {
+                        "in": "query",
+                        "name": "educationalCategory",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by educational category."
+                    },
+                    {
+                        "in": "query",
+                        "name": "scientificCategory",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by scientific category."
+                    },
+                    {
+                        "in": "query",
+                        "name": "ou",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter users by organizational unit."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of users."
+                    },
+                    "500": {
+                        "description": "An error occurred."
+                    }
+                }
+            }
+        },
+        "/api/v1/group/{group}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a list of users in a specific group.",
+                "description": "Retrieve a list of users in the specified group based on query parameters.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "group",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The group name for which to retrieve users."
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "description": "The page number."
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        },
+                        "description": "The number of items per page."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of users in the group."
+                    },
+                    "500": {
+                        "description": "An error occurred."
+                    }
+                }
+            }
+        },
+        "/api/v1/users/baseDN": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a list of users based on a custom baseDN.",
+                "description": "Retrieve a list of users based on a custom baseDN. You can specify the baseDN in the request body to filter the results. Optionally, you can provide additional query parameters to further refine the search.",
+                "operationId": "getUsersByBaseDN",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "baseDN": {
+                                        "type": "string",
+                                        "description": "The custom baseDN to search for users.",
+                                        "example": "ou=example,dc=example,dc=com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "description": "The page number."
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        },
+                        "description": "The number of items per page."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of users based on the custom baseDN."
+                    },
+                    "400": {
+                        "description": "Bad request. The `baseDN` parameter is missing in the request body."
+                    },
+                    "500": {
+                        "description": "An error occurred."
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{username}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update a user's attributes.",
+                "description": "Update a user's attributes by specifying the username in the URL path. You can provide the attribute name (`att`) and the new value (`value`) in the request body to perform the update.",
+                "operationId": "updateUserAttributes",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "username",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The username of the user to update.",
+                        "example": "johndoe"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "att": {
+                                        "type": "string",
+                                        "description": "The attribute name to update.",
+                                        "example": "email"
+                                    },
+                                    "value": {
+                                        "type": "string",
+                                        "description": "The new value for the attribute.",
+                                        "example": "newemail@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User attributes updated successfully."
+                    },
+                    "400": {
+                        "description": "Bad request. The `username` parameter is missing or invalid."
+                    },
+                    "500": {
+                        "description": "An error occurred while updating user attributes."
+                    }
+                }
+            }
+        },
+        "/api/v1/users/modify-ldap": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Modify LDAP user attributes.",
+                "description": "Modify LDAP user attributes by specifying the DN (Distinguished Name) and the new attribute values. You can provide a DN in the request body and an object containing attributes to modify. The attributes are provided as key-value pairs, where the key is the attribute name and the value is the new value to set. All specified attributes will be replaced with the new values.",
+                "operationId": "modifyLdapUserAttributes",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "dn": {
+                                        "type": "string",
+                                        "description": "The Distinguished Name (DN) of the user whose attributes you want to modify.",
+                                        "example": "cn=johndoe,ou=people,dc=example,dc=com"
+                                    },
+                                    "attributes": {
+                                        "type": "object",
+                                        "description": "A key-value object containing attributes to modify.",
+                                        "example": {
+                                            "email": "newemail@example.com",
+                                            "telephoneNumber": "+1 123-456-7890"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "LDAP user attributes modified successfully."
+                    },
+                    "400": {
+                        "description": "Bad request. The `dn` or `attributes` parameter is missing or invalid."
+                    },
+                    "500": {
+                        "description": "An error occurred while modifying LDAP user attributes."
+                    }
+                }
+            }
+        },
+        "/api/v1/users/newUser": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Add a new user to LDAP.",
+                "description": "Add a new user to the LDAP directory. Specify the DN (Distinguished Name) where the new user will be created and provide user attributes as a JSON object. The request body should contain the `newUser` object with user attributes and the `userDN` string that defines the DN of the new user.",
+                "operationId": "addNewUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "newUser": {
+                                        "type": "object",
+                                        "description": "User attributes for the new LDAP user.",
+                                        "example": {
+                                            "cn": "johndoe",
+                                            "sn": "Doe",
+                                            "givenName": "John",
+                                            "mail": "johndoe@example.com"
+                                        }
+                                    },
+                                    "userDN": {
+                                        "type": "string",
+                                        "description": "The Distinguished Name (DN) of the new user.",
+                                        "example": "cn=johndoe,ou=people,dc=example,dc=com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "New user added to LDAP successfully."
+                    },
+                    "400": {
+                        "description": "Bad request. The `newUser` or `userDN` parameter is missing or invalid."
+                    },
+                    "500": {
+                        "description": "An error occurred while adding the new user to LDAP."
+                    }
+                }
+            }
+        },
+        "/api/v1/logs": {
+            "get": {
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Get log entries.",
+                "description": "Retrieve log entries based on query parameters.",
+                "operationId": "getLogEntries",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "level",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter log entries by level."
+                    },
+                    {
+                        "in": "query",
+                        "name": "period",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter log entries by period (daily, weekly, monthly)."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of log entries."
+                    },
+                    "401": {
+                        "description": "Unauthorized or insufficient permissions."
+                    }
+                }
+            }
+        },
+        "/api/v1/log-file": {
+            "get": {
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Download log file.",
+                "description": "Download the log file containing all log entries.",
+                "operationId": "downloadLogFile",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Log file download."
+                    },
+                    "401": {
+                        "description": "Unauthorized or insufficient permissions."
+                    }
+                }
+            }
+        },
+        "/api/v1/forgot-password": {
+            "post": {
+                "tags": [
+                    "Recovery Password"
+                ],
+                "summary": "Request a password reset.",
+                "description": "Request a password reset for a user.",
+                "operationId": "requestPasswordReset",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "emailOrUsername": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": [
+                                "emailOrUsername"
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset email sent successfully."
+                    },
+                    "400": {
+                        "description": "Bad request. Invalid input data."
+                    },
+                    "404": {
+                        "description": "User not found."
+                    },
+                    "500": {
+                        "description": "Internal Server Error."
+                    }
+                }
+            }
+        },
+        "/reset-password": {
+            "post": {
+                "tags": [
+                    "Reset Password"
+                ],
+                "summary": "Restablecer la contraseña del usuario.",
+                "description": "Restablece la contraseña del usuario usando un código de recuperación.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "newPassword": {
+                                        "type": "string",
+                                        "description": "La nueva contraseña."
+                                    },
+                                    "confirmPassword": {
+                                        "type": "string",
+                                        "description": "Confirmación de la nueva contraseña."
+                                    },
+                                    "recoveryCode": {
+                                        "type": "string",
+                                        "description": "Código de recuperación."
+                                    }
+                                }
+                            },
+                            "required": [
+                                "newPassword",
+                                "confirmPassword",
+                                "recoveryCode"
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contraseña restablecida exitosamente."
+                    },
+                    "400": {
+                        "description": "Código de recuperación inválido o caducado."
+                    },
+                    "401": {
+                        "description": "No autorizado. El token no es válido."
+                    },
+                    "500": {
+                        "description": "Error interno del servidor."
+                    }
+                }
+            }
+        },
+        "/api/v1/update-password": {
+            "post": {
+                "tags": [
+                    "Update Password"
+                ],
+                "summary": "Update user password",
+                "description": "Update a user's password. The user must provide the old password, a new password, and confirm the new password.",
+                "operationId": "updateUserPassword",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "oldPassword": {
+                                        "type": "string",
+                                        "description": "The user's old password."
+                                    },
+                                    "newPassword": {
+                                        "type": "string",
+                                        "description": "The new password."
+                                    },
+                                    "confirmPassword": {
+                                        "type": "string",
+                                        "description": "Confirmation of the new password."
+                                    }
+                                }
+                            },
+                            "required": [
+                                "oldPassword",
+                                "newPassword",
+                                "confirmPassword"
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully."
+                    },
+                    "400": {
+                        "description": "Bad Request. The request is missing required fields or the passwords do not match."
+                    },
+                    "401": {
+                        "description": "Unauthorized. The user is not authenticated."
+                    },
+                    "404": {
+                        "description": "Not Found. User not found."
+                    },
+                    "500": {
+                        "description": "Internal Server Error."
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login.",
+                "description": "Authenticate a user using LDAP credentials.",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": [
+                                "username",
+                                "password"
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User authenticated successfully."
+                    },
+                    "401": {
+                        "description": "Authentication failed. Invalid credentials or user not found."
+                    },
+                    "500": {
+                        "description": "An error occurred during authentication."
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User logout.",
+                "description": "Log out a user and invalidate their access token.",
+                "operationId": "logoutUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "accessToken": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": [
+                                "accessToken"
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged out successfully."
+                    },
+                    "400": {
+                        "description": "Bad request. Access token is required."
+                    }
+                }
+            }
+        },
+        "/api/v1/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh access token.",
+                "description": "Refresh the user's access token using a refresh token.",
+                "operationId": "refreshAccessToken",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": [
+                                "username"
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Access token successfully refreshed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "newToken": {
+                                            "type": "string",
+                                            "description": "The new access token."
+                                        },
+                                        "newRefreshToken": {
+                                            "type": "string",
+                                            "description": "The new refresh token."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User not found or refresh token not found."
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,80 +1,97 @@
-const boom = require('@hapi/boom')
-const ldap = require('../connections/LDAP_client')
-const LDAP = require('ldapjs')
+require('dotenv').config({ path: __dirname + '/../../.env' })
 const config = require('../config/config')
-const assert = require('assert')
-
-ldap.bind(
-  'uid=agonzalezb,ou=usuarios,ou=informatica,dc=cujae,dc=edu,dc=cu',
-  '00092068426',
-  (err) => {
-    assert.ifError(err)
-  }
-)
-
-const STUDENT_CLASS = config.ldap.objectClasses[3].name
+const {
+  performLdapSearch,
+  performScopedLdapSearch,
+  performBaseLdapSearch,
+} = require('@src/utils/ldapUtils')
 
 const GroupServices = () => {
-  const searchAtt = (atts, value) => {
-    let values = {}
-    atts.map((att) => {
-      if (att.type === value) {
-        values = att.values
+  const getGroup = async (group) => {
+    try {
+      const baseDN = 'dc=cu'
+      const ldapFilter = `(ou=${group})`
+      const results = await performLdapSearch(baseDN, ldapFilter)
+      if (results[0] === undefined) {
+        throw new Error('No existe ese grupo')
+      } else {
+        return results
       }
-    })
-    return values[0]
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
   }
 
-  const getAll = (group) => {
-    const filter = `(studentClassGroup=${group})`
-    const attributes = ['uid', 'displayName', 'CI']
-    const search_options = {
-      scope: 'sub',
-      filter: filter,
-      attrs: attributes,
+  const getGroups = async (baseDN = 'dc=cu', ldapFilter, scope = 'sub') => {
+    try {
+      const results =
+        scope === 'sub'
+          ? await performLdapSearch(baseDN, ldapFilter)
+          : scope === 'base'
+          ? await performBaseLdapSearch(baseDN, ldapFilter)
+          : await performScopedLdapSearch(baseDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getChildrens', error)
+      throw error
     }
+  }
 
-    const results = []
+  const getAdminGroup = async (baseDN = config.ldap.base) => {
+    const ldapFilter = `(objectClass=*)`
+    const dn = `cn=admin,${baseDN}`
+    try {
+      const results = await performLdapSearch(dn, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getAdminGroup:', error)
+      // Optionally, you can throw the error again to propagate it to the caller
+      throw error
+    }
+  }
 
-    const promise = new Promise((resolve, reject) => {
-      ldap.search(config.ldap.dn, search_options, (err, res) => {
-        if (err) {
-          return reject(new Error(`Search failed: ${err.message}`))
-        }
-        return res
-          .on('searchEntry', (entry) =>
-            results.push({
-              objectName: entry.pojo.objectName,
-              attributes: {
-                uid: searchAtt(entry.pojo.attributes, 'uid'),
-                givenName: searchAtt(entry.pojo.attributes, 'givenName'),
-                cn: searchAtt(entry.pojo.attributes, 'cn'),
-                sn: searchAtt(entry.pojo.attributes, 'sn'),
-                ci: searchAtt(entry.pojo.attributes, 'CI'),
-                area: searchAtt(entry.pojo.attributes, 'area'),
-                displayName: searchAtt(entry.pojo.attributes, 'displayName'),
-                maildrop: searchAtt(entry.pojo.attributes, 'maildrop'),
-                email: searchAtt(entry.pojo.attributes, 'email'),
-                mailService: searchAtt(entry.pojo.attributes, 'mailService'),
-                type: searchAtt(entry.pojo.attributes, 'type'),
-              },
-            })
-          )
-          .once('error', (resError) =>
-            reject(new Error(`Search error: ${resError}`))
-          )
-          .on('end', (result) => {
-            console.log('status: ' + result.status)
-          })
-          .once('end', () => resolve(results))
-      })
-    })
+  const getGroupByCN = async (baseDN = config.ldap.base, cn = 'admin') => {
+    const ldapFilter = `(objectClass=*)`
+    const customDN = `cn=${cn},${baseDN}`
+    try {
+      const results = await performLdapSearch(customDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getGroupByCN:', error)
+      throw error
+    }
+  }
 
-    return promise
+  const getGroupsInBaseDN = async (baseDN = config.ldap.base) => {
+    const ldapFilter = `(objectClass=organizationalUnit)`
+    try {
+      const results = await performLdapSearch(baseDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getGroupByCN:', error)
+      throw error
+    }
+  }
+
+  const getChildrensBaseDN = async (baseDN = config.ldap.base) => {
+    const ldapFilter = `(objectClass=*)`
+    try {
+      const results = await performScopedLdapSearch(baseDN, ldapFilter)
+      return results
+    } catch (error) {
+      console.error('Error in getChildrens', error)
+      throw error
+    }
   }
 
   return {
-    getAll,
+    getAdminGroup,
+    getGroup,
+    getGroups,
+    getGroupByCN,
+    getGroupsInBaseDN,
+    getChildrensBaseDN,
   }
 }
 
