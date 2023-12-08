@@ -81,8 +81,8 @@ var init = function (
 
         const localSession = { user: username }
 
-        if (localSession.user === req.session?.passport?.user)
-          throw new Error('log out before logging back in')
+        /* if (localSession.user === req.session?.passport?.user)
+          throw new Error('log out before logging back in') */
 
         const response = await userService.getByUsername(username)
 
@@ -128,8 +128,11 @@ var init = function (
             options.adminPassword = opt.adminPassword
           }
         }
+
+        console.log('options', options)
         // ldap authenticate the user
         const user = await authenticate(options)
+        console.log('user authenticated', user)
         // success
         done(null, user)
       } catch (error) {

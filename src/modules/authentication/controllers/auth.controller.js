@@ -79,6 +79,8 @@ const login = async function (req, res, next) {
           loginInfo,
         }
 
+        console.log('user ', user)
+
         const userObj = { ...user }
         const token = signToken(payload, { expiresIn: '15 minutes' })
         const refreshToken = signToken(payload, { expiresIn: '1 hour' })

@@ -28,7 +28,7 @@ const getObject = (arr) => {
   const newObj = {}
   arr.forEach((obj) => {
     if (obj.type === 'mail' || obj.type === 'maildrop') {
-      newObj[obj.type] = obj.values
+      newObj[obj.type] = [...obj.values]
     } else {
       newObj[obj.type] = obj.values.length === 1 ? obj.values[0] : obj.values
     }

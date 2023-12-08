@@ -499,6 +499,8 @@ router.post('/modify-ldap', async (req, res) => {
     for (const attributeName in attributes) {
       if (attributes.hasOwnProperty(attributeName)) {
         const attributeValue = attributes[attributeName]
+        console.log('attributeName', attributeName)
+        console.log('attributeValue', attributeValue)
 
         // Create a modification object to replace the attribute value
         const modification = new ldap.Change({
