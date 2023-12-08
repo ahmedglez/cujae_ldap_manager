@@ -489,49 +489,51 @@ router.put('/:username', async (req, res) => {
  *         description: An error occurred while modifying LDAP user attributes.
  */
 router.post('/modify-ldap', async (req, res) => {
-  const dn = req.body.dn
-  const attributes = req.body.attributes
+  try {
+    const dn = req.body.dn
+    const attributes = req.body.attributes
 
-  const modifications = []
+    const modifications = []
 
-  // Loop through the updated attributes and create modification objects
-  for (const attributeName in attributes) {
-    if (attributes.hasOwnProperty(attributeName)) {
-      const attributeValue = attributes[attributeName]
+    // Loop through the updated attributes and create modification objects
+    for (const attributeName in attributes) {
+      if (attributes.hasOwnProperty(attributeName)) {
+        const attributeValue = attributes[attributeName]
 
-      // Create a modification object to replace the attribute value
-      const modification = new ldap.Change({
-        operation: 'replace', // Use 'replace' to replace the attribute value
-        modification: {
-          type: attributeName,
-          values: [attributeValue],
-        },
-      })
+        // Create a modification object to replace the attribute value
+        const modification = new ldap.Change({
+          operation: 'replace', // Use 'replace' to replace the attribute value
+          modification: {
+            type: attributeName,
+            values: [...attributeValue],
+          },
+        })
 
-      modifications.push(modification)
-    }
-  }
-
-  let errorOccurred = false // Track if any modification failed
-
-  // Perform the LDAP modify operation with all modifications
-  for (const modification of modifications) {
-    ldapClient.modify(dn, modification, (err) => {
-      if (err) {
-        console.error('Error modifying attributes:', err)
-        errorOccurred = true
+        modifications.push(modification)
       }
-    })
-  }
+    }
 
-  if (errorOccurred) {
-    res.status(500).json({ error: 'Error modifying attributes' })
-  } else {
+    // Perform the LDAP modify operation with all modifications
+    for (const modification of modifications) {
+      await new Promise((resolve, reject) => {
+        ldapClient.modify(dn, modification, (err) => {
+          if (err) {
+            console.error('Error modifying attributes:', err)
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
+      })
+    }
+
     console.log('Attributes modified successfully')
     res.json({ message: 'Attributes modified successfully' })
+  } catch (error) {
+    console.error('Error in modify-ldap endpoint:', error)
+    res.status(500).json({ error: error.message })
   }
 })
-
 /**
  * @openapi
  * /api/v1/users/newUser:
