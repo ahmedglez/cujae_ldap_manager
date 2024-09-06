@@ -25,7 +25,7 @@
     "handlebars": "^4.7.7",
     "jest-fetch-mock": "^3.0.3",
     "joi": "^13.0.2",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.2",
     "LDAP": "^1.2.1",
     "ldap-authentication": "^2.3.1",
     "ldapjs": "^3.0.1",
@@ -38,7 +38,7 @@
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "simple-ldap-search": "^3.1.2",
-    "socket.io": "^4.6.1",
+    "socket.io": "^4.6.2",
     "winston": "^3.8.2",
     "winston-mongodb": "^5.1.1"
   },
